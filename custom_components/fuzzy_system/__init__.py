@@ -133,3 +133,13 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     hass.async_create_task(async_load_platform(hass, "sensor", DOMAIN, {}, config))
 
     return True
+
+
+async def async_setup_entry(hass: HomeAssistant, entry) -> bool:
+    """Set up Fuzzy System from a config entry UI."""
+    return True
+
+
+async def async_unload_entry(hass: HomeAssistant, entry) -> bool:
+    """Unload a config entry UI."""
+    return True

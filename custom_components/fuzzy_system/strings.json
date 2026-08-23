@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Fuzzy System Integration",
+        "description": "Fuzzy System Integration evaluates Mamdani & Sugeno fuzzy inference systems configured in configuration.yaml."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Already configured. Only a single instance is necessary."
+    }
+  }
+}
