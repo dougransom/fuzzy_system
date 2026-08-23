@@ -147,3 +147,12 @@ async def test_fan_simulator_setup(hass: HomeAssistant, enable_custom_integratio
     set_state = hass.states.get("sensor.fuzzy_fan_simulator_fan_speed_set")
     assert set_state is not None
     assert set_state.state == "high"
+
+    # Verify System Status Sensor
+    sys_status = hass.states.get("sensor.fuzzy_system_fan_simulator")
+    assert sys_status is not None
+    assert sys_status.state == "OK"
+    assert sys_status.attributes["rule_count"] == 2
+    assert sys_status.attributes["active_rule_count"] == 1
+    assert "outputs" in sys_status.attributes
+    assert sys_status.attributes["outputs"]["fan_speed"] > 70.0

@@ -11,7 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
-from .const import CONF_DEFAULT, CONF_ENTITY_ID, CONF_INPUTS, DOMAIN
+from .const import CONF_DEFAULT, CONF_ENTITY_ID, CONF_EXPOSE_SYSTEM_SENSOR, CONF_INPUTS, DOMAIN
 from .fuzzy_engine import FuzzySystemEngine
 
 _LOGGER = logging.getLogger(__name__)
@@ -57,6 +57,17 @@ async def async_setup_platform(
                     hass=hass,
                     system_name=sys_name,
                     output_name=out_name,
+                    engine=engine,
+                    input_map=input_entities_map,
+                )
+            )
+
+        # 3. System Status Sensor (if expose_system_sensor is enabled)
+        if sys_cfg.get(CONF_EXPOSE_SYSTEM_SENSOR, True):
+            entities.append(
+                FuzzySystemStatusSensor(
+                    hass=hass,
+                    system_name=sys_name,
                     engine=engine,
                     input_map=input_entities_map,
                 )
@@ -234,3 +245,92 @@ class FuzzySetSensor(BaseFuzzySensor):
         else:
             self._state = None
             self._attributes = {}
+
+
+class FuzzySystemStatusSensor(SensorEntity):
+    """System Status Sensor for monitoring an entire Fuzzy System instance."""
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        system_name: str,
+        engine: FuzzySystemEngine,
+        input_map: dict[str, tuple[str, float]],
+    ) -> None:
+        self.hass = hass
+        self._system_name = system_name
+        self._engine = engine
+        self._input_map = input_map
+
+        self._attr_name = f"Fuzzy System {system_name.replace('_', ' ').title()}"
+        self._attr_unique_id = f"fuzzy_system_{system_name}_status"
+        self._attr_icon = "mdi:cpu-64-bit"
+        self._state: str = "OK"
+        self._evaluation_results: dict[str, Any] = {}
+        self._current_inputs: dict[str, float] = {}
+
+    @property
+    def native_value(self) -> str:
+        """Return system status string (OK or Input Unavailable)."""
+        return self._state
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return diagnostic attributes for the overall fuzzy system."""
+        outputs_summary = {
+            out: res["defuzzified_value"] for out, res in self._evaluation_results.items()
+        }
+        rule_strengths: list[dict[str, Any]] = []
+        if self._evaluation_results:
+            first_out = next(iter(self._evaluation_results.values()))
+            rule_strengths = first_out.get("rule_strengths", [])
+
+        firing_rules = [r for r in rule_strengths if r.get("firing_strength", 0.0) > 0.0]
+        max_strength = max([r.get("firing_strength", 0.0) for r in rule_strengths], default=0.0)
+
+        return {
+            "system": self._system_name,
+            "inference_type": self._engine.inference_type,
+            "defuzzifier": self._engine.defuzzifier,
+            "inputs": self._current_inputs,
+            "outputs": outputs_summary,
+            "rule_count": len(self._engine.rules),
+            "active_rule_count": len(firing_rules),
+            "max_rule_strength": round(max_strength, 4),
+        }
+
+    async def async_added_to_hass(self) -> None:
+        """Register state change tracking for all system input entities."""
+        track_entity_ids = [ent_id for ent_id, _ in self._input_map.values()]
+
+        @callback
+        def _async_input_changed(event: Any) -> None:
+            self._update_and_reevaluate()
+            self.async_write_ha_state()
+
+        self.async_on_remove(
+            async_track_state_change_event(self.hass, track_entity_ids, _async_input_changed)
+        )
+        self._update_and_reevaluate()
+
+    def _update_and_reevaluate(self) -> None:
+        """Fetch input states and evaluate system status."""
+        eval_inputs: dict[str, float] = {}
+        all_ok = True
+
+        for input_name, (ent_id, default_val) in self._input_map.items():
+            state_obj = self.hass.states.get(ent_id)
+            if state_obj is not None and state_obj.state not in (None, "unknown", "unavailable"):
+                try:
+                    eval_inputs[input_name] = float(state_obj.state)
+                except ValueError:
+                    eval_inputs[input_name] = default_val
+                    all_ok = False
+            else:
+                eval_inputs[input_name] = default_val
+                if state_obj is not None and state_obj.state in ("unknown", "unavailable"):
+                    all_ok = False
+
+        self._current_inputs = eval_inputs
+        self._state = "OK" if all_ok else "Input Unavailable"
+        self._evaluation_results = self._engine.evaluate(eval_inputs)

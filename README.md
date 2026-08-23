@@ -233,12 +233,27 @@ fuzzy_system:
 
 ## Exposed Entities & Attributes
 
-For each defined system output variable, **two entities** are created:
+For each defined fuzzy system, entities are created based on outputs and system status:
 
 1. **Defuzzified Output Sensor** (`sensor.fuzzy_<system_name>_<output_name>`):
    - **State Type**: `float` (numeric defuzzified result, e.g. `14.805`).
 2. **Pre-Defuzzified Dominant Set Sensor** (`sensor.fuzzy_<system_name>_<output_name>_set`):
    - **State Type**: `string` (name of winning linguistic term before defuzzification, e.g. `"generous"`).
+3. **System Status Sensor** (`sensor.fuzzy_system_<system_name>`):
+   - **State Type**: `string` (`"OK"` or `"Input Unavailable"`).
+   - **Toggle**: Controlled via `expose_system_sensor: true` (enabled by default).
+
+### System Status Configuration Toggle
+
+```yaml
+fuzzy_system:
+  systems:
+    fan_simulator:
+      expose_system_sensor: true # Enabled by default (creates sensor.fuzzy_system_fan_simulator)
+      inference: mamdani
+      defuzzifier: cog
+      ...
+```
 
 ### Sensor State Attributes & Data Types
 
@@ -251,7 +266,10 @@ For each defined system output variable, **two entities** are created:
 | `term_activations` | `dict[str, float]` | Output & Set | Pre-defuzzification activation height per term | `{"cheap": 0.0, "average": 0.7, "generous": 1.0}` |
 | `term_memberships` | `dict[str, float]` | Output Sensor | Membership degree of crisp value ($14.805$) per term | `{"cheap": 0.0, "average": 0.6923, "generous": 0.1504}` |
 | `rule_strengths` | `list[dict]` (Array) | Output & Set | Array of rule string and firing strength pairs | `[{"rule": "...", "firing_strength": 0.7}]` |
-| `inputs` | `dict[str, float]` | Output & Set | Dictionary of current input sensor scalar values | `{"service": 6.5, "food": 9.8}` |
+| `inputs` | `dict[str, float]` | Output, Set & Status | Dictionary of current input sensor scalar values | `{"service": 6.5, "food": 9.8}` |
+| `outputs` | `dict[str, float]` | System Status | Map of all evaluated defuzzified output values | `{"fan_speed": 43.2}` |
+| `rule_count` | `int` | System Status | Total number of configured system rules | `4` |
+| `active_rule_count` | `int` | System Status | Number of currently firing rules (> 0 strength) | `2` |
 
 ---
 

@@ -14,6 +14,7 @@ from .const import (
     CONF_DEFAULT,
     CONF_DEFUZZIFIER,
     CONF_ENTITY_ID,
+    CONF_EXPOSE_SYSTEM_SENSOR,
     CONF_INFERENCE,
     CONF_INPUTS,
     CONF_OUTPUTS,
@@ -64,6 +65,7 @@ SYSTEM_SCHEMA = vol.Schema(
     {
         vol.Optional(CONF_INFERENCE, default=INFERENCE_MAMDANI): vol.In(VALID_INFERENCE_TYPES),
         vol.Optional(CONF_DEFUZZIFIER, default=DEF_COG): vol.In(VALID_DEFUZZIFIERS),
+        vol.Optional(CONF_EXPOSE_SYSTEM_SENSOR, default=True): cv.boolean,
         vol.Required(CONF_INPUTS): vol.Schema({cv.string: INPUT_VAR_SCHEMA}),
         vol.Required(CONF_OUTPUTS): vol.Schema({cv.string: OUTPUT_VAR_SCHEMA}),
         vol.Required(CONF_RULES): vol.All(cv.ensure_list, [cv.string]),
