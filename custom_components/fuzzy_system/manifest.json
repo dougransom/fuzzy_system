@@ -6,6 +6,7 @@
   ],
   "config_flow": true,
   "documentation": "https://github.com/dougransom/fuzzy_system",
+  "issue_tracker": "https://github.com/dougransom/fuzzy_system/issues",
   "iot_class": "local_push",
   "requirements": [
     "scikit-fuzzy==0.5.0",
