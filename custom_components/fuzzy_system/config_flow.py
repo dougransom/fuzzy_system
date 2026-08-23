@@ -31,3 +31,10 @@ class FuzzySystemConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=None,
             description_placeholders={},
         )
+
+    async def async_step_import(self, import_config: dict[str, Any]) -> FlowResult:
+        """Handle automatic import from configuration.yaml."""
+        if self._async_current_entries():
+            return self.async_abort(reason="single_instance_allowed")
+
+        return self.async_create_entry(title="Fuzzy System Integration", data={})

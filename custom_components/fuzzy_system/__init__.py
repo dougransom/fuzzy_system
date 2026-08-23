@@ -132,6 +132,12 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     # Load sensor platform
     hass.async_create_task(async_load_platform(hass, "sensor", DOMAIN, {}, config))
 
+    # Auto-create entry for Integrations Dashboard card
+    if not hass.config_entries.async_entries(DOMAIN):
+        hass.async_create_task(
+            hass.config_entries.flow.async_init(DOMAIN, context={"source": "import"}, data={})
+        )
+
     return True
 
 
