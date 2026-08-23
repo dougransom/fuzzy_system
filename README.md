@@ -6,6 +6,20 @@ The **Fuzzy System** custom component brings Mamdani and Sugeno fuzzy logic cont
 
 ---
 
+## Why Fuzzy Logic in Home Automation?
+
+Traditional automations rely on rigid `if/else` threshold calculations (e.g. *"if temperature > 22°C set fan to 50%"*). In contrast, **Fuzzy Logic** allows you to easily declare natural, human-like rules for a system rather than defining complex mathematical formulas:
+
+- `IF temperature IS cold THEN fan_speed IS off`
+- `IF temperature IS comfortable THEN fan_speed IS low`
+- `IF temperature IS hot THEN fan_speed IS high`
+
+The system is simply told what linguistic terms like **temperature** (`cold`, `comfortable`, `hot`) and **fan speed** (`off`, `low`, `high`) mean mathematically. This is done by specifying **fuzzy sets** (membership curves such as triangles or trapezoids). The fuzzy engine then continuously calculates smooth, optimal output values across overlapping sets.
+
+> For a detailed example of how fuzzy sets and rules work, see the official [scikit-fuzzy Tipping Problem Example](https://scikit-fuzzy.github.io/scikit-fuzzy/auto_examples/plot_tipping_problem_newapi.html).
+
+---
+
 ## Features
 
 - **Inference Engines**: Mamdani & Sugeno (zero-order and first-order).
