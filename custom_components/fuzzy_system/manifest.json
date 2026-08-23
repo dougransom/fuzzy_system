@@ -1,0 +1,16 @@
+{
+  "domain": "fuzzy_system",
+  "name": "Fuzzy System Integration",
+  "codeowners": [
+    "@dougransom"
+  ],
+  "config_flow": false,
+  "documentation": "https://github.com/dougransom/fuzzy_system",
+  "iot_class": "local_push",
+  "requirements": [
+    "scikit-fuzzy==0.5.0",
+    "numpy",
+    "scipy"
+  ],
+  "version": "0.0.1"
+}

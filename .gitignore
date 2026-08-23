@@ -1,0 +1,16 @@
+# Environment & Dependencies
+.venv/
+env/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Python & Tool Caches
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
