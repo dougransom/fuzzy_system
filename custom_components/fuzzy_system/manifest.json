@@ -10,9 +10,7 @@
   "iot_class": "calculated",
   "issue_tracker": "https://github.com/dougransom/fuzzy_system/issues",
   "requirements": [
-    "scikit-fuzzy==0.5.0",
-    "numpy",
-    "scipy"
+    "scikit-fuzzy==0.5.0"
   ],
   "version": "0.0.2"
 }
