@@ -16,13 +16,16 @@ from .const import (
     CONF_ENTITY_ID,
     CONF_EXPOSE_SYSTEM_SENSOR,
     CONF_INFERENCE,
+    CONF_ICON,
     CONF_INPUTS,
+    CONF_NAME,
     CONF_OUTPUTS,
     CONF_RANGE,
     CONF_RESOLUTION,
     CONF_RULES,
     CONF_SYSTEMS,
     CONF_TERMS,
+    CONF_UNIT_OF_MEASUREMENT,
     DEF_COG,
     DOMAIN,
     INFERENCE_MAMDANI,
@@ -58,6 +61,9 @@ OUTPUT_VAR_SCHEMA = vol.Schema(
         vol.Required(CONF_TERMS): vol.Schema({cv.string: TERM_SCHEMA}),
         vol.Optional(CONF_RESOLUTION, default=100): vol.Coerce(int),
         vol.Optional(CONF_DEFUZZIFIER): vol.In(VALID_DEFUZZIFIERS),
+        vol.Optional(CONF_NAME): cv.string,
+        vol.Optional(CONF_ICON): cv.icon,
+        vol.Optional(CONF_UNIT_OF_MEASUREMENT): cv.string,
     }
 )
 

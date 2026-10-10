@@ -6,17 +6,19 @@ The **Fuzzy System** custom component brings Mamdani and Sugeno fuzzy logic cont
 
 ---
 
-## Why Fuzzy Logic in Home Automation?
+## Project Goals
 
-Traditional automations rely on rigid `if/else` threshold calculations (e.g. *"if temperature > 22°C set fan to 50%"*). In contrast, **Fuzzy Logic** allows you to easily declare natural, human-like rules for a system rather than defining complex mathematical formulas:
+The primary goal of this project is to implement **Fuzzy Control for Home Assistant**, enabling declarative, human-like reasoning for smart home automations without brittle threshold formulas or complex PID tuning.
 
-- `IF temperature IS cold THEN fan_speed IS off`
-- `IF temperature IS comfortable THEN fan_speed IS low`
-- `IF temperature IS hot THEN fan_speed IS high`
-
-The system is simply told what linguistic terms like **temperature** (`cold`, `comfortable`, `hot`) and **fan speed** (`off`, `low`, `high`) mean mathematically. This is done by specifying **fuzzy sets** (membership curves such as triangles or trapezoids). The fuzzy engine then continuously calculates smooth, optimal output values across overlapping sets.
-
-> For a detailed example of how fuzzy sets and rules work, see the official [scikit-fuzzy Tipping Problem Example](https://scikit-fuzzy.github.io/scikit-fuzzy/auto_examples/plot_tipping_problem_newapi.html).
+### Core Objectives
+1. **Declarative Linguistic Control**: Allow users to define natural language control rules (`IF temperature IS hot AND humidity IS humid THEN fan_speed IS high`) mapped to mathematical fuzzy membership functions and linguistic hedges.
+2. **Robust Inference Engines**: Support both Mamdani and Sugeno (zero-order and first-order) fuzzy inference with 8 defuzzification algorithms (`cog`, `coa`, `boa`, `cos`, `mom`, `som`, `lom`, `weighted_average`).
+3. **Reactive Home Assistant Integration**: Dynamically monitor Home Assistant entity states (sensors, input numbers, helpers) and re-evaluate fuzzy systems in real-time as inputs update.
+4. **Deep Observability & Lovelace Visualization**: Expose both crisp defuzzified state values and rich diagnostic attributes (`rule_strengths`, `term_memberships`, pre-defuzzified dominant sets, and aggregated curve distributions) for Lovelace dashboards.
+5. **Distribution & Setup Options**:
+   - Support standard YAML configuration and UI Config Flow.
+   - Maintain seamless installation via HACS (Home Assistant Community Store).
+6. **Code Quality & Testing**: Maintain rigorous unit and integration tests using `pytest` alongside Home Assistant core developer tooling (`ruff`, `hassfest`).
 
 ---
 
@@ -83,6 +85,9 @@ fuzzy_system:
         <output_var_name>:
           range: [min_val, max_val]
           resolution: 100                    # Number of segments across universe (default: 100)
+          name: "Custom Sensor Name"         # Optional friendly name
+          icon: mdi:fan                      # Optional icon
+          unit_of_measurement: "%"           # Optional unit of measurement
           terms:
             <term_name>:
               type: trimf
@@ -247,27 +252,12 @@ fuzzy_system:
 
 ## Exposed Entities & Attributes
 
-For each defined fuzzy system, entities are created based on outputs and system status:
+For each defined system output variable, **two entities** are created:
 
 1. **Defuzzified Output Sensor** (`sensor.fuzzy_<system_name>_<output_name>`):
    - **State Type**: `float` (numeric defuzzified result, e.g. `14.805`).
 2. **Pre-Defuzzified Dominant Set Sensor** (`sensor.fuzzy_<system_name>_<output_name>_set`):
    - **State Type**: `string` (name of winning linguistic term before defuzzification, e.g. `"generous"`).
-3. **System Status Sensor** (`sensor.fuzzy_system_<system_name>`):
-   - **State Type**: `string` (`"OK"` or `"Input Unavailable"`).
-   - **Toggle**: Controlled via `expose_system_sensor: true` (enabled by default).
-
-### System Status Configuration Toggle
-
-```yaml
-fuzzy_system:
-  systems:
-    fan_simulator:
-      expose_system_sensor: true # Enabled by default (creates sensor.fuzzy_system_fan_simulator)
-      inference: mamdani
-      defuzzifier: cog
-      ...
-```
 
 ### Sensor State Attributes & Data Types
 
@@ -280,10 +270,7 @@ fuzzy_system:
 | `term_activations` | `dict[str, float]` | Output & Set | Pre-defuzzification activation height per term | `{"cheap": 0.0, "average": 0.7, "generous": 1.0}` |
 | `term_memberships` | `dict[str, float]` | Output Sensor | Membership degree of crisp value ($14.805$) per term | `{"cheap": 0.0, "average": 0.6923, "generous": 0.1504}` |
 | `rule_strengths` | `list[dict]` (Array) | Output & Set | Array of rule string and firing strength pairs | `[{"rule": "...", "firing_strength": 0.7}]` |
-| `inputs` | `dict[str, float]` | Output, Set & Status | Dictionary of current input sensor scalar values | `{"service": 6.5, "food": 9.8}` |
-| `outputs` | `dict[str, float]` | System Status | Map of all evaluated defuzzified output values | `{"fan_speed": 43.2}` |
-| `rule_count` | `int` | System Status | Total number of configured system rules | `4` |
-| `active_rule_count` | `int` | System Status | Number of currently firing rules (> 0 strength) | `2` |
+| `inputs` | `dict[str, float]` | Output & Set | Dictionary of current input sensor scalar values | `{"service": 6.5, "food": 9.8}` |
 
 ---
 

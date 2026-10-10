@@ -11,7 +11,17 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
-from .const import CONF_DEFAULT, CONF_ENTITY_ID, CONF_EXPOSE_SYSTEM_SENSOR, CONF_INPUTS, DOMAIN
+from .const import (
+    CONF_DEFAULT,
+    CONF_ENTITY_ID,
+    CONF_EXPOSE_SYSTEM_SENSOR,
+    CONF_ICON,
+    CONF_INPUTS,
+    CONF_NAME,
+    CONF_OUTPUTS,
+    CONF_UNIT_OF_MEASUREMENT,
+    DOMAIN,
+)
 from .fuzzy_engine import FuzzySystemEngine
 
 _LOGGER = logging.getLogger(__name__)
@@ -39,7 +49,9 @@ async def async_setup_platform(
             def_val = input_cfg.get(CONF_DEFAULT, 0.0)
             input_entities_map[input_name] = (ent_id, def_val)
 
+        outputs_cfg: dict[str, Any] = sys_cfg.get(CONF_OUTPUTS, {})
         for out_name in engine.output_vars:
+            out_cfg = outputs_cfg.get(out_name, {})
             # 1. Defuzzified Numeric Output Sensor
             entities.append(
                 FuzzyOutputSensor(
@@ -48,6 +60,7 @@ async def async_setup_platform(
                     output_name=out_name,
                     engine=engine,
                     input_map=input_entities_map,
+                    output_config=out_cfg,
                 )
             )
 
@@ -59,6 +72,7 @@ async def async_setup_platform(
                     output_name=out_name,
                     engine=engine,
                     input_map=input_entities_map,
+                    output_config=out_cfg,
                 )
             )
 
@@ -164,15 +178,23 @@ class FuzzyOutputSensor(BaseFuzzySensor):
         output_name: str,
         engine: FuzzySystemEngine,
         input_map: dict[str, tuple[str, float]],
+        output_config: dict[str, Any] | None = None,
     ) -> None:
         """Initialize fuzzy output numerical sensor entity."""
         super().__init__(hass, system_name, output_name, engine, input_map)
 
-        self._attr_name = (
-            f"Fuzzy {system_name.replace('_', ' ').title()} {output_name.replace('_', ' ').title()}"
-        )
+        output_cfg = output_config or {}
+        custom_name = output_cfg.get(CONF_NAME)
+        if custom_name:
+            self._attr_name = custom_name
+        else:
+            self._attr_name = (
+                f"Fuzzy {system_name.replace('_', ' ').title()} {output_name.replace('_', ' ').title()}"
+            )
         self._attr_unique_id = f"fuzzy_{system_name}_{output_name}"
-        self._attr_icon = "mdi:calculator-variant"
+        self._attr_icon = output_cfg.get(CONF_ICON, "mdi:calculator-variant")
+        if CONF_UNIT_OF_MEASUREMENT in output_cfg:
+            self._attr_native_unit_of_measurement = output_cfg[CONF_UNIT_OF_MEASUREMENT]
         self._state: float | None = None
 
     @property
@@ -214,11 +236,19 @@ class FuzzySetSensor(BaseFuzzySensor):
         output_name: str,
         engine: FuzzySystemEngine,
         input_map: dict[str, tuple[str, float]],
+        output_config: dict[str, Any] | None = None,
     ) -> None:
         """Initialize fuzzy set sensor entity."""
         super().__init__(hass, system_name, output_name, engine, input_map)
 
-        self._attr_name = f"Fuzzy {system_name.replace('_', ' ').title()} {output_name.replace('_', ' ').title()} Set"
+        output_cfg = output_config or {}
+        custom_name = output_cfg.get(CONF_NAME)
+        if custom_name:
+            self._attr_name = f"{custom_name} Set"
+        else:
+            self._attr_name = (
+                f"Fuzzy {system_name.replace('_', ' ').title()} {output_name.replace('_', ' ').title()} Set"
+            )
         self._attr_unique_id = f"fuzzy_{system_name}_{output_name}_set"
         self._attr_icon = "mdi:chart-bell-curve-cumulative"
         self._state: str | None = None

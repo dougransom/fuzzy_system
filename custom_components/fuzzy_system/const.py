@@ -60,3 +60,7 @@ CONF_ENTITY_ID = "entity_id"
 CONF_DEFAULT = "default"
 CONF_RESOLUTION = "resolution"
 CONF_EXPOSE_SYSTEM_SENSOR = "expose_system_sensor"
+
+CONF_NAME = "name"
+CONF_ICON = "icon"
+CONF_UNIT_OF_MEASUREMENT = "unit_of_measurement"
