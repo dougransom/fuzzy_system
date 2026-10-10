@@ -96,6 +96,67 @@ fuzzy_system:
         - "IF <input_var> IS [hedge] <term> [AND/OR ...] THEN <output_var> IS <term_or_value>"
 ```
 
+### Organizing Your Configuration
+
+To keep your `configuration.yaml` clean as your controllers grow, use Home Assistant's native YAML inclusion strategies:
+
+#### Option A: Dedicated File (`fuzzy_systems.yaml`)
+In `configuration.yaml`:
+```yaml
+fuzzy_system: !include fuzzy_systems.yaml
+```
+
+In `config/fuzzy_systems.yaml`:
+```yaml
+systems:
+  climate:
+    inference: mamdani
+    defuzzifier: cog
+    inputs: ...
+    outputs: ...
+    rules: ...
+  irrigation:
+    inference: sugeno
+    ...
+```
+
+#### Option B: Modular Directory (`config/fuzzy_systems/*.yaml`)
+Ideal for managing multiple distinct controllers (e.g. heating, cooling, irrigation, ventilation):
+In `configuration.yaml`:
+```yaml
+fuzzy_system:
+  systems: !include_dir_merge_named fuzzy_systems/
+```
+
+In `config/fuzzy_systems/climate.yaml`:
+```yaml
+inference: mamdani
+defuzzifier: cog
+inputs:
+  temperature: ...
+outputs:
+  fan_speed: ...
+rules:
+  - "IF temperature IS hot THEN fan_speed IS high"
+```
+
+In `config/fuzzy_systems/irrigation.yaml`:
+```yaml
+inference: sugeno
+...
+```
+
+---
+
+## Hot Reloading (`fuzzy_system.reload`)
+
+You can tweak rules, add terms, or adjust membership curve parameters without restarting Home Assistant:
+1. Go to **Developer Tools** > **YAML Configuration** > Click **Fuzzy System** (or **Reload All YAML**).
+2. Alternatively, invoke the action/service via **Developer Tools** > **Actions** (or scripts/automations):
+   ```yaml
+   action: fuzzy_system.reload
+   ```
+
 ---
 
 ## Membership Function Types & Parameters

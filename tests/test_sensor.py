@@ -213,3 +213,43 @@ async def test_fuzzy_sensor_metadata(hass: HomeAssistant, enable_custom_integrat
     assert set_state.attributes.get("friendly_name") == "Custom Fan Speed Set"
     assert set_state.attributes.get("icon") == "mdi:chart-bell-curve-cumulative"
 
+
+async def test_fuzzy_system_reload_service(hass: HomeAssistant, enable_custom_integrations):
+    """Test that the reload service is registered and can be called."""
+    base_config = {
+        DOMAIN: {
+            "systems": {
+                "thermostat": {
+                    "inference": "mamdani",
+                    "defuzzifier": "cog",
+                    "inputs": {
+                        "temp": {
+                            "entity_id": "sensor.reload_temp",
+                            "range": [0.0, 50.0],
+                            "terms": {
+                                "cold": {"type": "trimf", "params": [0, 0, 25]},
+                                "hot": {"type": "trimf", "params": [25, 50, 50]},
+                            },
+                        }
+                    },
+                    "outputs": {
+                        "power": {
+                            "range": [0.0, 100.0],
+                            "terms": {
+                                "low": {"type": "trimf", "params": [0, 0, 50]},
+                                "high": {"type": "trimf", "params": [50, 100, 100]},
+                            },
+                        }
+                    },
+                    "rules": ["IF temp IS hot THEN power IS high"],
+                }
+            }
+        }
+    }
+
+    hass.states.async_set("sensor.reload_temp", "40.0")
+    assert await async_setup_component(hass, DOMAIN, base_config)
+    await hass.async_block_till_done()
+
+    assert hass.services.has_service(DOMAIN, "reload")
+

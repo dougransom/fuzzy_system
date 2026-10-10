@@ -3,11 +3,16 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 import voluptuous as vol
-from homeassistant.core import HomeAssistant
+from homeassistant.const import SERVICE_RELOAD
+from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
+from homeassistant.helpers.entity_platform import async_get_platforms
+from homeassistant.helpers.reload import async_integration_yaml_config
+from homeassistant.helpers.service import async_register_admin_service
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
@@ -90,14 +95,11 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 
-async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Set up the Fuzzy System component."""
-    if DOMAIN not in config:
-        return True
-
-    domain_config = config[DOMAIN]
+async def _async_setup_fuzzy_systems(
+    hass: HomeAssistant, domain_config: dict[str, Any], full_config: ConfigType
+) -> None:
+    """Build engines and load sensor platforms."""
     systems_config = domain_config[CONF_SYSTEMS]
-
     hass.data[DOMAIN] = {}
 
     for sys_name, sys_cfg in systems_config.items():
@@ -138,7 +140,31 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         _LOGGER.info("Configured Fuzzy System '%s' with %d rules", sys_name, len(engine.rules))
 
     # Load sensor platform
-    hass.async_create_task(async_load_platform(hass, "sensor", DOMAIN, {}, config))
+    await async_load_platform(hass, "sensor", DOMAIN, {}, full_config)
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Set up the Fuzzy System component and register reload service."""
+    async def _reload_config(call: ServiceCall) -> None:
+        """Reload Fuzzy System integration from YAML."""
+        reload_config = await async_integration_yaml_config(hass, DOMAIN)
+        if not reload_config or DOMAIN not in reload_config:
+            _LOGGER.warning("No configuration found for %s during reload", DOMAIN)
+            return
+
+        # Reset entity platforms
+        reset_platforms = async_get_platforms(hass, DOMAIN)
+        for reset_platform in reset_platforms:
+            await reset_platform.async_reset()
+
+        await _async_setup_fuzzy_systems(hass, reload_config[DOMAIN], reload_config)
+        hass.bus.async_fire(f"event_{DOMAIN}_reloaded", context=call.context)
+        _LOGGER.info("Fuzzy System integration reloaded successfully")
+
+    async_register_admin_service(hass, DOMAIN, SERVICE_RELOAD, _reload_config)
+
+    if DOMAIN in config:
+        await _async_setup_fuzzy_systems(hass, config[DOMAIN], config)
 
     return True
 
