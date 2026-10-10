@@ -6,7 +6,7 @@
 ---
 
 ## 1. Project Goal
-Implement **Fuzzy Control for Home Assistant** to provide declarative, linguistic automation rules with Mamdani and Sugeno inference engines, rich Lovelace diagnostic attributes, and distribution via HACS.
+Implement **Fuzzy Control for Home Assistant** to provide declarative, linguistic automation rules with Mamdani and Sugeno inference engines, rich Lovelace diagnostic attributes, initial distribution via HACS, and eventual inclusion in Home Assistant Core as an official built-in helper.
 
 Refer to [`README.md`](README.md) for the detailed project goals, technical specification, and configuration reference.
 
