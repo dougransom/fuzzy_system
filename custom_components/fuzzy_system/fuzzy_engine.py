@@ -33,19 +33,19 @@ _LOGGER = logging.getLogger(__name__)
 # -----------------------------------------------------------------------------
 # Pre-compiled Regular Expressions
 # -----------------------------------------------------------------------------
-RE_RULE = re.compile(r"^\s*IF\s+(.+)\s+THEN\s+(.+)\s*$", re.IGNORECASE)
-RE_CONSEQUENT = re.compile(r"^(\b\w+\b)\s+IS\s+(.+)$", re.IGNORECASE)
-RE_CLAUSE = re.compile(
+_RE_RULE = re.compile(r"^\s*IF\s+(.+)\s+THEN\s+(.+)\s*$", re.IGNORECASE)
+_RE_CONSEQUENT = re.compile(r"^(\b\w+\b)\s+IS\s+(.+)$", re.IGNORECASE)
+_RE_CLAUSE = re.compile(
     r"(\b\w+\b)\s+IS\s+((?:very|extremely|somewhat|slightly|not)\s+)?(\b\w+\b)",
     re.IGNORECASE,
 )
-RE_AND = re.compile(r"\bAND\b", re.IGNORECASE)
-RE_OR = re.compile(r"\bOR\b", re.IGNORECASE)
+_RE_AND = re.compile(r"\bAND\b", re.IGNORECASE)
+_RE_OR = re.compile(r"\bOR\b", re.IGNORECASE)
 
 # -----------------------------------------------------------------------------
 # Functional Hedge Dispatch Table
 # -----------------------------------------------------------------------------
-HEDGE_FUNCTIONS: dict[str, Callable[[Any], Any]] = {
+_HEDGE_FUNCTIONS: dict[str, Callable[[Any], Any]] = {
     HEDGE_VERY: lambda x: np.power(x, 2.0),
     HEDGE_EXTREMELY: lambda x: np.power(x, 3.0),
     HEDGE_SOMEWHAT: lambda x: np.power(x, 0.5),
@@ -62,12 +62,12 @@ def get_hedge_function(hedge: str | None) -> Callable[[Any], Any]:
     """Retrieve functional hedge transformation, defaulting to identity."""
     if not hedge:
         return _identity_func
-    return HEDGE_FUNCTIONS.get(hedge.lower(), _identity_func)
+    return _HEDGE_FUNCTIONS.get(hedge.lower(), _identity_func)
 
 
 def apply_hedge(membership_values: np.ndarray, hedge: str) -> np.ndarray:
     """Apply a hedge modifier to membership function values using functional table lookup."""
-    func = HEDGE_FUNCTIONS.get(hedge.lower())
+    func = _HEDGE_FUNCTIONS.get(hedge.lower())
     if func is not None:
         return func(membership_values)
     return membership_values
@@ -76,7 +76,7 @@ def apply_hedge(membership_values: np.ndarray, hedge: str) -> np.ndarray:
 # -----------------------------------------------------------------------------
 # Membership Function Factory Table
 # -----------------------------------------------------------------------------
-MF_FACTORIES: dict[str, Callable[[list[float]], Callable[[np.ndarray], np.ndarray]]] = {
+_MF_FACTORIES: dict[str, Callable[[list[float]], Callable[[np.ndarray], np.ndarray]]] = {
     "trimf": lambda p: lambda u: fuzz.trimf(u, p),
     "trapmf": lambda p: lambda u: fuzz.trapmf(u, p),
     "gaussmf": lambda p: lambda u: fuzz.gaussmf(u, p[0], p[1]),
@@ -121,7 +121,7 @@ def _defuzz_weighted_average(
     )
 
 
-DEFUZZIFIERS: dict[str, Callable[[np.ndarray, np.ndarray, list[np.ndarray]], float]] = {
+_DEFUZZIFIERS: dict[str, Callable[[np.ndarray, np.ndarray, list[np.ndarray]], float]] = {
     DEF_COG: lambda u, agg, _: float(fuzz.defuzz(u, agg, "centroid")),
     DEF_COA: lambda u, agg, _: float(fuzz.defuzz(u, agg, "centroid")),
     DEF_BOA: lambda u, agg, _: float(fuzz.defuzz(u, agg, "bisector")),
@@ -139,7 +139,7 @@ class Defuzzifier:
     def __init__(self, method: str) -> None:
         """Initialize defuzzifier strategy."""
         self.method = method.lower()
-        self._strategy = DEFUZZIFIERS.get(self.method, DEFUZZIFIERS[DEF_COG])
+        self._strategy = _DEFUZZIFIERS.get(self.method, _DEFUZZIFIERS[DEF_COG])
 
     def __call__(
         self,
@@ -176,7 +176,7 @@ class FuzzyTerm:
         self.params = [float(p) for p in params]
         self.hedge = hedge
 
-        factory = MF_FACTORIES.get(self.mf_type)
+        factory = _MF_FACTORIES.get(self.mf_type)
         if not factory:
             raise ValueError(f"Unsupported membership function type: {self.mf_type}")
 
@@ -289,13 +289,13 @@ class FuzzyRule:
         )
 
     def _parse_rule(self, rule_str: str) -> tuple[str, str]:
-        match = RE_RULE.match(rule_str)
+        match = _RE_RULE.match(rule_str)
         if not match:
             raise ValueError(f"Invalid rule format: '{rule_str}'. Must be 'IF ... THEN ...'")
         return match.group(1).strip(), match.group(2).strip()
 
     def _compile_consequent(self, consequent_str: str) -> tuple[str, str, float | None]:
-        match = RE_CONSEQUENT.match(consequent_str)
+        match = _RE_CONSEQUENT.match(consequent_str)
         if not match:
             raise ValueError(f"Invalid consequent format: '{consequent_str}'")
         output_var = match.group(1).strip()
@@ -307,16 +307,16 @@ class FuzzyRule:
             return output_var, term_or_val, None
 
     def _compile_antecedent(self, antecedent_str: str) -> list[list[AntecedentCondition]]:
-        or_tokens = RE_OR.split(antecedent_str)
+        or_tokens = _RE_OR.split(antecedent_str)
         groups: list[list[AntecedentCondition]] = []
         for or_token in or_tokens:
-            and_tokens = RE_AND.split(or_token)
+            and_tokens = _RE_AND.split(or_token)
             and_group: list[AntecedentCondition] = []
             for clause in and_tokens:
                 clause = clause.strip()
                 if not clause:
                     continue
-                match = RE_CLAUSE.search(clause)
+                match = _RE_CLAUSE.search(clause)
                 if match:
                     var_name = match.group(1)
                     hedge = match.group(2).strip() if match.group(2) else None
