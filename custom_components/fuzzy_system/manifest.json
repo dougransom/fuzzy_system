@@ -6,12 +6,13 @@
   ],
   "config_flow": true,
   "documentation": "https://github.com/dougransom/fuzzy_system",
-  "iot_class": "local_push",
+  "integration_type": "helper",
+  "iot_class": "calculated",
   "issue_tracker": "https://github.com/dougransom/fuzzy_system/issues",
   "requirements": [
     "scikit-fuzzy==0.5.0",
     "numpy",
     "scipy"
   ],
-  "version": "0.0.1"
+  "version": "0.0.2"
 }
