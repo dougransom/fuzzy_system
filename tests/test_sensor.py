@@ -156,3 +156,60 @@ async def test_fan_simulator_setup(hass: HomeAssistant, enable_custom_integratio
     assert sys_status.attributes["active_rule_count"] == 1
     assert "outputs" in sys_status.attributes
     assert sys_status.attributes["outputs"]["fan_speed"] > 70.0
+
+
+async def test_fuzzy_sensor_metadata(hass: HomeAssistant, enable_custom_integrations):
+    """Test setting custom name, icon, and unit_of_measurement on output sensors."""
+    meta_config = {
+        DOMAIN: {
+            "systems": {
+                "climate": {
+                    "inference": "mamdani",
+                    "defuzzifier": "cog",
+                    "inputs": {
+                        "temp": {
+                            "entity_id": "sensor.test_temp",
+                            "range": [0.0, 40.0],
+                            "terms": {
+                                "low": {"type": "trimf", "params": [0, 0, 20]},
+                                "high": {"type": "trimf", "params": [20, 40, 40]},
+                            },
+                        }
+                    },
+                    "outputs": {
+                        "speed": {
+                            "name": "Custom Fan Speed",
+                            "icon": "mdi:fan",
+                            "unit_of_measurement": "%",
+                            "range": [0.0, 100.0],
+                            "terms": {
+                                "slow": {"type": "trimf", "params": [0, 0, 50]},
+                                "fast": {"type": "trimf", "params": [50, 100, 100]},
+                            },
+                        }
+                    },
+                    "rules": [
+                        "IF temp IS high THEN speed IS fast",
+                        "IF temp IS low THEN speed IS slow",
+                    ],
+                }
+            }
+        }
+    }
+
+    hass.states.async_set("sensor.test_temp", "35.0")
+    assert await async_setup_component(hass, DOMAIN, meta_config)
+    await hass.async_block_till_done()
+
+    # The custom name creates sensor.custom_fan_speed
+    state = hass.states.get("sensor.custom_fan_speed")
+    assert state is not None
+    assert state.attributes.get("friendly_name") == "Custom Fan Speed"
+    assert state.attributes.get("icon") == "mdi:fan"
+    assert state.attributes.get("unit_of_measurement") == "%"
+
+    set_state = hass.states.get("sensor.custom_fan_speed_set")
+    assert set_state is not None
+    assert set_state.attributes.get("friendly_name") == "Custom Fan Speed Set"
+    assert set_state.attributes.get("icon") == "mdi:chart-bell-curve-cumulative"
+

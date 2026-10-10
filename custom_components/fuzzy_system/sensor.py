@@ -108,6 +108,12 @@ class BaseFuzzySensor(SensorEntity):
         self._engine = engine
         self._input_map = input_map  # input_var_name -> (entity_id, default_value)
 
+        # Pre-build reverse lookup table from entity_id to variable name
+        self._entity_to_var: dict[str, str] = {
+            ent_id: var_name for var_name, (ent_id, _) in input_map.items()
+        }
+        self._tracked_entity_ids: list[str] = list(self._entity_to_var.keys())
+
         self._attributes: dict[str, Any] = {}
         self._input_values: dict[str, float] = {}
 
@@ -120,9 +126,7 @@ class BaseFuzzySensor(SensorEntity):
         """Register state listeners when entity is added to HA."""
         await super().async_added_to_hass()
 
-        tracked_entity_ids = []
         for var_name, (ent_id, def_val) in self._input_map.items():
-            tracked_entity_ids.append(ent_id)
             current_state = self._hass.states.get(ent_id)
             val = def_val
             if current_state is not None:
@@ -134,19 +138,22 @@ class BaseFuzzySensor(SensorEntity):
 
         self._reevaluate()
 
-        if tracked_entity_ids:
+        if self._tracked_entity_ids:
             self.async_on_remove(
                 async_track_state_change_event(
-                    self._hass, tracked_entity_ids, self._handle_input_change
+                    self._hass, self._tracked_entity_ids, self._handle_input_change
                 )
             )
 
     @callback
     def _handle_input_change(self, event: Any) -> None:
-        """Handle state change event from input entities."""
+        """Handle state change event from input entities via O(1) table lookup."""
         changed_entity_id = event.data.get("entity_id")
-        new_state = event.data.get("new_state")
+        var_name = self._entity_to_var.get(changed_entity_id)
+        if var_name is None:
+            return
 
+        new_state = event.data.get("new_state")
         if not new_state:
             return
 
@@ -155,11 +162,7 @@ class BaseFuzzySensor(SensorEntity):
         except (ValueError, TypeError):
             return
 
-        for var_name, (ent_id, _) in self._input_map.items():
-            if ent_id == changed_entity_id:
-                self._input_values[var_name] = new_val
-                break
-
+        self._input_values[var_name] = new_val
         self._reevaluate()
         self.async_write_ha_state()
 
@@ -287,10 +290,25 @@ class FuzzySystemStatusSensor(SensorEntity):
         engine: FuzzySystemEngine,
         input_map: dict[str, tuple[str, float]],
     ) -> None:
+        """Initialize fuzzy system status sensor with pre-computed lookup tables."""
         self.hass = hass
         self._system_name = system_name
         self._engine = engine
         self._input_map = input_map
+
+        # Pre-build lookup and tracking tables on initialization
+        self._entity_to_var: dict[str, str] = {
+            ent_id: var_name for var_name, (ent_id, _) in input_map.items()
+        }
+        self._tracked_entity_ids: list[str] = list(self._entity_to_var.keys())
+
+        # Static attributes pre-bound on initialization
+        self._static_attributes: dict[str, Any] = {
+            "system": self._system_name,
+            "inference_type": self._engine.inference_type,
+            "defuzzifier": self._engine.defuzzifier,
+            "rule_count": len(self._engine.rules),
+        }
 
         self._attr_name = f"Fuzzy System {system_name.replace('_', ' ').title()}"
         self._attr_unique_id = f"fuzzy_system_{system_name}_status"
@@ -318,29 +336,30 @@ class FuzzySystemStatusSensor(SensorEntity):
         firing_rules = [r for r in rule_strengths if r.get("firing_strength", 0.0) > 0.0]
         max_strength = max([r.get("firing_strength", 0.0) for r in rule_strengths], default=0.0)
 
-        return {
-            "system": self._system_name,
-            "inference_type": self._engine.inference_type,
-            "defuzzifier": self._engine.defuzzifier,
-            "inputs": self._current_inputs,
-            "outputs": outputs_summary,
-            "rule_count": len(self._engine.rules),
-            "active_rule_count": len(firing_rules),
-            "max_rule_strength": round(max_strength, 4),
-        }
+        attrs = dict(self._static_attributes)
+        attrs.update(
+            {
+                "inputs": self._current_inputs,
+                "outputs": outputs_summary,
+                "active_rule_count": len(firing_rules),
+                "max_rule_strength": round(max_strength, 4),
+            }
+        )
+        return attrs
 
     async def async_added_to_hass(self) -> None:
         """Register state change tracking for all system input entities."""
-        track_entity_ids = [ent_id for ent_id, _ in self._input_map.values()]
-
         @callback
         def _async_input_changed(event: Any) -> None:
             self._update_and_reevaluate()
             self.async_write_ha_state()
 
-        self.async_on_remove(
-            async_track_state_change_event(self.hass, track_entity_ids, _async_input_changed)
-        )
+        if self._tracked_entity_ids:
+            self.async_on_remove(
+                async_track_state_change_event(
+                    self.hass, self._tracked_entity_ids, _async_input_changed
+                )
+            )
         self._update_and_reevaluate()
 
     def _update_and_reevaluate(self) -> None:
@@ -364,3 +383,4 @@ class FuzzySystemStatusSensor(SensorEntity):
         self._current_inputs = eval_inputs
         self._state = "OK" if all_ok else "Input Unavailable"
         self._evaluation_results = self._engine.evaluate(eval_inputs)
+
