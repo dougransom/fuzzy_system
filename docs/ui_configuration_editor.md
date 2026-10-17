@@ -18,20 +18,21 @@ The **Fuzzy System UI Configuration Editor** aims to replace manual YAML authori
 
 The editor is organized into a dedicated Home Assistant Panel (`/fuzzy-system`) and integrated with Home Assistant Settings / Integrations:
 
-```
-[Fuzzy Logic Dashboard]
-  │
-  ├── [System Overview & Catalog]
-  │     ├── System List (Active, YAML-managed, UI-managed, Disabled)
-  │     ├── Template Marketplace / Presets
-  │     └── Import / Export (YAML / JSON)
-  │
-  └── [System Workspace (Tabbed / Stepped Editor)]
-        ├── Tab 1: General & Inference Settings
-        ├── Tab 2: Inputs & Membership Curves
-        ├── Tab 3: Outputs & Defuzzifiers
-        ├── Tab 4: Linguistic Rule Builder
-        └── Tab 5: Live Simulation & Workbench
+```mermaid
+graph TD
+    Dashboard["Fuzzy Logic Dashboard"]
+    Dashboard --> Catalog["System Overview & Catalog"]
+    Dashboard --> Workspace["System Workspace (Tabbed / Stepped Editor)"]
+
+    Catalog --> List["System List (Active, YAML, UI, Disabled)"]
+    Catalog --> Market["Template Marketplace / Presets"]
+    Catalog --> ImpExp["Import / Export (YAML / JSON)"]
+
+    Workspace --> T1["Tab 1: General & Inference Settings"]
+    Workspace --> T2["Tab 2: Inputs & Membership Curves"]
+    Workspace --> T3["Tab 3: Outputs & Defuzzifiers"]
+    Workspace --> T4["Tab 4: Linguistic Rule Builder"]
+    Workspace --> T5["Tab 5: Live Simulation & Workbench"]
 ```
 
 ---

@@ -4,38 +4,37 @@
 
 Building an enterprise-grade visual configuration editor inside Home Assistant requires strict alignment with Home Assistant's frontend ecosystem. The frontend must feel like a native, seamless part of the Home Assistant user interface while providing advanced, responsive graphics for membership curves and real-time simulation.
 
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        Home Assistant Frontend                         │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                    Fuzzy System Custom Panel                     │  │
-│  │                     (/fuzzy-system/...)                          │  │
-│  │  ┌───────────────┐ ┌───────────────┐ ┌────────────────────────┐  │  │
-│  │  │ System Catalog│ │ Curve Editor  │ │ Simulation Workbench   │  │  │
-│  │  │ (CRUD / Cards)│ │ (Reactive SVG)│ │ (Live State & Meters)  │  │  │
-│  │  └───────┬───────┘ └───────┬───────┘ └───────────┬────────────┘  │  │
-│  │          └─────────────────┼─────────────────────┘               │  │
-│  │                            ▼                                     │  │
-│  │             Lit State Controller & WS Client                     │  │
-│  └────────────────────────────┬─────────────────────────────────────┘  │
-└───────────────────────────────┼────────────────────────────────────────┘
-                                │ Home Assistant WebSocket API
-                                ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│                        Home Assistant Core Backend                     │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │            fuzzy_system Integration Backend                      │  │
-│  │  ┌───────────────────────┐         ┌──────────────────────────┐  │  │
-│  │  │ WebSocket Command API │ ◄─────► │ Storage Manager (JSON)   │  │  │
-│  │  │ (CRUD, Sim, Templates)│         │ (.storage/fuzzy_system)  │  │  │
-│  │  └───────────┬───────────┘         └─────────────┬────────────┘  │  │
-│  │              ▼                                   ▼               │  │
-│  │  ┌───────────────────────┐         ┌──────────────────────────┐  │  │
-│  │  │ FuzzySystemEngine     │         │ Sensor Entity Platform   │  │  │
-│  │  │ (Mamdani / Sugeno)    │         │ (Reactive HA Sensors)    │  │  │
-│  │  └───────────────────────┘         └──────────────────────────┘  │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph Frontend["Home Assistant Frontend"]
+        subgraph Panel["Fuzzy System Custom Panel (/fuzzy-system/...)"]
+            direction TB
+            subgraph Views["UI Components"]
+                Catalog["System Catalog<br/>(CRUD / Cards)"]
+                CurveEditor["Curve Editor<br/>(Reactive SVG)"]
+                Workbench["Simulation Workbench<br/>(Live State & Meters)"]
+            end
+            StateCtrl["Lit State Controller & WS Client"]
+            Catalog --> StateCtrl
+            CurveEditor --> StateCtrl
+            Workbench --> StateCtrl
+        end
+    end
+
+    subgraph Backend["Home Assistant Core Backend"]
+        subgraph Integration["fuzzy_system Integration Backend"]
+            WSAPI["WebSocket Command API<br/>(CRUD, Sim, Templates)"]
+            Storage["Storage Manager (JSON)<br/>(.storage/fuzzy_system)"]
+            Engine["FuzzySystemEngine<br/>(Mamdani / Sugeno)"]
+            Sensors["Sensor Entity Platform<br/>(Reactive HA Sensors)"]
+
+            WSAPI <--> Storage
+            WSAPI --> Engine
+            Storage --> Sensors
+        end
+    end
+
+    StateCtrl <-->|"Home Assistant WebSocket API"| WSAPI
 ```
 
 ---
