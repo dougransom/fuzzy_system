@@ -2,12 +2,35 @@
   "config": {
     "step": {
       "user": {
-        "title": "Fuzzy System Integration",
-        "description": "Fuzzy System Integration evaluates Mamdani & Sugeno fuzzy inference systems configured in configuration.yaml."
+        "title": "Create Fuzzy System",
+        "description": "Configure a new declarative fuzzy logic controller.",
+        "data": {
+          "system_id": "System Identifier (Slug)",
+          "name": "Display Name",
+          "inference": "Inference Type (Mamdani or Sugeno)",
+          "defuzzifier": "Defuzzification Method"
+        }
       }
     },
+    "error": {
+      "invalid_system_id": "Please specify a valid system identifier.",
+      "id_exists_yaml": "A system with this identifier already exists in configuration.yaml and cannot be duplicated.",
+      "id_exists": "A fuzzy system with this identifier is already configured."
+    },
     "abort": {
-      "single_instance_allowed": "Already configured. Only a single instance is necessary."
+      "already_configured": "A fuzzy system with this identifier is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Fuzzy System Options",
+        "description": "System: {system_id}\n\nTo visually edit membership curves and linguistic rules, visit the [Visual Editor]({editor_url}).",
+        "data": {
+          "description": "Description",
+          "expose_system_sensor": "Expose System Status Sensor"
+        }
+      }
     }
   }
 }

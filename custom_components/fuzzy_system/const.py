@@ -63,3 +63,21 @@ CONF_NAME = "name"
 CONF_ICON = "icon"
 CONF_UNIT_OF_MEASUREMENT = "unit_of_measurement"
 CONF_EXPOSE_SYSTEM_SENSOR = "expose_system_sensor"
+CONF_SYSTEM_ID = "system_id"
+CONF_DESCRIPTION = "description"
+CONF_SOURCE = "source"
+SOURCE_YAML = "yaml"
+SOURCE_CONFIG_ENTRY = "config_entry"
+
+# Internal Data Keys
+DATA_YAML_SYSTEMS = "yaml_systems"
+DATA_ENTRIES = "entries"
+
+# WebSocket Command Identifiers
+WS_TYPE_LIST_SYSTEMS = "fuzzy_system/systems/list"
+WS_TYPE_GET_SYSTEM = "fuzzy_system/systems/get"
+WS_TYPE_SAVE_SYSTEM = "fuzzy_system/systems/save"
+WS_TYPE_DELETE_SYSTEM = "fuzzy_system/systems/delete"
+WS_TYPE_SIMULATE = "fuzzy_system/simulate"
+WS_TYPE_LIST_TEMPLATES = "fuzzy_system/templates/list"
+WS_TYPE_INSTANTIATE_TEMPLATE = "fuzzy_system/templates/instantiate"

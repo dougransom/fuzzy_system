@@ -3,8 +3,21 @@
 import pytest
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.fuzzy_system.const import DOMAIN
+from custom_components.fuzzy_system.const import (
+    CONF_DEFUZZIFIER,
+    CONF_EXPOSE_SYSTEM_SENSOR,
+    CONF_INFERENCE,
+    CONF_INPUTS,
+    CONF_NAME,
+    CONF_OUTPUTS,
+    CONF_RULES,
+    CONF_SYSTEM_ID,
+    DEF_COG,
+    DOMAIN,
+    INFERENCE_MAMDANI,
+)
 
 
 @pytest.fixture
@@ -252,4 +265,82 @@ async def test_fuzzy_system_reload_service(hass: HomeAssistant, enable_custom_in
     await hass.async_block_till_done()
 
     assert hass.services.has_service(DOMAIN, "reload")
+
+
+async def test_config_entry_sensor_lifecycle(hass: HomeAssistant, enable_custom_integrations):
+    """Test full sensor entity lifecycle driven by a ConfigEntry."""
+    hass.states.async_set("sensor.office_temperature", "29.0")
+
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        unique_id="office_comfort",
+        title="Office Comfort",
+        data={
+            CONF_SYSTEM_ID: "office_comfort",
+            CONF_NAME: "Office Comfort",
+            CONF_INFERENCE: INFERENCE_MAMDANI,
+            CONF_DEFUZZIFIER: DEF_COG,
+            CONF_EXPOSE_SYSTEM_SENSOR: True,
+            CONF_INPUTS: {
+                "temperature": {
+                    "entity_id": "sensor.office_temperature",
+                    "range": [15.0, 35.0],
+                    "terms": {
+                        "cool": {"type": "trimf", "params": [15, 15, 22]},
+                        "hot": {"type": "trimf", "params": [24, 35, 35]},
+                    },
+                }
+            },
+            CONF_OUTPUTS: {
+                "fan": {
+                    "range": [0.0, 100.0],
+                    "terms": {
+                        "low": {"type": "trimf", "params": [0, 0, 50]},
+                        "high": {"type": "trimf", "params": [50, 100, 100]},
+                    },
+                }
+            },
+            CONF_RULES: [
+                "IF temperature IS hot THEN fan IS high",
+                "IF temperature IS cool THEN fan IS low",
+            ],
+        },
+    )
+    entry.add_to_hass(hass)
+
+    # Set up integration entry
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    # Output sensor verification
+    out_state = hass.states.get("sensor.fuzzy_office_comfort_fan")
+    assert out_state is not None
+    assert float(out_state.state) > 60.0
+
+    # Set sensor verification
+    set_state = hass.states.get("sensor.fuzzy_office_comfort_fan_set")
+    assert set_state is not None
+    assert set_state.state == "high"
+
+    # Status sensor verification
+    status_state = hass.states.get("sensor.fuzzy_system_office_comfort")
+    assert status_state is not None
+    assert status_state.state == "OK"
+    assert status_state.attributes["active_rule_count"] == 1
+
+    # Reactivity: change input temperature to cool (18 C)
+    hass.states.async_set("sensor.office_temperature", "18.0")
+    await hass.async_block_till_done()
+
+    updated_out = hass.states.get("sensor.fuzzy_office_comfort_fan")
+    assert float(updated_out.state) < 40.0
+    updated_set = hass.states.get("sensor.fuzzy_office_comfort_fan_set")
+    assert updated_set.state == "low"
+
+    # Unload entry: sensors should be removed/unloaded
+    assert await hass.config_entries.async_unload(entry.entry_id)
+    await hass.async_block_till_done()
+
+    unloaded_out = hass.states.get("sensor.fuzzy_office_comfort_fan")
+    assert unloaded_out.state == "unavailable"
 

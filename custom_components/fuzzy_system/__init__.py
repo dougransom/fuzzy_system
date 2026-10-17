@@ -6,7 +6,8 @@ import logging
 from typing import Any
 
 import voluptuous as vol
-from homeassistant.const import SERVICE_RELOAD
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import SERVICE_RELOAD, Platform
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
@@ -28,9 +29,12 @@ from .const import (
     CONF_RANGE,
     CONF_RESOLUTION,
     CONF_RULES,
+    CONF_SYSTEM_ID,
     CONF_SYSTEMS,
     CONF_TERMS,
     CONF_UNIT_OF_MEASUREMENT,
+    DATA_ENTRIES,
+    DATA_YAML_SYSTEMS,
     DEF_COG,
     DOMAIN,
     INFERENCE_MAMDANI,
@@ -39,8 +43,11 @@ from .const import (
     VALID_INFERENCE_TYPES,
 )
 from .fuzzy_engine import FuzzySystemEngine
+from .websocket import async_setup_websocket
 
 _LOGGER = logging.getLogger(__name__)
+
+PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 TERM_SCHEMA = vol.Schema(
     {
@@ -95,56 +102,43 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 
+def _init_domain_data(hass: HomeAssistant) -> None:
+    """Initialize domain storage structures in hass.data."""
+    domain_store = hass.data.setdefault(DOMAIN, {})
+    domain_store.setdefault(DATA_YAML_SYSTEMS, {})
+    domain_store.setdefault(DATA_ENTRIES, {})
+
+
 async def _async_setup_fuzzy_systems(
     hass: HomeAssistant, domain_config: dict[str, Any], full_config: ConfigType
 ) -> None:
-    """Build engines and load sensor platforms."""
+    """Build engines and load sensor platforms for YAML-configured systems."""
     systems_config = domain_config[CONF_SYSTEMS]
-    hass.data[DOMAIN] = {}
+    _init_domain_data(hass)
 
     for sys_name, sys_cfg in systems_config.items():
-        engine = FuzzySystemEngine(
-            name=sys_name,
-            inference_type=sys_cfg[CONF_INFERENCE],
-            defuzzifier=sys_cfg[CONF_DEFUZZIFIER],
-        )
-
-        # Build Input Variables
-        for input_name, input_cfg in sys_cfg[CONF_INPUTS].items():
-            engine.add_input_variable(
-                name=input_name,
-                var_range=input_cfg[CONF_RANGE],
-                terms=input_cfg[CONF_TERMS],
-                resolution=input_cfg.get(CONF_RESOLUTION, 100),
-            )
-
-        # Build Output Variables
-        for output_name, output_cfg in sys_cfg[CONF_OUTPUTS].items():
-            engine.add_output_variable(
-                name=output_name,
-                var_range=output_cfg[CONF_RANGE],
-                terms=output_cfg[CONF_TERMS],
-                resolution=output_cfg.get(CONF_RESOLUTION, 100),
-                defuzzifier=output_cfg.get(CONF_DEFUZZIFIER),
-            )
-
-        # Add Rules
-        for rule_str in sys_cfg[CONF_RULES]:
-            engine.add_rule(rule_str)
-
-        hass.data[DOMAIN][sys_name] = {
+        engine = FuzzySystemEngine.from_dict({**sys_cfg, "name": sys_name})
+        sys_data = {
             "engine": engine,
             "config": sys_cfg,
         }
+        hass.data[DOMAIN][DATA_YAML_SYSTEMS][sys_name] = sys_data
+        # Retain direct key mapping for backward compatibility
+        hass.data[DOMAIN][sys_name] = sys_data
 
         _LOGGER.info("Configured Fuzzy System '%s' with %d rules", sys_name, len(engine.rules))
 
-    # Load sensor platform
-    await async_load_platform(hass, "sensor", DOMAIN, {}, full_config)
+    # Load sensor platform for YAML systems
+    await async_load_platform(hass, Platform.SENSOR, DOMAIN, {}, full_config)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Set up the Fuzzy System component and register reload service."""
+    """Set up the Fuzzy System component and register reload service and WebSocket APIs."""
+    _init_domain_data(hass)
+
+    # Register WebSocket commands
+    async_setup_websocket(hass)
+
     async def _reload_config(call: ServiceCall) -> None:
         """Reload Fuzzy System integration from YAML."""
         reload_config = await async_integration_yaml_config(hass, DOMAIN)
@@ -169,11 +163,36 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     return True
 
 
-async def async_setup_entry(hass: HomeAssistant, entry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Fuzzy System from a config entry UI."""
+    _init_domain_data(hass)
+
+    system_id = entry.data.get(CONF_SYSTEM_ID) or entry.unique_id or entry.title
+    engine = FuzzySystemEngine.from_dict(entry.data)
+
+    hass.data[DOMAIN][DATA_ENTRIES][entry.entry_id] = {
+        "system_id": system_id,
+        "engine": engine,
+        "config": entry.data,
+    }
+
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    entry.async_on_unload(entry.add_update_listener(async_reload_entry))
+    _LOGGER.info("Set up Fuzzy System ConfigEntry '%s' (%s)", system_id, entry.entry_id)
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry UI."""
-    return True
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unload_ok:
+        _init_domain_data(hass)
+        hass.data[DOMAIN][DATA_ENTRIES].pop(entry.entry_id, None)
+        _LOGGER.info("Unloaded Fuzzy System ConfigEntry (%s)", entry.entry_id)
+    return unload_ok
+
+
+async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload config entry."""
+    await hass.config_entries.async_reload(entry.entry_id)

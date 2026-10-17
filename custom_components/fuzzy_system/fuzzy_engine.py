@@ -5,6 +5,8 @@ from __future__ import annotations
 import logging
 import re
 from collections.abc import Callable
+from dataclasses import dataclass, field
+from functools import cached_property
 from typing import Any
 
 import numpy as np
@@ -90,24 +92,6 @@ _MF_FACTORIES: dict[str, Callable[[list[float]], Callable[[np.ndarray], np.ndarr
 # -----------------------------------------------------------------------------
 # Defuzzification Strategy Table & Class
 # -----------------------------------------------------------------------------
-def _defuzz_cos(
-    universe: np.ndarray,
-    aggregated_mf: np.ndarray,
-    individual_rule_mfs: list[np.ndarray],
-) -> float:
-    if individual_rule_mfs:
-        sum_mf = np.sum(individual_rule_mfs, axis=0)
-        sum_area = np.sum(sum_mf)
-        if sum_area > 0:
-            return float(np.sum(universe * sum_mf) / sum_area)
-    sum_agg = np.sum(aggregated_mf)
-    return (
-        float(np.sum(universe * aggregated_mf) / sum_agg)
-        if sum_agg > 0
-        else float(np.mean(universe))
-    )
-
-
 def _defuzz_weighted_average(
     universe: np.ndarray,
     aggregated_mf: np.ndarray,
@@ -119,6 +103,19 @@ def _defuzz_weighted_average(
         if sum_agg > 0
         else float(np.mean(universe))
     )
+
+
+def _defuzz_cos(
+    universe: np.ndarray,
+    aggregated_mf: np.ndarray,
+    individual_rule_mfs: list[np.ndarray],
+) -> float:
+    if individual_rule_mfs:
+        sum_mf = np.sum(individual_rule_mfs, axis=0)
+        sum_area = np.sum(sum_mf)
+        if sum_area > 0:
+            return float(np.sum(universe * sum_mf) / sum_area)
+    return _defuzz_weighted_average(universe, aggregated_mf, individual_rule_mfs)
 
 
 _DEFUZZIFIERS: dict[str, Callable[[np.ndarray, np.ndarray, list[np.ndarray]], float]] = {
@@ -195,6 +192,16 @@ class FuzzyTerm:
         single_u = np.array([float(crisp_val)])
         return float(self.calculate_membership(single_u)[0])
 
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize term to dictionary."""
+        data: dict[str, Any] = {
+            "type": self.mf_type,
+            "params": self.params,
+        }
+        if self.hedge:
+            data["hedge"] = self.hedge
+        return data
+
 
 # -----------------------------------------------------------------------------
 # Fuzzy Variable
@@ -239,18 +246,34 @@ class FuzzyVariable:
             raise KeyError(f"Term '{term_name}' not defined in variable '{self.name}'")
         return term.evaluate_crisp(crisp_val)
 
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize fuzzy variable configuration to dictionary."""
+        data: dict[str, Any] = {
+            "range": [self.min_val, self.max_val],
+            "resolution": self.resolution,
+            "terms": {t_name: t_obj.to_dict() for t_name, t_obj in self.terms.items()},
+        }
+        if self.defuzzifier:
+            data["defuzzifier"] = self.defuzzifier
+        return data
+
 
 # -----------------------------------------------------------------------------
 # Pre-Compiled Antecedent Condition & Rule
 # -----------------------------------------------------------------------------
+@dataclass(slots=True)
 class AntecedentCondition:
     """Pre-compiled condition clause 'var IS [hedge] term' evaluated during inference."""
 
-    def __init__(self, var_name: str, term_name: str, hedge: str | None = None) -> None:
-        """Initialize condition clause."""
-        self.var_name = var_name
-        self.term_name = term_name
-        self.hedge = hedge.lower() if hedge else None
+    var_name: str
+    term_name: str
+    hedge: str | None = None
+    _hedge_calc: Callable[[Any], Any] = field(init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        """Initialize normalized hedge and pre-bound transform callable."""
+        if self.hedge:
+            self.hedge = self.hedge.lower()
         self._hedge_calc = get_hedge_function(self.hedge)
 
     def evaluate(self, inputs: dict[str, float], fuzzy_vars: dict[str, FuzzyVariable]) -> float:
@@ -269,6 +292,22 @@ class AntecedentCondition:
             deg = float(self._hedge_calc(deg))
         return deg
 
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize condition to dictionary."""
+        return {
+            "variable": self.var_name,
+            "term": self.term_name,
+            "hedge": self.hedge,
+        }
+
+    def to_str(self) -> str:
+        """Render condition as DSL string."""
+        return (
+            f"{self.var_name} IS {self.hedge} {self.term_name}"
+            if self.hedge
+            else f"{self.var_name} IS {self.term_name}"
+        )
+
 
 class FuzzyRule:
     """Representation of a fuzzy IF ... THEN ... rule, parsed and structured on initialization."""
@@ -282,6 +321,18 @@ class FuzzyRule:
         self.output_var, self.consequent_term, self.consequent_constant = (
             self._compile_consequent(self.consequent_str)
         )
+
+        # Pre-bind callable Sugeno consequent evaluator
+        if self.consequent_constant is not None:
+            const_val = self.consequent_constant
+            self._consequent_evaluator: Callable[[FuzzyVariable], float] = lambda _var: const_val
+        else:
+            term_name = self.consequent_term
+            self._consequent_evaluator = lambda var: (
+                float(var.terms[term_name].params[0])
+                if term_name in var.terms and var.terms[term_name].params
+                else 0.0
+            )
 
         # Pre-compile antecedent conditions into DNF (OR of ANDs)
         self._antecedent_groups: list[list[AntecedentCondition]] = self._compile_antecedent(
@@ -330,6 +381,54 @@ class FuzzyRule:
         """Return pre-compiled consequent tuple."""
         return self.output_var, self.consequent_term, self.consequent_constant
 
+    def evaluate_sugeno_output(self, out_var: FuzzyVariable) -> float:
+        """Evaluate crisp output for Sugeno consequent using pre-compiled callable."""
+        return self._consequent_evaluator(out_var)
+
+    @cached_property
+    def ast(self) -> dict[str, Any]:
+        """Export rule representation as Abstract Syntax Tree (AST)."""
+        return {
+            "raw": self.raw_rule,
+            "antecedent": [
+                [cond.to_dict() for cond in group] for group in self._antecedent_groups
+            ],
+            "consequent": {
+                "variable": self.output_var,
+                "term": self.consequent_term,
+                "constant": self.consequent_constant,
+            },
+        }
+
+    def to_ast(self) -> dict[str, Any]:
+        """Export rule representation as Abstract Syntax Tree (AST)."""
+        return self.ast
+
+    @classmethod
+    def compile_from_ast(cls, ast: dict[str, Any]) -> str:
+        """Compile a rule AST into an IF ... THEN ... DSL string."""
+        antecedent_groups = ast.get("antecedent", [])
+        or_clauses: list[str] = []
+        for group in antecedent_groups:
+            and_clauses: list[str] = [
+                f"{cond.get('variable', '')} IS {cond['hedge']} {cond.get('term', '')}"
+                if cond.get("hedge")
+                else f"{cond.get('variable', '')} IS {cond.get('term', '')}"
+                for cond in group
+            ]
+            if and_clauses:
+                or_clauses.append(" AND ".join(and_clauses))
+        antecedent_str = " OR ".join(or_clauses)
+
+        consequent = ast.get("consequent", {})
+        out_var = consequent.get("variable", "")
+        constant = consequent.get("constant")
+        term = consequent.get("term", "")
+        consequent_val = str(constant) if constant is not None else term
+        consequent_str = f"{out_var} IS {consequent_val}"
+
+        return f"IF {antecedent_str} THEN {consequent_str}"
+
     def evaluate_antecedent(
         self, inputs: dict[str, float], fuzzy_vars: dict[str, FuzzyVariable]
     ) -> float:
@@ -342,6 +441,31 @@ class FuzzyRule:
             for and_group in self._antecedent_groups
         ]
         return float(max(or_values)) if or_values else 0.0
+
+    def evaluate_antecedent_with_diagnostics(
+        self, inputs: dict[str, float], fuzzy_vars: dict[str, FuzzyVariable]
+    ) -> tuple[float, dict[str, Any] | None]:
+        """Evaluate firing strength and identify the bottleneck clause."""
+        if not self._antecedent_groups:
+            return 0.0, None
+
+        best_group_val = -1.0
+        best_bottleneck: dict[str, Any] | None = None
+
+        for and_group in self._antecedent_groups:
+            min_val = 1.0
+            bottleneck_cond: AntecedentCondition | None = None
+            for cond in and_group:
+                val = cond.evaluate(inputs, fuzzy_vars)
+                if val <= min_val or bottleneck_cond is None:
+                    min_val = val
+                    bottleneck_cond = cond
+            if min_val > best_group_val:
+                best_group_val = min_val
+                best_bottleneck = bottleneck_cond.to_dict() if bottleneck_cond else None
+
+        firing_strength = float(max(0.0, best_group_val))
+        return firing_strength, best_bottleneck
 
 
 # -----------------------------------------------------------------------------
@@ -450,28 +574,43 @@ class FuzzySystemEngine:
                 out_var.universe, aggregated_mf, individual_rule_mfs
             )
 
-            dominant_term = (
-                max(term_activations, key=term_activations.get)  # type: ignore[arg-type]
-                if any(v > 0 for v in term_activations.values())
-                else "none"
+            results[out_name] = self._package_output_result(
+                out_var=out_var,
+                defuzz_value=defuzz_value,
+                term_activations=term_activations,
+                rule_strengths=rule_strengths,
+                aggregated_mf=aggregated_mf,
             )
 
-            term_memberships = {
-                t_name: round(t_obj.evaluate_crisp(defuzz_value), 4)
-                for t_name, t_obj in out_var.terms.items()
-            }
-
-            results[out_name] = {
-                "defuzzified_value": round(defuzz_value, 4),
-                "dominant_term": dominant_term,
-                "term_activations": {k: round(v, 4) for k, v in term_activations.items()},
-                "term_memberships": term_memberships,
-                "rule_strengths": rule_strengths,
-                "universe": out_var.universe.tolist(),
-                "aggregated_set": aggregated_mf.tolist(),
-            }
-
         return results
+
+    @staticmethod
+    def _package_output_result(
+        out_var: FuzzyVariable,
+        defuzz_value: float,
+        term_activations: dict[str, float],
+        rule_strengths: list[dict[str, Any]],
+        aggregated_mf: np.ndarray | None = None,
+    ) -> dict[str, Any]:
+        """Package standardized output dictionary for Mamdani or Sugeno inference."""
+        dominant_term = (
+            max(term_activations, key=term_activations.get)  # type: ignore[arg-type]
+            if any(v > 0 for v in term_activations.values())
+            else "none"
+        )
+        term_memberships = {
+            t_name: round(t_obj.evaluate_crisp(defuzz_value), 4)
+            for t_name, t_obj in out_var.terms.items()
+        }
+        return {
+            "defuzzified_value": round(defuzz_value, 4),
+            "dominant_term": dominant_term,
+            "term_activations": {k: round(v, 4) for k, v in term_activations.items()},
+            "term_memberships": term_memberships,
+            "rule_strengths": rule_strengths,
+            "universe": out_var.universe.tolist(),
+            "aggregated_set": aggregated_mf.tolist() if aggregated_mf is not None else [],
+        }
 
     def _evaluate_sugeno(self, inputs: dict[str, float]) -> dict[str, dict[str, Any]]:
         """Perform Sugeno zero-order / first-order inference."""
@@ -498,54 +637,32 @@ class FuzzySystemEngine:
                     continue
 
                 term_or_val = rule.consequent_term
-                constant_val = rule.consequent_constant
-
                 if term_or_val in term_activations:
                     term_activations[term_or_val] = max(term_activations[term_or_val], w)
 
-                if constant_val is not None:
-                    y = constant_val
-                elif term_or_val in out_var.terms:
-                    params = out_var.terms[term_or_val].params
-                    y = float(params[0]) if params else 0.0
-                else:
+                y = rule.evaluate_sugeno_output(out_var)
+                if rule.consequent_constant is None and term_or_val not in out_var.terms:
                     _LOGGER.warning(
                         "Sugeno output '%s' not recognized as constant or term", term_or_val
                     )
-                    y = 0.0
 
                 rule_weights.append(w)
                 rule_outputs.append(y)
 
             total_weight = sum(rule_weights)
-            if total_weight > 0:
-                defuzz_val = (
-                    sum(w * y for w, y in zip(rule_weights, rule_outputs, strict=False))
-                    / total_weight
-                )
-            else:
-                defuzz_val = out_var.min_val
-
-            dominant_term = (
-                max(term_activations, key=term_activations.get)  # type: ignore[arg-type]
-                if any(v > 0 for v in term_activations.values())
-                else "none"
+            defuzz_val = (
+                sum(w * y for w, y in zip(rule_weights, rule_outputs, strict=False)) / total_weight
+                if total_weight > 0
+                else out_var.min_val
             )
 
-            term_memberships = {
-                t_name: round(t_obj.evaluate_crisp(defuzz_val), 4)
-                for t_name, t_obj in out_var.terms.items()
-            }
-
-            results[out_name] = {
-                "defuzzified_value": round(defuzz_val, 4),
-                "dominant_term": dominant_term,
-                "term_activations": {k: round(v, 4) for k, v in term_activations.items()},
-                "term_memberships": term_memberships,
-                "rule_strengths": rule_strengths,
-                "universe": out_var.universe.tolist(),
-                "aggregated_set": [],
-            }
+            results[out_name] = self._package_output_result(
+                out_var=out_var,
+                defuzz_value=defuzz_val,
+                term_activations=term_activations,
+                rule_strengths=rule_strengths,
+                aggregated_mf=None,
+            )
 
         return results
 
@@ -558,3 +675,120 @@ class FuzzySystemEngine:
     ) -> float:
         """Compatibility wrapper delegating to Defuzzifier strategy."""
         return Defuzzifier(method)(universe, aggregated_mf, individual_rule_mfs)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize complete fuzzy system configuration to dictionary."""
+        return {
+            "name": self.name,
+            "inference": self.inference_type,
+            "defuzzifier": self.defuzzifier,
+            "inputs": {name: var.to_dict() for name, var in self.input_vars.items()},
+            "outputs": {name: var.to_dict() for name, var in self.output_vars.items()},
+            "rules": [rule.raw_rule for rule in self.rules],
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> FuzzySystemEngine:
+        """Construct a FuzzySystemEngine instance from a dictionary configuration."""
+        name = data.get("name") or data.get("system_id") or "unnamed_system"
+        inference = data.get("inference", INFERENCE_MAMDANI)
+        defuzzifier = data.get("defuzzifier", DEF_COG)
+
+        engine = cls(name=name, inference_type=inference, defuzzifier=defuzzifier)
+
+        inputs = data.get("inputs", {})
+        for in_name, in_cfg in inputs.items():
+            engine.add_input_variable(
+                name=in_name,
+                var_range=in_cfg["range"],
+                terms=in_cfg["terms"],
+                resolution=in_cfg.get("resolution", 100),
+            )
+
+        outputs = data.get("outputs", {})
+        for out_name, out_cfg in outputs.items():
+            engine.add_output_variable(
+                name=out_name,
+                var_range=out_cfg["range"],
+                terms=out_cfg["terms"],
+                resolution=out_cfg.get("resolution", 100),
+                defuzzifier=out_cfg.get("defuzzifier"),
+            )
+
+        for rule in data.get("rules", []):
+            rule_str = FuzzyRule.compile_from_ast(rule) if isinstance(rule, dict) else str(rule)
+            engine.add_rule(rule_str)
+
+        return engine
+
+    def simulate(self, inputs: dict[str, float]) -> dict[str, Any]:
+        """Perform isolated dry-run simulation with full explainability diagnostics."""
+        eval_result = self.evaluate(inputs)
+
+        # Build detailed rule strengths with bottleneck diagnostics
+        detailed_rules: list[dict[str, Any]] = []
+        for rule in self.rules:
+            strength, bottleneck = rule.evaluate_antecedent_with_diagnostics(
+                inputs, self.input_vars
+            )
+            detailed_rules.append(
+                {
+                    "rule": rule.raw_rule,
+                    "firing_strength": round(strength, 4),
+                    "bottleneck_clause": bottleneck,
+                }
+            )
+
+        defuzzified_values: dict[str, float] = {}
+        dominant_terms: dict[str, str] = {}
+        term_activations: dict[str, dict[str, float]] = {}
+        term_memberships: dict[str, dict[str, float]] = {}
+        aggregated_sets: dict[str, list[float]] = {}
+
+        for out, res in eval_result.items():
+            defuzzified_values[out] = res["defuzzified_value"]
+            dominant_terms[out] = res["dominant_term"]
+            term_activations[out] = res["term_activations"]
+            term_memberships[out] = res["term_memberships"]
+            aggregated_sets[out] = res.get("aggregated_set", [])
+
+        # Generate natural language explainability report
+        explanations: list[str] = []
+        active_rules = [r for r in detailed_rules if r["firing_strength"] > 0]
+        active_rules.sort(key=lambda r: r["firing_strength"], reverse=True)
+
+        inputs_summary = ", ".join(f"{k}={v}" for k, v in inputs.items())
+        explanations.append(f"At inputs ({inputs_summary}):")
+
+        if active_rules:
+            top_rule = active_rules[0]
+            explanations.append(
+                f"- Top firing rule fired with strength {top_rule['firing_strength']}: '{top_rule['rule']}'."
+            )
+            if top_rule.get("bottleneck_clause"):
+                bn = top_rule["bottleneck_clause"]
+                hedge_str = f" {bn['hedge']}" if bn.get("hedge") else ""
+                explanations.append(
+                    f"  (Limiting clause: {bn['variable']} IS{hedge_str} {bn['term']})"
+                )
+            explanations.append(f"- {len(active_rules)} of {len(self.rules)} rules fired.")
+        else:
+            explanations.append("- No rules fired for the given input states.")
+
+        for out_name, crisp_val in defuzzified_values.items():
+            dom = dominant_terms.get(out_name, "none")
+            explanations.append(
+                f"- Output '{out_name}' defuzzified to {crisp_val} with dominant term '{dom}'."
+            )
+
+        explainability_text = "\n".join(explanations)
+
+        return {
+            "defuzzified_values": defuzzified_values,
+            "dominant_terms": dominant_terms,
+            "term_activations": term_activations,
+            "term_memberships": term_memberships,
+            "rule_strengths": detailed_rules,
+            "aggregated_sets": aggregated_sets,
+            "explainability": explainability_text,
+        }
