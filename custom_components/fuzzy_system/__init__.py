@@ -8,6 +8,7 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant.components import panel_custom
+from homeassistant.components.frontend import add_extra_js_url
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import SERVICE_RELOAD, Platform
@@ -151,6 +152,50 @@ async def _async_setup_fuzzy_systems(
     await async_load_platform(hass, Platform.SENSOR, DOMAIN, {}, full_config)
 
 
+async def _async_register_frontend(hass: HomeAssistant) -> None:
+    """Register static path, extra JS URL, and custom sidebar panel."""
+    frontend_dist_dir = Path(__file__).parent / "frontend" / "dist"
+    panel_file = frontend_dist_dir / "fuzzy-system-panel.js"
+    if not panel_file.exists():
+        return
+
+    if hasattr(hass, "http"):
+        try:
+            await hass.http.async_register_static_paths(
+                [
+                    StaticPathConfig(
+                        "/fuzzy_system_frontend",
+                        str(frontend_dist_dir),
+                        cache_headers=False,
+                    )
+                ]
+            )
+        except Exception as err:
+            _LOGGER.debug("Could not register static path: %s", err)
+
+    mtime_hash = int(panel_file.stat().st_mtime)
+    try:
+        add_extra_js_url(hass, f"/fuzzy_system_frontend/fuzzy-system-panel.js?v={mtime_hash}")
+    except Exception as err:
+        _LOGGER.debug("Could not add extra js url: %s", err)
+
+    try:
+        panels = hass.data.get("frontend_panels", {})
+        if "fuzzy-system" not in panels:
+            await panel_custom.async_register_panel(
+                hass,
+                frontend_url_path="fuzzy-system",
+                webcomponent_name="fuzzy-system-panel",
+                sidebar_title="Fuzzy Systems",
+                sidebar_icon="mdi:chart-bell-curve-cumulative",
+                module_url=f"/fuzzy_system_frontend/fuzzy-system-panel.js?v={mtime_hash}",
+                require_admin=True,
+            )
+            _LOGGER.info("Registered Fuzzy System frontend panel at /fuzzy-system")
+    except Exception as err:
+        _LOGGER.debug("Could not register frontend panel: %s", err)
+
+
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the Fuzzy System component and register reload service and WebSocket APIs."""
     _init_domain_data(hass)
@@ -176,40 +221,8 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     async_register_admin_service(hass, DOMAIN, SERVICE_RELOAD, _reload_config)
 
-    # Register static path for frontend assets and custom panel
-    frontend_dist_dir = Path(__file__).parent / "frontend" / "dist"
-    panel_file = frontend_dist_dir / "fuzzy-system-panel.js"
-    if panel_file.exists():
-        if hasattr(hass, "http"):
-            try:
-                await hass.http.async_register_static_paths(
-                    [
-                        StaticPathConfig(
-                            "/fuzzy_system_frontend",
-                            str(frontend_dist_dir),
-                            cache_headers=False,
-                        )
-                    ]
-                )
-            except Exception as err:
-                _LOGGER.debug("Could not register static path: %s", err)
-
-        try:
-            panels = hass.data.get("frontend_panels", {})
-            if "fuzzy-system" not in panels:
-                mtime_hash = int(panel_file.stat().st_mtime)
-                await panel_custom.async_register_panel(
-                    hass,
-                    frontend_url_path="fuzzy-system",
-                    webcomponent_name="fuzzy-system-panel",
-                    sidebar_title="Fuzzy Systems",
-                    sidebar_icon="mdi:chart-bell-curve-cumulative",
-                    module_url=f"/fuzzy_system_frontend/fuzzy-system-panel.js?v={mtime_hash}",
-                    require_admin=True,
-                )
-                _LOGGER.info("Registered Fuzzy System frontend panel at /fuzzy-system")
-        except Exception as err:
-            _LOGGER.debug("Could not register frontend panel: %s", err)
+    # Register frontend assets and custom panel
+    await _async_register_frontend(hass)
 
     if DOMAIN in config:
         await _async_setup_fuzzy_systems(hass, config[DOMAIN], config)

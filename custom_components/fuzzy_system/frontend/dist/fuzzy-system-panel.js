@@ -3,18 +3,18 @@
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const rt = globalThis, ht = rt.ShadowRoot && (rt.ShadyCSS === void 0 || rt.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, gt = Symbol(), _t = /* @__PURE__ */ new WeakMap();
-let Tt = class {
+const ot = globalThis, gt = ot.ShadowRoot && (ot.ShadyCSS === void 0 || ot.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, ft = Symbol(), $t = /* @__PURE__ */ new WeakMap();
+let Mt = class {
   constructor(t, s, a) {
-    if (this._$cssResult$ = !0, a !== gt) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+    if (this._$cssResult$ = !0, a !== ft) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
     this.cssText = t, this.t = s;
   }
   get styleSheet() {
     let t = this.o;
     const s = this.t;
-    if (ht && t === void 0) {
+    if (gt && t === void 0) {
       const a = s !== void 0 && s.length === 1;
-      a && (t = _t.get(s)), t === void 0 && ((this.o = t = new CSSStyleSheet()).replaceSync(this.cssText), a && _t.set(s, t));
+      a && (t = $t.get(s)), t === void 0 && ((this.o = t = new CSSStyleSheet()).replaceSync(this.cssText), a && $t.set(s, t));
     }
     return t;
   }
@@ -22,20 +22,20 @@ let Tt = class {
     return this.cssText;
   }
 };
-const Ut = (e) => new Tt(typeof e == "string" ? e : e + "", void 0, gt), R = (e, ...t) => {
-  const s = e.length === 1 ? e[0] : t.reduce((a, i, n) => a + ((r) => {
-    if (r._$cssResult$ === !0) return r.cssText;
-    if (typeof r == "number") return r;
-    throw Error("Value passed to 'css' function must be a 'css' function result: " + r + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
-  })(i) + e[n + 1], e[0]);
-  return new Tt(s, e, gt);
-}, Bt = (e, t) => {
-  if (ht) e.adoptedStyleSheets = t.map((s) => s instanceof CSSStyleSheet ? s : s.styleSheet);
+const Ut = (e) => new Mt(typeof e == "string" ? e : e + "", void 0, ft), T = (e, ...t) => {
+  const s = e.length === 1 ? e[0] : t.reduce((a, i, r) => a + ((n) => {
+    if (n._$cssResult$ === !0) return n.cssText;
+    if (typeof n == "number") return n;
+    throw Error("Value passed to 'css' function must be a 'css' function result: " + n + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
+  })(i) + e[r + 1], e[0]);
+  return new Mt(s, e, ft);
+}, Dt = (e, t) => {
+  if (gt) e.adoptedStyleSheets = t.map((s) => s instanceof CSSStyleSheet ? s : s.styleSheet);
   else for (const s of t) {
-    const a = document.createElement("style"), i = rt.litNonce;
+    const a = document.createElement("style"), i = ot.litNonce;
     i !== void 0 && a.setAttribute("nonce", i), a.textContent = s.cssText, e.appendChild(a);
   }
-}, xt = ht ? (e) => e : (e) => e instanceof CSSStyleSheet ? ((t) => {
+}, zt = gt ? (e) => e : (e) => e instanceof CSSStyleSheet ? ((t) => {
   let s = "";
   for (const a of t.cssRules) s += a.cssText;
   return Ut(s);
@@ -45,10 +45,10 @@ const Ut = (e) => new Tt(typeof e == "string" ? e : e + "", void 0, gt), R = (e,
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: Vt, defineProperty: Dt, getOwnPropertyDescriptor: Lt, getOwnPropertyNames: qt, getOwnPropertySymbols: Ht, getPrototypeOf: Wt } = Object, dt = globalThis, $t = dt.trustedTypes, Gt = $t ? $t.emptyScript : "", Jt = dt.reactiveElementPolyfillSupport, K = (e, t) => e, ot = { toAttribute(e, t) {
+const { is: Bt, defineProperty: qt, getOwnPropertyDescriptor: Ht, getOwnPropertyNames: Wt, getOwnPropertySymbols: Gt, getPrototypeOf: Jt } = Object, pt = globalThis, wt = pt.trustedTypes, Zt = wt ? wt.emptyScript : "", Qt = pt.reactiveElementPolyfillSupport, K = (e, t) => e, lt = { toAttribute(e, t) {
   switch (t) {
     case Boolean:
-      e = e ? Gt : null;
+      e = e ? Zt : null;
       break;
     case Object:
     case Array:
@@ -73,8 +73,8 @@ const { is: Vt, defineProperty: Dt, getOwnPropertyDescriptor: Lt, getOwnProperty
       }
   }
   return s;
-} }, ft = (e, t) => !Vt(e, t), zt = { attribute: !0, type: String, converter: ot, reflect: !1, useDefault: !1, hasChanged: ft };
-Symbol.metadata ??= Symbol("metadata"), dt.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
+} }, mt = (e, t) => !Bt(e, t), St = { attribute: !0, type: String, converter: lt, reflect: !1, useDefault: !1, hasChanged: mt };
+Symbol.metadata ??= Symbol("metadata"), pt.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
 let G = class extends HTMLElement {
   static addInitializer(t) {
     this._$Ei(), (this.l ??= []).push(t);
@@ -82,35 +82,35 @@ let G = class extends HTMLElement {
   static get observedAttributes() {
     return this.finalize(), this._$Eh && [...this._$Eh.keys()];
   }
-  static createProperty(t, s = zt) {
+  static createProperty(t, s = St) {
     if (s.state && (s.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(t) && ((s = Object.create(s)).wrapped = !0), this.elementProperties.set(t, s), !s.noAccessor) {
       const a = Symbol(), i = this.getPropertyDescriptor(t, a, s);
-      i !== void 0 && Dt(this.prototype, t, i);
+      i !== void 0 && qt(this.prototype, t, i);
     }
   }
   static getPropertyDescriptor(t, s, a) {
-    const { get: i, set: n } = Lt(this.prototype, t) ?? { get() {
+    const { get: i, set: r } = Ht(this.prototype, t) ?? { get() {
       return this[s];
-    }, set(r) {
-      this[s] = r;
+    }, set(n) {
+      this[s] = n;
     } };
-    return { get: i, set(r) {
+    return { get: i, set(n) {
       const l = i?.call(this);
-      n?.call(this, r), this.requestUpdate(t, l, a);
+      r?.call(this, n), this.requestUpdate(t, l, a);
     }, configurable: !0, enumerable: !0 };
   }
   static getPropertyOptions(t) {
-    return this.elementProperties.get(t) ?? zt;
+    return this.elementProperties.get(t) ?? St;
   }
   static _$Ei() {
     if (this.hasOwnProperty(K("elementProperties"))) return;
-    const t = Wt(this);
+    const t = Jt(this);
     t.finalize(), t.l !== void 0 && (this.l = [...t.l]), this.elementProperties = new Map(t.elementProperties);
   }
   static finalize() {
     if (this.hasOwnProperty(K("finalized"))) return;
     if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(K("properties"))) {
-      const s = this.properties, a = [...qt(s), ...Ht(s)];
+      const s = this.properties, a = [...Wt(s), ...Gt(s)];
       for (const i of a) this.createProperty(i, s[i]);
     }
     const t = this[Symbol.metadata];
@@ -129,8 +129,8 @@ let G = class extends HTMLElement {
     const s = [];
     if (Array.isArray(t)) {
       const a = new Set(t.flat(1 / 0).reverse());
-      for (const i of a) s.unshift(xt(i));
-    } else t !== void 0 && s.push(xt(t));
+      for (const i of a) s.unshift(zt(i));
+    } else t !== void 0 && s.push(zt(t));
     return s;
   }
   static _$Eu(t, s) {
@@ -156,7 +156,7 @@ let G = class extends HTMLElement {
   }
   createRenderRoot() {
     const t = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
-    return Bt(t, this.constructor.elementStyles), t;
+    return Dt(t, this.constructor.elementStyles), t;
   }
   connectedCallback() {
     this.renderRoot ??= this.createRenderRoot(), this.enableUpdating(!0), this._$EO?.forEach((t) => t.hostConnected?.());
@@ -172,29 +172,29 @@ let G = class extends HTMLElement {
   _$ET(t, s) {
     const a = this.constructor.elementProperties.get(t), i = this.constructor._$Eu(t, a);
     if (i !== void 0 && a.reflect === !0) {
-      const n = (a.converter?.toAttribute !== void 0 ? a.converter : ot).toAttribute(s, a.type);
-      this._$Em = t, n == null ? this.removeAttribute(i) : this.setAttribute(i, n), this._$Em = null;
+      const r = (a.converter?.toAttribute !== void 0 ? a.converter : lt).toAttribute(s, a.type);
+      this._$Em = t, r == null ? this.removeAttribute(i) : this.setAttribute(i, r), this._$Em = null;
     }
   }
   _$AK(t, s) {
     const a = this.constructor, i = a._$Eh.get(t);
     if (i !== void 0 && this._$Em !== i) {
-      const n = a.getPropertyOptions(i), r = typeof n.converter == "function" ? { fromAttribute: n.converter } : n.converter?.fromAttribute !== void 0 ? n.converter : ot;
+      const r = a.getPropertyOptions(i), n = typeof r.converter == "function" ? { fromAttribute: r.converter } : r.converter?.fromAttribute !== void 0 ? r.converter : lt;
       this._$Em = i;
-      const l = r.fromAttribute(s, n.type);
+      const l = n.fromAttribute(s, r.type);
       this[i] = l ?? this._$Ej?.get(i) ?? l, this._$Em = null;
     }
   }
-  requestUpdate(t, s, a, i = !1, n) {
+  requestUpdate(t, s, a, i = !1, r) {
     if (t !== void 0) {
-      const r = this.constructor;
-      if (i === !1 && (n = this[t]), a ??= r.getPropertyOptions(t), !((a.hasChanged ?? ft)(n, s) || a.useDefault && a.reflect && n === this._$Ej?.get(t) && !this.hasAttribute(r._$Eu(t, a)))) return;
+      const n = this.constructor;
+      if (i === !1 && (r = this[t]), a ??= n.getPropertyOptions(t), !((a.hasChanged ?? mt)(r, s) || a.useDefault && a.reflect && r === this._$Ej?.get(t) && !this.hasAttribute(n._$Eu(t, a)))) return;
       this.C(t, s, a);
     }
     this.isUpdatePending === !1 && (this._$ES = this._$EP());
   }
-  C(t, s, { useDefault: a, reflect: i, wrapped: n }, r) {
-    a && !(this._$Ej ??= /* @__PURE__ */ new Map()).has(t) && (this._$Ej.set(t, r ?? s ?? this[t]), n !== !0 || r !== void 0) || (this._$AL.has(t) || (this.hasUpdated || a || (s = void 0), this._$AL.set(t, s)), i === !0 && this._$Em !== t && (this._$Eq ??= /* @__PURE__ */ new Set()).add(t));
+  C(t, s, { useDefault: a, reflect: i, wrapped: r }, n) {
+    a && !(this._$Ej ??= /* @__PURE__ */ new Map()).has(t) && (this._$Ej.set(t, n ?? s ?? this[t]), r !== !0 || n !== void 0) || (this._$AL.has(t) || (this.hasUpdated || a || (s = void 0), this._$AL.set(t, s)), i === !0 && this._$Em !== t && (this._$Eq ??= /* @__PURE__ */ new Set()).add(t));
   }
   async _$EP() {
     this.isUpdatePending = !0;
@@ -213,13 +213,13 @@ let G = class extends HTMLElement {
     if (!this.isUpdatePending) return;
     if (!this.hasUpdated) {
       if (this.renderRoot ??= this.createRenderRoot(), this._$Ep) {
-        for (const [i, n] of this._$Ep) this[i] = n;
+        for (const [i, r] of this._$Ep) this[i] = r;
         this._$Ep = void 0;
       }
       const a = this.constructor.elementProperties;
-      if (a.size > 0) for (const [i, n] of a) {
-        const { wrapped: r } = n, l = this[i];
-        r !== !0 || this._$AL.has(i) || l === void 0 || this.C(i, void 0, n, l);
+      if (a.size > 0) for (const [i, r] of a) {
+        const { wrapped: n } = r, l = this[i];
+        n !== !0 || this._$AL.has(i) || l === void 0 || this.C(i, void 0, r, l);
       }
     }
     let t = !1;
@@ -256,75 +256,75 @@ let G = class extends HTMLElement {
   firstUpdated(t) {
   }
 };
-G.elementStyles = [], G.shadowRootOptions = { mode: "open" }, G[K("elementProperties")] = /* @__PURE__ */ new Map(), G[K("finalized")] = /* @__PURE__ */ new Map(), Jt?.({ ReactiveElement: G }), (dt.reactiveElementVersions ??= []).push("2.1.2");
+G.elementStyles = [], G.shadowRootOptions = { mode: "open" }, G[K("elementProperties")] = /* @__PURE__ */ new Map(), G[K("finalized")] = /* @__PURE__ */ new Map(), Qt?.({ ReactiveElement: G }), (pt.reactiveElementVersions ??= []).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const mt = globalThis, wt = (e) => e, lt = mt.trustedTypes, St = lt ? lt.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, Mt = "$lit$", O = `lit$${Math.random().toFixed(9).slice(2)}$`, Ot = "?" + O, Qt = `<${Ot}>`, V = document, Y = () => V.createComment(""), tt = (e) => e === null || typeof e != "object" && typeof e != "function", bt = Array.isArray, Zt = (e) => bt(e) || typeof e?.[Symbol.iterator] == "function", ut = `[ 	
-\f\r]`, X = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, kt = /-->/g, At = />/g, U = RegExp(`>|${ut}(?:([^\\s"'>=/]+)(${ut}*=${ut}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), It = /'/g, Ct = /"/g, Rt = /^(?:script|style|textarea|title)$/i, Nt = (e) => (t, ...s) => ({ _$litType$: e, strings: t, values: s }), o = Nt(1), J = Nt(2), Q = Symbol.for("lit-noChange"), _ = Symbol.for("lit-nothing"), Et = /* @__PURE__ */ new WeakMap(), B = V.createTreeWalker(V, 129);
-function jt(e, t) {
-  if (!bt(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
-  return St !== void 0 ? St.createHTML(t) : t;
+const bt = globalThis, kt = (e) => e, dt = bt.trustedTypes, At = dt ? dt.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, Rt = "$lit$", R = `lit$${Math.random().toFixed(9).slice(2)}$`, jt = "?" + R, Xt = `<${jt}>`, D = document, Y = () => D.createComment(""), tt = (e) => e === null || typeof e != "object" && typeof e != "function", yt = Array.isArray, Kt = (e) => yt(e) || typeof e?.[Symbol.iterator] == "function", ht = `[ 	
+\f\r]`, X = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, Ct = /-->/g, Et = />/g, L = RegExp(`>|${ht}(?:([^\\s"'>=/]+)(${ht}*=${ht}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g"), It = /'/g, Tt = /"/g, Nt = /^(?:script|style|textarea|title)$/i, Pt = (e) => (t, ...s) => ({ _$litType$: e, strings: t, values: s }), o = Pt(1), J = Pt(2), Z = Symbol.for("lit-noChange"), _ = Symbol.for("lit-nothing"), Ot = /* @__PURE__ */ new WeakMap(), U = D.createTreeWalker(D, 129);
+function Ft(e, t) {
+  if (!yt(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
+  return At !== void 0 ? At.createHTML(t) : t;
 }
-const Xt = (e, t) => {
+const Yt = (e, t) => {
   const s = e.length - 1, a = [];
-  let i, n = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", r = X;
+  let i, r = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", n = X;
   for (let l = 0; l < s; l++) {
     const d = e[l];
     let p, c, u = -1, h = 0;
-    for (; h < d.length && (r.lastIndex = h, c = r.exec(d), c !== null); ) h = r.lastIndex, r === X ? c[1] === "!--" ? r = kt : c[1] !== void 0 ? r = At : c[2] !== void 0 ? (Rt.test(c[2]) && (i = RegExp("</" + c[2], "g")), r = U) : c[3] !== void 0 && (r = U) : r === U ? c[0] === ">" ? (r = i ?? X, u = -1) : c[1] === void 0 ? u = -2 : (u = r.lastIndex - c[2].length, p = c[1], r = c[3] === void 0 ? U : c[3] === '"' ? Ct : It) : r === Ct || r === It ? r = U : r === kt || r === At ? r = X : (r = U, i = void 0);
-    const f = r === U && e[l + 1].startsWith("/>") ? " " : "";
-    n += r === X ? d + Qt : u >= 0 ? (a.push(p), d.slice(0, u) + Mt + d.slice(u) + O + f) : d + O + (u === -2 ? l : f);
+    for (; h < d.length && (n.lastIndex = h, c = n.exec(d), c !== null); ) h = n.lastIndex, n === X ? c[1] === "!--" ? n = Ct : c[1] !== void 0 ? n = Et : c[2] !== void 0 ? (Nt.test(c[2]) && (i = RegExp("</" + c[2], "g")), n = L) : c[3] !== void 0 && (n = L) : n === L ? c[0] === ">" ? (n = i ?? X, u = -1) : c[1] === void 0 ? u = -2 : (u = n.lastIndex - c[2].length, p = c[1], n = c[3] === void 0 ? L : c[3] === '"' ? Tt : It) : n === Tt || n === It ? n = L : n === Ct || n === Et ? n = X : (n = L, i = void 0);
+    const f = n === L && e[l + 1].startsWith("/>") ? " " : "";
+    r += n === X ? d + Xt : u >= 0 ? (a.push(p), d.slice(0, u) + Rt + d.slice(u) + R + f) : d + R + (u === -2 ? l : f);
   }
-  return [jt(e, n + (e[s] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), a];
+  return [Ft(e, r + (e[s] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), a];
 };
 class et {
   constructor({ strings: t, _$litType$: s }, a) {
     let i;
     this.parts = [];
-    let n = 0, r = 0;
-    const l = t.length - 1, d = this.parts, [p, c] = Xt(t, s);
-    if (this.el = et.createElement(p, a), B.currentNode = this.el.content, s === 2 || s === 3) {
+    let r = 0, n = 0;
+    const l = t.length - 1, d = this.parts, [p, c] = Yt(t, s);
+    if (this.el = et.createElement(p, a), U.currentNode = this.el.content, s === 2 || s === 3) {
       const u = this.el.content.firstChild;
       u.replaceWith(...u.childNodes);
     }
-    for (; (i = B.nextNode()) !== null && d.length < l; ) {
+    for (; (i = U.nextNode()) !== null && d.length < l; ) {
       if (i.nodeType === 1) {
-        if (i.hasAttributes()) for (const u of i.getAttributeNames()) if (u.endsWith(Mt)) {
-          const h = c[r++], f = i.getAttribute(u).split(O), y = /([.?@])?(.*)/.exec(h);
-          d.push({ type: 1, index: n, name: y[2], strings: f, ctor: y[1] === "." ? Yt : y[1] === "?" ? te : y[1] === "@" ? ee : pt }), i.removeAttribute(u);
-        } else u.startsWith(O) && (d.push({ type: 6, index: n }), i.removeAttribute(u));
-        if (Rt.test(i.tagName)) {
-          const u = i.textContent.split(O), h = u.length - 1;
+        if (i.hasAttributes()) for (const u of i.getAttributeNames()) if (u.endsWith(Rt)) {
+          const h = c[n++], f = i.getAttribute(u).split(R), y = /([.?@])?(.*)/.exec(h);
+          d.push({ type: 1, index: r, name: y[2], strings: f, ctor: y[1] === "." ? ee : y[1] === "?" ? se : y[1] === "@" ? ie : ct }), i.removeAttribute(u);
+        } else u.startsWith(R) && (d.push({ type: 6, index: r }), i.removeAttribute(u));
+        if (Nt.test(i.tagName)) {
+          const u = i.textContent.split(R), h = u.length - 1;
           if (h > 0) {
-            i.textContent = lt ? lt.emptyScript : "";
-            for (let f = 0; f < h; f++) i.append(u[f], Y()), B.nextNode(), d.push({ type: 2, index: ++n });
+            i.textContent = dt ? dt.emptyScript : "";
+            for (let f = 0; f < h; f++) i.append(u[f], Y()), U.nextNode(), d.push({ type: 2, index: ++r });
             i.append(u[h], Y());
           }
         }
-      } else if (i.nodeType === 8) if (i.data === Ot) d.push({ type: 2, index: n });
+      } else if (i.nodeType === 8) if (i.data === jt) d.push({ type: 2, index: r });
       else {
         let u = -1;
-        for (; (u = i.data.indexOf(O, u + 1)) !== -1; ) d.push({ type: 7, index: n }), u += O.length - 1;
+        for (; (u = i.data.indexOf(R, u + 1)) !== -1; ) d.push({ type: 7, index: r }), u += R.length - 1;
       }
-      n++;
+      r++;
     }
   }
   static createElement(t, s) {
-    const a = V.createElement("template");
+    const a = D.createElement("template");
     return a.innerHTML = t, a;
   }
 }
-function Z(e, t, s = e, a) {
-  if (t === Q) return t;
+function Q(e, t, s = e, a) {
+  if (t === Z) return t;
   let i = a !== void 0 ? s._$Co?.[a] : s._$Cl;
-  const n = tt(t) ? void 0 : t._$litDirective$;
-  return i?.constructor !== n && (i?._$AO?.(!1), n === void 0 ? i = void 0 : (i = new n(e), i._$AT(e, s, a)), a !== void 0 ? (s._$Co ??= [])[a] = i : s._$Cl = i), i !== void 0 && (t = Z(e, i._$AS(e, t.values), i, a)), t;
+  const r = tt(t) ? void 0 : t._$litDirective$;
+  return i?.constructor !== r && (i?._$AO?.(!1), r === void 0 ? i = void 0 : (i = new r(e), i._$AT(e, s, a)), a !== void 0 ? (s._$Co ??= [])[a] = i : s._$Cl = i), i !== void 0 && (t = Q(e, i._$AS(e, t.values), i, a)), t;
 }
-class Kt {
+class te {
   constructor(t, s) {
     this._$AV = [], this._$AN = void 0, this._$AD = t, this._$AM = s;
   }
@@ -335,24 +335,24 @@ class Kt {
     return this._$AM._$AU;
   }
   u(t) {
-    const { el: { content: s }, parts: a } = this._$AD, i = (t?.creationScope ?? V).importNode(s, !0);
-    B.currentNode = i;
-    let n = B.nextNode(), r = 0, l = 0, d = a[0];
+    const { el: { content: s }, parts: a } = this._$AD, i = (t?.creationScope ?? D).importNode(s, !0);
+    U.currentNode = i;
+    let r = U.nextNode(), n = 0, l = 0, d = a[0];
     for (; d !== void 0; ) {
-      if (r === d.index) {
+      if (n === d.index) {
         let p;
-        d.type === 2 ? p = new it(n, n.nextSibling, this, t) : d.type === 1 ? p = new d.ctor(n, d.name, d.strings, this, t) : d.type === 6 && (p = new se(n, this, t)), this._$AV.push(p), d = a[++l];
+        d.type === 2 ? p = new at(r, r.nextSibling, this, t) : d.type === 1 ? p = new d.ctor(r, d.name, d.strings, this, t) : d.type === 6 && (p = new ae(r, this, t)), this._$AV.push(p), d = a[++l];
       }
-      r !== d?.index && (n = B.nextNode(), r++);
+      n !== d?.index && (r = U.nextNode(), n++);
     }
-    return B.currentNode = V, i;
+    return U.currentNode = D, i;
   }
   p(t) {
     let s = 0;
     for (const a of this._$AV) a !== void 0 && (a.strings !== void 0 ? (a._$AI(t, a, s), s += a.strings.length - 2) : a._$AI(t[s])), s++;
   }
 }
-class it {
+class at {
   get _$AU() {
     return this._$AM?._$AU ?? this._$Cv;
   }
@@ -371,7 +371,7 @@ class it {
     return this._$AB;
   }
   _$AI(t, s = this) {
-    t = Z(this, t, s), tt(t) ? t === _ || t == null || t === "" ? (this._$AH !== _ && this._$AR(), this._$AH = _) : t !== this._$AH && t !== Q && this._(t) : t._$litType$ !== void 0 ? this.$(t) : t.nodeType !== void 0 ? this.T(t) : Zt(t) ? this.k(t) : this._(t);
+    t = Q(this, t, s), tt(t) ? t === _ || t == null || t === "" ? (this._$AH !== _ && this._$AR(), this._$AH = _) : t !== this._$AH && t !== Z && this._(t) : t._$litType$ !== void 0 ? this.$(t) : t.nodeType !== void 0 ? this.T(t) : Kt(t) ? this.k(t) : this._(t);
   }
   O(t) {
     return this._$AA.parentNode.insertBefore(t, this._$AB);
@@ -380,63 +380,63 @@ class it {
     this._$AH !== t && (this._$AR(), this._$AH = this.O(t));
   }
   _(t) {
-    this._$AH !== _ && tt(this._$AH) ? this._$AA.nextSibling.data = t : this.T(V.createTextNode(t)), this._$AH = t;
+    this._$AH !== _ && tt(this._$AH) ? this._$AA.nextSibling.data = t : this.T(D.createTextNode(t)), this._$AH = t;
   }
   $(t) {
-    const { values: s, _$litType$: a } = t, i = typeof a == "number" ? this._$AC(t) : (a.el === void 0 && (a.el = et.createElement(jt(a.h, a.h[0]), this.options)), a);
+    const { values: s, _$litType$: a } = t, i = typeof a == "number" ? this._$AC(t) : (a.el === void 0 && (a.el = et.createElement(Ft(a.h, a.h[0]), this.options)), a);
     if (this._$AH?._$AD === i) this._$AH.p(s);
     else {
-      const n = new Kt(i, this), r = n.u(this.options);
-      n.p(s), this.T(r), this._$AH = n;
+      const r = new te(i, this), n = r.u(this.options);
+      r.p(s), this.T(n), this._$AH = r;
     }
   }
   _$AC(t) {
-    let s = Et.get(t.strings);
-    return s === void 0 && Et.set(t.strings, s = new et(t)), s;
+    let s = Ot.get(t.strings);
+    return s === void 0 && Ot.set(t.strings, s = new et(t)), s;
   }
   k(t) {
-    bt(this._$AH) || (this._$AH = [], this._$AR());
+    yt(this._$AH) || (this._$AH = [], this._$AR());
     const s = this._$AH;
     let a, i = 0;
-    for (const n of t) i === s.length ? s.push(a = new it(this.O(Y()), this.O(Y()), this, this.options)) : a = s[i], a._$AI(n), i++;
+    for (const r of t) i === s.length ? s.push(a = new at(this.O(Y()), this.O(Y()), this, this.options)) : a = s[i], a._$AI(r), i++;
     i < s.length && (this._$AR(a && a._$AB.nextSibling, i), s.length = i);
   }
   _$AR(t = this._$AA.nextSibling, s) {
     for (this._$AP?.(!1, !0, s); t !== this._$AB; ) {
-      const a = wt(t).nextSibling;
-      wt(t).remove(), t = a;
+      const a = kt(t).nextSibling;
+      kt(t).remove(), t = a;
     }
   }
   setConnected(t) {
     this._$AM === void 0 && (this._$Cv = t, this._$AP?.(t));
   }
 }
-class pt {
+class ct {
   get tagName() {
     return this.element.tagName;
   }
   get _$AU() {
     return this._$AM._$AU;
   }
-  constructor(t, s, a, i, n) {
-    this.type = 1, this._$AH = _, this._$AN = void 0, this.element = t, this.name = s, this._$AM = i, this.options = n, a.length > 2 || a[0] !== "" || a[1] !== "" ? (this._$AH = Array(a.length - 1).fill(new String()), this.strings = a) : this._$AH = _;
+  constructor(t, s, a, i, r) {
+    this.type = 1, this._$AH = _, this._$AN = void 0, this.element = t, this.name = s, this._$AM = i, this.options = r, a.length > 2 || a[0] !== "" || a[1] !== "" ? (this._$AH = Array(a.length - 1).fill(new String()), this.strings = a) : this._$AH = _;
   }
   _$AI(t, s = this, a, i) {
-    const n = this.strings;
-    let r = !1;
-    if (n === void 0) t = Z(this, t, s, 0), r = !tt(t) || t !== this._$AH && t !== Q, r && (this._$AH = t);
+    const r = this.strings;
+    let n = !1;
+    if (r === void 0) t = Q(this, t, s, 0), n = !tt(t) || t !== this._$AH && t !== Z, n && (this._$AH = t);
     else {
       const l = t;
       let d, p;
-      for (t = n[0], d = 0; d < n.length - 1; d++) p = Z(this, l[a + d], s, d), p === Q && (p = this._$AH[d]), r ||= !tt(p) || p !== this._$AH[d], p === _ ? t = _ : t !== _ && (t += (p ?? "") + n[d + 1]), this._$AH[d] = p;
+      for (t = r[0], d = 0; d < r.length - 1; d++) p = Q(this, l[a + d], s, d), p === Z && (p = this._$AH[d]), n ||= !tt(p) || p !== this._$AH[d], p === _ ? t = _ : t !== _ && (t += (p ?? "") + r[d + 1]), this._$AH[d] = p;
     }
-    r && !i && this.j(t);
+    n && !i && this.j(t);
   }
   j(t) {
     t === _ ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, t ?? "");
   }
 }
-class Yt extends pt {
+class ee extends ct {
   constructor() {
     super(...arguments), this.type = 3;
   }
@@ -444,7 +444,7 @@ class Yt extends pt {
     this.element[this.name] = t === _ ? void 0 : t;
   }
 }
-class te extends pt {
+class se extends ct {
   constructor() {
     super(...arguments), this.type = 4;
   }
@@ -452,20 +452,20 @@ class te extends pt {
     this.element.toggleAttribute(this.name, !!t && t !== _);
   }
 }
-class ee extends pt {
-  constructor(t, s, a, i, n) {
-    super(t, s, a, i, n), this.type = 5;
+class ie extends ct {
+  constructor(t, s, a, i, r) {
+    super(t, s, a, i, r), this.type = 5;
   }
   _$AI(t, s = this) {
-    if ((t = Z(this, t, s, 0) ?? _) === Q) return;
-    const a = this._$AH, i = t === _ && a !== _ || t.capture !== a.capture || t.once !== a.once || t.passive !== a.passive, n = t !== _ && (a === _ || i);
-    i && this.element.removeEventListener(this.name, this, a), n && this.element.addEventListener(this.name, this, t), this._$AH = t;
+    if ((t = Q(this, t, s, 0) ?? _) === Z) return;
+    const a = this._$AH, i = t === _ && a !== _ || t.capture !== a.capture || t.once !== a.once || t.passive !== a.passive, r = t !== _ && (a === _ || i);
+    i && this.element.removeEventListener(this.name, this, a), r && this.element.addEventListener(this.name, this, t), this._$AH = t;
   }
   handleEvent(t) {
     typeof this._$AH == "function" ? this._$AH.call(this.options?.host ?? this.element, t) : this._$AH.handleEvent(t);
   }
 }
-class se {
+class ae {
   constructor(t, s, a) {
     this.element = t, this.type = 6, this._$AN = void 0, this._$AM = s, this.options = a;
   }
@@ -473,17 +473,17 @@ class se {
     return this._$AM._$AU;
   }
   _$AI(t) {
-    Z(this, t);
+    Q(this, t);
   }
 }
-const ie = mt.litHtmlPolyfillSupport;
-ie?.(et, it), (mt.litHtmlVersions ??= []).push("3.3.3");
-const ae = (e, t, s) => {
+const re = bt.litHtmlPolyfillSupport;
+re?.(et, at), (bt.litHtmlVersions ??= []).push("3.3.3");
+const ne = (e, t, s) => {
   const a = s?.renderBefore ?? t;
   let i = a._$litPart$;
   if (i === void 0) {
-    const n = s?.renderBefore ?? null;
-    a._$litPart$ = i = new it(t.insertBefore(Y(), n), n, void 0, s ?? {});
+    const r = s?.renderBefore ?? null;
+    a._$litPart$ = i = new at(t.insertBefore(Y(), r), r, void 0, s ?? {});
   }
   return i._$AI(e), i;
 };
@@ -492,7 +492,7 @@ const ae = (e, t, s) => {
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const yt = globalThis;
+const vt = globalThis;
 class z extends G {
   constructor() {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
@@ -503,7 +503,7 @@ class z extends G {
   }
   update(t) {
     const s = this.render();
-    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(t), this._$Do = ae(s, this.renderRoot, this.renderOptions);
+    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(t), this._$Do = ne(s, this.renderRoot, this.renderOptions);
   }
   connectedCallback() {
     super.connectedCallback(), this._$Do?.setConnected(!0);
@@ -512,43 +512,43 @@ class z extends G {
     super.disconnectedCallback(), this._$Do?.setConnected(!1);
   }
   render() {
-    return Q;
+    return Z;
   }
 }
-z._$litElement$ = !0, z.finalized = !0, yt.litElementHydrateSupport?.({ LitElement: z });
-const ne = yt.litElementPolyfillSupport;
-ne?.({ LitElement: z });
-(yt.litElementVersions ??= []).push("4.2.2");
+z._$litElement$ = !0, z.finalized = !0, vt.litElementHydrateSupport?.({ LitElement: z });
+const oe = vt.litElementPolyfillSupport;
+oe?.({ LitElement: z });
+(vt.litElementVersions ??= []).push("4.2.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const re = { attribute: !0, type: String, converter: ot, reflect: !1, hasChanged: ft }, oe = (e = re, t, s) => {
+const le = { attribute: !0, type: String, converter: lt, reflect: !1, hasChanged: mt }, de = (e = le, t, s) => {
   const { kind: a, metadata: i } = s;
-  let n = globalThis.litPropertyMetadata.get(i);
-  if (n === void 0 && globalThis.litPropertyMetadata.set(i, n = /* @__PURE__ */ new Map()), a === "setter" && ((e = Object.create(e)).wrapped = !0), n.set(s.name, e), a === "accessor") {
-    const { name: r } = s;
+  let r = globalThis.litPropertyMetadata.get(i);
+  if (r === void 0 && globalThis.litPropertyMetadata.set(i, r = /* @__PURE__ */ new Map()), a === "setter" && ((e = Object.create(e)).wrapped = !0), r.set(s.name, e), a === "accessor") {
+    const { name: n } = s;
     return { set(l) {
       const d = t.get.call(this);
-      t.set.call(this, l), this.requestUpdate(r, d, e, !0, l);
+      t.set.call(this, l), this.requestUpdate(n, d, e, !0, l);
     }, init(l) {
-      return l !== void 0 && this.C(r, void 0, e, l), l;
+      return l !== void 0 && this.C(n, void 0, e, l), l;
     } };
   }
   if (a === "setter") {
-    const { name: r } = s;
+    const { name: n } = s;
     return function(l) {
-      const d = this[r];
-      t.call(this, l), this.requestUpdate(r, d, e, !0, l);
+      const d = this[n];
+      t.call(this, l), this.requestUpdate(n, d, e, !0, l);
     };
   }
   throw Error("Unsupported decorator location: " + a);
 };
 function v(e) {
-  return (t, s) => typeof s == "object" ? oe(e, t, s) : ((a, i, n) => {
-    const r = i.hasOwnProperty(n);
-    return i.constructor.createProperty(n, a), r ? Object.getOwnPropertyDescriptor(i, n) : void 0;
+  return (t, s) => typeof s == "object" ? de(e, t, s) : ((a, i, r) => {
+    const n = i.hasOwnProperty(r);
+    return i.constructor.createProperty(r, a), n ? Object.getOwnPropertyDescriptor(i, r) : void 0;
   })(e, t, s);
 }
 /**
@@ -559,10 +559,10 @@ function v(e) {
 function g(e) {
   return v({ ...e, state: !0, attribute: !1 });
 }
-function L(e) {
+function j(e) {
   return (t) => (typeof customElements < "u" && !customElements.get(e) && customElements.define(e, t), t);
 }
-const ct = R`
+const ut = T`
   :host {
     --fuzzy-primary: var(--primary-color, #0284c7);
     --fuzzy-primary-hover: var(--primary-color-hover, #0369a1);
@@ -802,16 +802,16 @@ const ct = R`
     padding: 28px;
     box-sizing: border-box;
   }
-`, le = "fuzzy_system/systems/list", de = "fuzzy_system/systems/save", pe = "fuzzy_system/systems/delete", ce = "fuzzy_system/simulate", ue = "fuzzy_system/templates/list", he = "fuzzy_system/templates/instantiate";
-async function ge(e) {
+`, pe = "fuzzy_system/systems/list", ce = "fuzzy_system/systems/save", ue = "fuzzy_system/systems/delete", he = "fuzzy_system/simulate", ge = "fuzzy_system/templates/list", fe = "fuzzy_system/templates/instantiate";
+async function me(e) {
   const t = await e.callWS({
-    type: le
+    type: pe
   });
   return Array.isArray(t) ? t : t.systems || [];
 }
-async function fe(e, t, s) {
+async function be(e, t, s) {
   return e.callWS({
-    type: de,
+    type: ce,
     system_id: t.system_id,
     name: t.name,
     description: t.description,
@@ -827,42 +827,42 @@ async function fe(e, t, s) {
     entry_id: s
   });
 }
-async function me(e, t) {
+async function ye(e, t) {
   return e.callWS({
-    type: pe,
+    type: ue,
     entry_id: t
   });
 }
-async function be(e) {
+async function ve(e) {
   return (await e.callWS({
-    type: ue
+    type: ge
   })).templates || [];
 }
-async function ye(e, t, s, a) {
+async function _e(e, t, s, a) {
   return e.callWS({
-    type: he,
+    type: fe,
     template_id: t,
     system_id: s,
     name: a
   });
 }
-async function ve(e, t, s) {
+async function xe(e, t, s) {
   const a = await e.callWS({
-    type: ce,
+    type: he,
     system_config: t,
     inputs: s
   }), i = a?.results || a;
   if (!i) return {};
   if (i.defuzzified_values) {
-    const n = {}, r = Object.keys(t.outputs || {});
-    for (const l of r) {
+    const r = {}, n = Object.keys(t.outputs || {});
+    for (const l of n) {
       const d = i.aggregated_sets?.[l] || [];
       let p = i.universes?.[l] || [];
       if ((!p || p.length === 0) && d.length > 0) {
         const c = t.outputs[l]?.range || [0, 100], h = (c[1] - c[0]) / (d.length - 1 || 1);
         p = Array.from({ length: d.length }, (f, y) => c[0] + y * h);
       }
-      n[l] = {
+      r[l] = {
         defuzzified_value: i.defuzzified_values[l],
         dominant_term: i.dominant_terms?.[l] || "",
         term_activations: i.term_activations?.[l] || {},
@@ -872,14 +872,14 @@ async function ve(e, t, s) {
         aggregated_set: d
       };
     }
-    return n;
+    return r;
   }
   return i;
 }
-var _e = Object.defineProperty, xe = Object.getOwnPropertyDescriptor, N = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? xe(t, s) : t, n = e.length - 1, r; n >= 0; n--)
-    (r = e[n]) && (i = (a ? r(t, s, i) : r(i)) || i);
-  return a && i && _e(t, s, i), i;
+var $e = Object.defineProperty, ze = Object.getOwnPropertyDescriptor, N = (e, t, s, a) => {
+  for (var i = a > 1 ? void 0 : a ? ze(t, s) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
+  return a && i && $e(t, s, i), i;
 };
 let A = class extends z {
   constructor() {
@@ -894,17 +894,17 @@ let A = class extends z {
           </div>
         </div>
       `;
-    const e = this.universe[0], t = this.universe[this.universe.length - 1], s = t - e || 1, a = 640, i = 190, n = 36, r = 24, l = 20, d = 28, p = a - n - r, c = i - l - d, u = ($) => n + ($ - e) / s * p, h = ($) => l + (1 - Math.max(0, Math.min(1, $))) * c, f = this.aggregatedSet || [], y = [], x = Math.max(1, Math.floor(this.universe.length / 140));
+    const e = this.universe[0], t = this.universe[this.universe.length - 1], s = t - e || 1, a = 640, i = 190, r = 36, n = 24, l = 20, d = 28, p = a - r - n, c = i - l - d, u = ($) => r + ($ - e) / s * p, h = ($) => l + (1 - Math.max(0, Math.min(1, $))) * c, f = this.aggregatedSet || [], y = [], x = Math.max(1, Math.floor(this.universe.length / 140));
     for (let $ = 0; $ < this.universe.length; $ += x) {
       const S = this.universe[$], k = f[$] ?? 0;
       y.push([u(S), h(k)]);
     }
     const q = this.universe.length - 1;
     y.push([u(this.universe[q]), h(f[q] ?? 0)]);
-    const E = y.reduce(
+    const I = y.reduce(
       ($, [S, k], W) => W === 0 ? `M ${S} ${k}` : `${$} L ${S} ${k}`,
       ""
-    ), F = `${E} L ${n + p} ${l + c} L ${n} ${l + c} Z`, H = this.defuzzifiedValue !== void 0 && !isNaN(this.defuzzifiedValue), M = H ? u(Math.max(e, Math.min(t, this.defuzzifiedValue))) : 0;
+    ), V = `${I} L ${r + p} ${l + c} L ${r} ${l + c} Z`, H = this.defuzzifiedValue !== void 0 && !isNaN(this.defuzzifiedValue), M = H ? u(Math.max(e, Math.min(t, this.defuzzifiedValue))) : 0;
     return o`
       <div class="graph-card">
         <div class="graph-header">
@@ -932,30 +932,30 @@ let A = class extends z {
           </defs>
 
           <!-- Horizontal Grid lines at mu = 0.5, 1.0 -->
-          <line class="grid-line" x1=${n} y1=${h(0.5)} x2=${n + p} y2=${h(0.5)} />
-          <line class="grid-line" x1=${n} y1=${h(1)} x2=${n + p} y2=${h(1)} />
+          <line class="grid-line" x1=${r} y1=${h(0.5)} x2=${r + p} y2=${h(0.5)} />
+          <line class="grid-line" x1=${r} y1=${h(1)} x2=${r + p} y2=${h(1)} />
 
           <!-- Axes -->
-          <line class="axis-line" x1=${n} y1=${l} x2=${n} y2=${l + c} />
-          <line class="axis-line" x1=${n} y1=${l + c} x2=${n + p} y2=${l + c} />
+          <line class="axis-line" x1=${r} y1=${l} x2=${r} y2=${l + c} />
+          <line class="axis-line" x1=${r} y1=${l + c} x2=${r + p} y2=${l + c} />
 
           <!-- Y-axis labels -->
-          <text class="axis-text" x=${n - 6} y=${h(1) + 3} text-anchor="end">1.0</text>
-          <text class="axis-text" x=${n - 6} y=${h(0.5) + 3} text-anchor="end">0.5</text>
-          <text class="axis-text" x=${n - 6} y=${h(0) + 3} text-anchor="end">0.0</text>
+          <text class="axis-text" x=${r - 6} y=${h(1) + 3} text-anchor="end">1.0</text>
+          <text class="axis-text" x=${r - 6} y=${h(0.5) + 3} text-anchor="end">0.5</text>
+          <text class="axis-text" x=${r - 6} y=${h(0) + 3} text-anchor="end">0.0</text>
 
           <!-- X-axis labels -->
-          <text class="axis-text" x=${n} y=${i - 10} text-anchor="start">${e.toFixed(0)}</text>
-          <text class="axis-text" x=${n + p / 2} y=${i - 10} text-anchor="middle">
+          <text class="axis-text" x=${r} y=${i - 10} text-anchor="start">${e.toFixed(0)}</text>
+          <text class="axis-text" x=${r + p / 2} y=${i - 10} text-anchor="middle">
             ${(e + s / 2).toFixed(1)}
           </text>
-          <text class="axis-text" x=${n + p} y=${i - 10} text-anchor="end">
+          <text class="axis-text" x=${r + p} y=${i - 10} text-anchor="end">
             ${t.toFixed(0)} ${this.unit}
           </text>
 
           <!-- Aggregated Fuzzy Set Area & Stroke -->
-          <path d=${F} fill="url(#aggGradient)" />
-          <path d=${E} fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" />
+          <path d=${V} fill="url(#aggGradient)" />
+          <path d=${I} fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" />
 
           <!-- Defuzzified Crisp Slice Line -->
           ${H ? J`
@@ -969,7 +969,7 @@ let A = class extends z {
                   />
                   <circle class="pulse-marker" cx=${M} cy=${l + c} r="4.5" />
                   <rect
-                    x=${Math.min(n + p - 90, Math.max(n, M - 45))}
+                    x=${Math.min(r + p - 90, Math.max(r, M - 45))}
                     y=${l - 18}
                     width="90"
                     height="18"
@@ -977,7 +977,7 @@ let A = class extends z {
                     fill="#0284c7"
                   />
                   <text
-                    x=${Math.min(n + p - 45, Math.max(n + 45, M))}
+                    x=${Math.min(r + p - 45, Math.max(r + 45, M))}
                     y=${l - 5}
                     text-anchor="middle"
                     fill="#ffffff"
@@ -994,7 +994,7 @@ let A = class extends z {
     `;
   }
 };
-A.styles = R`
+A.styles = T`
     :host {
       display: block;
       width: 100%;
@@ -1110,14 +1110,14 @@ N([
   v({ type: String })
 ], A.prototype, "outputName", 2);
 A = N([
-  L("fuzzy-aggregated-graph")
+  j("fuzzy-aggregated-graph")
 ], A);
-var $e = Object.defineProperty, ze = Object.getOwnPropertyDescriptor, j = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? ze(t, s) : t, n = e.length - 1, r; n >= 0; n--)
-    (r = e[n]) && (i = (a ? r(t, s, i) : r(i)) || i);
-  return a && i && $e(t, s, i), i;
+var we = Object.defineProperty, Se = Object.getOwnPropertyDescriptor, P = (e, t, s, a) => {
+  for (var i = a > 1 ? void 0 : a ? Se(t, s) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
+  return a && i && we(t, s, i), i;
 };
-let I = class extends z {
+let C = class extends z {
   constructor() {
     super(...arguments), this._systems = [], this._searchQuery = "", this._loading = !1, this._error = "", this._showTemplateModal = !1, this._expandedWaveforms = {};
   }
@@ -1138,7 +1138,7 @@ let I = class extends z {
     if (this.hass) {
       this._loading = !0, this._error = "";
       try {
-        this._systems = await ge(this.hass);
+        this._systems = await me(this.hass);
       } catch (e) {
         this._error = e.message || "Failed to load fuzzy systems";
       } finally {
@@ -1173,7 +1173,7 @@ let I = class extends z {
   async _handleDelete(e) {
     if (e.entry_id && confirm(`Are you sure you want to delete '${e.name}'?`))
       try {
-        await me(this.hass, e.entry_id), await this.refresh();
+        await ye(this.hass, e.entry_id), await this.refresh();
       } catch (t) {
         alert(t.message || "Failed to delete system");
       }
@@ -1185,13 +1185,13 @@ let I = class extends z {
       `sensor.${s}_${a}`,
       `sensor.fuzzy_${a}`
     ];
-    for (const n of i)
-      if (this.hass.states[n])
-        return { entityId: n, stateObj: this.hass.states[n] };
-    for (const [n, r] of Object.entries(this.hass.states)) {
-      if (!n.startsWith("sensor.") || n.endsWith("_set") || n.endsWith("_status")) continue;
-      if ((r.attributes || {}).system === e && (n.endsWith(`_${a}`) || n.includes(a)))
-        return { entityId: n, stateObj: r };
+    for (const r of i)
+      if (this.hass.states[r])
+        return { entityId: r, stateObj: this.hass.states[r] };
+    for (const [r, n] of Object.entries(this.hass.states)) {
+      if (!r.startsWith("sensor.") || r.endsWith("_set") || r.endsWith("_status")) continue;
+      if ((n.attributes || {}).system === e && (r.endsWith(`_${a}`) || r.includes(a)))
+        return { entityId: r, stateObj: n };
     }
     return null;
   }
@@ -1240,15 +1240,15 @@ let I = class extends z {
 
         <div class="live-outputs-list">
           ${s.map((i) => {
-      const n = this._findOutputSensor(e.system_id, i), r = t[i] || {}, l = n?.stateObj?.attributes?.unit_of_measurement || r.unit_of_measurement || "", d = n?.stateObj?.attributes?.dominant_term, p = n?.stateObj?.state, c = p !== void 0 && p !== "unknown" && p !== "unavailable" && !isNaN(parseFloat(p)), u = !!this._expandedWaveforms[`${e.system_id}_${i}`];
-      if (n && c) {
+      const r = this._findOutputSensor(e.system_id, i), n = t[i] || {}, l = r?.stateObj?.attributes?.unit_of_measurement || n.unit_of_measurement || "", d = r?.stateObj?.attributes?.dominant_term, p = r?.stateObj?.state, c = p !== void 0 && p !== "unknown" && p !== "unavailable" && !isNaN(parseFloat(p)), u = !!this._expandedWaveforms[`${e.system_id}_${i}`];
+      if (r && c) {
         const h = parseFloat(p).toFixed(1);
         return o`
                 <div style="display: inline-flex; align-items: center; gap: 4px;">
                   <button
                     class="output-badge live-active"
-                    @click=${(f) => this._openMoreInfo(n.entityId, f)}
-                    title="Entity: ${n.entityId} — Click to view Home Assistant history graph and diagnostic attributes"
+                    @click=${(f) => this._openMoreInfo(r.entityId, f)}
+                    title="Entity: ${r.entityId} — Click to view Home Assistant history graph and diagnostic attributes"
                   >
                     <span class="pulse-dot"></span>
                     <span class="output-name">${i}:</span>
@@ -1271,7 +1271,7 @@ let I = class extends z {
       return o`
               <div
                 class="output-badge live-idle"
-                title="${n ? `Entity: ${n.entityId} (State: ${p})` : "Sensor entity not yet registered in Home Assistant"}"
+                title="${r ? `Entity: ${r.entityId} (State: ${p})` : "Sensor entity not yet registered in Home Assistant"}"
               >
                 <span class="idle-dot"></span>
                 <span class="output-name">${i}:</span>
@@ -1285,7 +1285,7 @@ let I = class extends z {
 
         ${s.map((i) => {
       if (!this._expandedWaveforms[`${e.system_id}_${i}`]) return "";
-      const n = this._findOutputSensor(e.system_id, i), r = t[i] || {}, l = n?.stateObj?.attributes?.unit_of_measurement || r.unit_of_measurement || "", d = n?.stateObj?.attributes?.universe || [], p = n?.stateObj?.attributes?.aggregated_set || [], c = n?.stateObj?.state, u = c !== void 0 && !isNaN(parseFloat(c)), h = n?.stateObj?.attributes?.dominant_term || "";
+      const r = this._findOutputSensor(e.system_id, i), n = t[i] || {}, l = r?.stateObj?.attributes?.unit_of_measurement || n.unit_of_measurement || "", d = r?.stateObj?.attributes?.universe || [], p = r?.stateObj?.attributes?.aggregated_set || [], c = r?.stateObj?.state, u = c !== void 0 && !isNaN(parseFloat(c)), h = r?.stateObj?.attributes?.dominant_term || "";
       return o`
             <div style="margin-top: 12px;">
               <fuzzy-aggregated-graph
@@ -1413,9 +1413,9 @@ let I = class extends z {
     `;
   }
 };
-I.styles = [
-  ct,
-  R`
+C.styles = [
+  ut,
+  T`
       .header-row {
         display: flex;
         justify-content: space-between;
@@ -1606,61 +1606,61 @@ I.styles = [
       }
     `
 ];
-j([
+P([
   v({ attribute: !1 })
-], I.prototype, "hass", 2);
-j([
+], C.prototype, "hass", 2);
+P([
   g()
-], I.prototype, "_systems", 2);
-j([
+], C.prototype, "_systems", 2);
+P([
   g()
-], I.prototype, "_searchQuery", 2);
-j([
+], C.prototype, "_searchQuery", 2);
+P([
   g()
-], I.prototype, "_loading", 2);
-j([
+], C.prototype, "_loading", 2);
+P([
   g()
-], I.prototype, "_error", 2);
-j([
+], C.prototype, "_error", 2);
+P([
   g()
-], I.prototype, "_showTemplateModal", 2);
-j([
+], C.prototype, "_showTemplateModal", 2);
+P([
   g()
-], I.prototype, "_expandedWaveforms", 2);
-I = j([
-  L("fuzzy-system-catalog")
-], I);
-var we = Object.defineProperty, Se = Object.getOwnPropertyDescriptor, at = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? Se(t, s) : t, n = e.length - 1, r; n >= 0; n--)
-    (r = e[n]) && (i = (a ? r(t, s, i) : r(i)) || i);
-  return a && i && we(t, s, i), i;
+], C.prototype, "_expandedWaveforms", 2);
+C = P([
+  j("fuzzy-system-catalog")
+], C);
+var ke = Object.defineProperty, Ae = Object.getOwnPropertyDescriptor, rt = (e, t, s, a) => {
+  for (var i = a > 1 ? void 0 : a ? Ae(t, s) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
+  return a && i && ke(t, s, i), i;
 };
-function Pt(e, t, s, a) {
+function Vt(e, t, s, a) {
   switch (e.toLowerCase()) {
     case "trimf": {
-      const [i, n, r] = t;
-      return s <= i || s >= r ? 0 : s === n ? 1 : s < n ? (s - i) / (n - i || 1e-6) : (r - s) / (r - n || 1e-6);
+      const [i, r, n] = t;
+      return s <= i || s >= n ? 0 : s === r ? 1 : s < r ? (s - i) / (r - i || 1e-6) : (n - s) / (n - r || 1e-6);
     }
     case "trapmf": {
-      const [i, n, r, l] = t;
-      return s <= i || s >= l ? 0 : s >= n && s <= r ? 1 : s < n ? (s - i) / (n - i || 1e-6) : (l - s) / (l - r || 1e-6);
+      const [i, r, n, l] = t;
+      return s <= i || s >= l ? 0 : s >= r && s <= n ? 1 : s < r ? (s - i) / (r - i || 1e-6) : (l - s) / (l - n || 1e-6);
     }
     case "gaussmf": {
-      const [i, n] = t, r = n || 1;
-      return Math.exp(-0.5 * Math.pow((s - i) / r, 2));
+      const [i, r] = t, n = r || 1;
+      return Math.exp(-0.5 * Math.pow((s - i) / n, 2));
     }
     case "sigmf": {
-      const [i, n] = t;
-      return 1 / (1 + Math.exp(-i * (s - n)));
+      const [i, r] = t;
+      return 1 / (1 + Math.exp(-i * (s - r)));
     }
     case "gbellmf": {
-      const [i, n, r] = t;
-      return 1 / (1 + Math.pow(Math.abs((s - r) / (i || 1e-6)), 2 * (n || 1)));
+      const [i, r, n] = t;
+      return 1 / (1 + Math.pow(Math.abs((s - n) / (i || 1e-6)), 2 * (r || 1)));
     }
     case "singleton":
     case "constant": {
-      const [i] = t, n = (a || 100) * 0.015;
-      return Math.abs(s - i) <= n ? 1 : 0;
+      const [i] = t, r = (a || 100) * 0.015;
+      return Math.abs(s - i) <= r ? 1 : 0;
     }
     default:
       return 0;
@@ -1682,54 +1682,54 @@ const nt = [
   { stroke: "#a3e635", fill: "rgba(163, 230, 53, 0.15)" }
   // lime
 ];
-let D = class extends z {
+let B = class extends z {
   constructor() {
     super(...arguments), this.range = [0, 100], this.terms = {};
   }
   render() {
-    const e = Number.isFinite(this.range[0]) ? this.range[0] : 0, t = Number.isFinite(this.range[1]) && this.range[1] > e ? this.range[1] : e + 100, s = t - e || 1, a = 600, i = 180, n = 36, r = 24, l = 16, d = 28, p = a - n - r, c = i - l - d, u = (x) => n + (x - e) / s * p, h = (x) => l + (1 - Math.max(0, Math.min(1, x))) * c, f = Object.keys(this.terms || {}), y = 120;
+    const e = Number.isFinite(this.range[0]) ? this.range[0] : 0, t = Number.isFinite(this.range[1]) && this.range[1] > e ? this.range[1] : e + 100, s = t - e || 1, a = 600, i = 180, r = 36, n = 24, l = 16, d = 28, p = a - r - n, c = i - l - d, u = (x) => r + (x - e) / s * p, h = (x) => l + (1 - Math.max(0, Math.min(1, x))) * c, f = Object.keys(this.terms || {}), y = 120;
     return o`
       <div class="canvas-container">
         <svg viewBox="0 0 ${a} ${i}" preserveAspectRatio="xMidYMid meet">
           <!-- Horizontal Grid lines at mu = 0.0, 0.5, 1.0 -->
-          <line class="grid-line" x1=${n} y1=${h(0.5)} x2=${n + p} y2=${h(0.5)} />
-          <line class="grid-line" x1=${n} y1=${h(1)} x2=${n + p} y2=${h(1)} />
+          <line class="grid-line" x1=${r} y1=${h(0.5)} x2=${r + p} y2=${h(0.5)} />
+          <line class="grid-line" x1=${r} y1=${h(1)} x2=${r + p} y2=${h(1)} />
 
           <!-- Axes -->
-          <line class="axis-line" x1=${n} y1=${l} x2=${n} y2=${l + c} />
-          <line class="axis-line" x1=${n} y1=${l + c} x2=${n + p} y2=${l + c} />
+          <line class="axis-line" x1=${r} y1=${l} x2=${r} y2=${l + c} />
+          <line class="axis-line" x1=${r} y1=${l + c} x2=${r + p} y2=${l + c} />
 
           <!-- Y-axis tick labels -->
-          <text class="axis-text" x=${n - 6} y=${h(1) + 3} text-anchor="end">1.0</text>
-          <text class="axis-text" x=${n - 6} y=${h(0.5) + 3} text-anchor="end">0.5</text>
-          <text class="axis-text" x=${n - 6} y=${h(0) + 3} text-anchor="end">0.0</text>
+          <text class="axis-text" x=${r - 6} y=${h(1) + 3} text-anchor="end">1.0</text>
+          <text class="axis-text" x=${r - 6} y=${h(0.5) + 3} text-anchor="end">0.5</text>
+          <text class="axis-text" x=${r - 6} y=${h(0) + 3} text-anchor="end">0.0</text>
 
           <!-- X-axis tick labels -->
-          <text class="axis-text" x=${n} y=${i - 10} text-anchor="start">${e}</text>
-          <text class="axis-text" x=${n + p / 2} y=${i - 10} text-anchor="middle">
+          <text class="axis-text" x=${r} y=${i - 10} text-anchor="start">${e}</text>
+          <text class="axis-text" x=${r + p / 2} y=${i - 10} text-anchor="middle">
             ${(e + s / 2).toFixed(1)}
           </text>
-          <text class="axis-text" x=${n + p} y=${i - 10} text-anchor="end">
+          <text class="axis-text" x=${r + p} y=${i - 10} text-anchor="end">
             ${t} ${this.unit || ""}
           </text>
 
           <!-- Curves for each membership term -->
           ${f.map((x, q) => {
-      const E = this.terms[x];
-      if (!E || !E.params) return J``;
-      const F = nt[q % nt.length], H = [];
+      const I = this.terms[x];
+      if (!I || !I.params) return J``;
+      const V = nt[q % nt.length], H = [];
       for (let S = 0; S <= y; S++) {
-        const k = e + S / y * s, W = Pt(E.type, E.params, k, s);
+        const k = e + S / y * s, W = Vt(I.type, I.params, k, s);
         H.push([u(k), h(W)]);
       }
       const M = H.reduce(
-        (S, [k, W], Ft) => Ft === 0 ? `M ${k} ${W}` : `${S} L ${k} ${W}`,
+        (S, [k, W], Lt) => Lt === 0 ? `M ${k} ${W}` : `${S} L ${k} ${W}`,
         ""
-      ), $ = `${M} L ${n + p} ${l + c} L ${n} ${l + c} Z`;
+      ), $ = `${M} L ${r + p} ${l + c} L ${r} ${l + c} Z`;
       return J`
               <g>
-                <path class="curve-fill" d=${$} fill=${F.fill} />
-                <path class="curve-path" d=${M} fill="none" stroke=${F.stroke} />
+                <path class="curve-fill" d=${$} fill=${V.fill} />
+                <path class="curve-path" d=${M} fill="none" stroke=${V.stroke} />
               </g>
             `;
     })}
@@ -1765,12 +1765,12 @@ let D = class extends z {
         <!-- Color Legend -->
         <div class="legend-row">
           ${f.map((x, q) => {
-      const E = this.terms[x], F = nt[q % nt.length];
+      const I = this.terms[x], V = nt[q % nt.length];
       return o`
-              <div class="legend-item" style="color: ${F.stroke};">
-                <span class="legend-swatch" style="background: ${F.stroke};"></span>
+              <div class="legend-item" style="color: ${V.stroke};">
+                <span class="legend-swatch" style="background: ${V.stroke};"></span>
                 <span>${x}</span>
-                <span style="opacity: 0.6; font-size: 10px;">(${E.type})</span>
+                <span style="opacity: 0.6; font-size: 10px;">(${I.type})</span>
               </div>
             `;
     })}
@@ -1779,7 +1779,7 @@ let D = class extends z {
     `;
   }
 };
-D.styles = R`
+B.styles = T`
     :host {
       display: block;
       width: 100%;
@@ -1858,25 +1858,25 @@ D.styles = R`
       border-radius: 3px;
     }
   `;
-at([
+rt([
   v({ type: Array })
-], D.prototype, "range", 2);
-at([
+], B.prototype, "range", 2);
+rt([
   v({ type: Object })
-], D.prototype, "terms", 2);
-at([
+], B.prototype, "terms", 2);
+rt([
   v({ type: Number })
-], D.prototype, "currentValue", 2);
-at([
+], B.prototype, "currentValue", 2);
+rt([
   v({ type: String })
-], D.prototype, "unit", 2);
-D = at([
-  L("fuzzy-curve-canvas")
-], D);
-var ke = Object.defineProperty, Ae = Object.getOwnPropertyDescriptor, b = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? Ae(t, s) : t, n = e.length - 1, r; n >= 0; n--)
-    (r = e[n]) && (i = (a ? r(t, s, i) : r(i)) || i);
-  return a && i && ke(t, s, i), i;
+], B.prototype, "unit", 2);
+B = rt([
+  j("fuzzy-curve-canvas")
+], B);
+var Ce = Object.defineProperty, Ee = Object.getOwnPropertyDescriptor, b = (e, t, s, a) => {
+  for (var i = a > 1 ? void 0 : a ? Ee(t, s) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
+  return a && i && Ce(t, s, i), i;
 };
 let m = class extends z {
   constructor() {
@@ -1912,13 +1912,13 @@ let m = class extends z {
   _initSimInputs(e = !1) {
     const t = {};
     for (const [s, a] of Object.entries(this._config?.inputs || {})) {
-      const i = Number.isFinite(a.range?.[0]) ? a.range[0] : 0, n = Number.isFinite(a.range?.[1]) && a.range[1] > i ? a.range[1] : i + 100, r = this._simInputs[s];
-      if (!e && r !== void 0 && r >= i && r <= n)
-        t[s] = r;
+      const i = Number.isFinite(a.range?.[0]) ? a.range[0] : 0, r = Number.isFinite(a.range?.[1]) && a.range[1] > i ? a.range[1] : i + 100, n = this._simInputs[s];
+      if (!e && n !== void 0 && n >= i && n <= r)
+        t[s] = n;
       else if (a.entity_id && this.hass?.states?.[a.entity_id]) {
         const l = parseFloat(this.hass.states[a.entity_id].state);
-        t[s] = isNaN(l) ? (i + n) / 2 : l;
-      } else a.default !== void 0 ? t[s] = a.default : t[s] = (i + n) / 2;
+        t[s] = isNaN(l) ? (i + r) / 2 : l;
+      } else a.default !== void 0 ? t[s] = a.default : t[s] = (i + r) / 2;
     }
     this._simInputs = t;
   }
@@ -1940,7 +1940,7 @@ let m = class extends z {
     if (this.hass) {
       this._simulating = !0, this._simError = "";
       try {
-        const e = await ve(this.hass, this._config, this._simInputs);
+        const e = await xe(this.hass, this._config, this._simInputs);
         this._simResults = e;
       } catch (e) {
         this._simError = e?.message || String(e);
@@ -1985,7 +1985,7 @@ let m = class extends z {
       return !0;
     })), this._saving = !0;
     try {
-      const e = await fe(this.hass, this._config, this.entryId);
+      const e = await be(this.hass, this._config, this.entryId);
       this._successMsg = `System '${e.system_id}' saved successfully!`, this.dispatchEvent(
         new CustomEvent("system-saved", {
           detail: { systemId: e.system_id, entryId: e.entry_id },
@@ -2067,7 +2067,7 @@ let m = class extends z {
           .value=${e || ""}
           ?disabled=${t}
           .includeDomains=${["sensor", "input_number", "number", "climate", "weather"]}
-          @value-changed=${(n) => s(n.detail.value || "")}
+          @value-changed=${(r) => s(r.detail.value || "")}
         ></ha-entity-picker>
       ` : o`
       <div style="position: relative;">
@@ -2078,13 +2078,13 @@ let m = class extends z {
           .value=${e || ""}
           ?disabled=${t}
           placeholder="Search entities (e.g. sensor.temperature)..."
-          @input=${(n) => s(n.target.value)}
+          @input=${(r) => s(r.target.value)}
         />
         <datalist id="ha-fuzzy-entities">
           ${i.map(
-      (n) => o`
-              <option value=${n.entity_id}>
-                ${n.friendly_name} (${n.state} ${n.unit})
+      (r) => o`
+              <option value=${r.entity_id}>
+                ${r.friendly_name} (${r.state} ${r.unit})
               </option>
             `
     )}
@@ -2148,7 +2148,7 @@ let m = class extends z {
     if (!t) return null;
     const s = t[1].trim(), i = t[2].trim().match(/^([a-zA-Z0-9_]+)\s*(?:IS|=)\s*(.+)$/i);
     if (!i) return null;
-    const n = i[1].trim(), r = i[2].trim(), l = parseFloat(r), d = !isNaN(l) && isFinite(l) && !r.match(/[a-zA-Z]/), p = s.split(/\s+(AND|OR)\s+/i), c = [];
+    const r = i[1].trim(), n = i[2].trim(), l = parseFloat(n), d = !isNaN(l) && isFinite(l) && !n.match(/[a-zA-Z]/), p = s.split(/\s+(AND|OR)\s+/i), c = [];
     let u = "AND";
     for (let h = 0; h < p.length; h++) {
       const f = p[h].trim();
@@ -2175,8 +2175,8 @@ let m = class extends z {
     return c.length === 0 ? null : {
       conditions: c,
       consequent: {
-        variable: n,
-        term: d ? "" : r,
+        variable: r,
+        term: d ? "" : n,
         isConstant: d,
         constantValue: d ? l : 0
       }
@@ -2184,9 +2184,9 @@ let m = class extends z {
   }
   _compileRuleString(e, t) {
     const s = [];
-    e.forEach((n, r) => {
-      const l = n.hedge ? `${n.hedge} ` : "", d = `${n.variable} IS ${l}${n.term}`;
-      r === 0 ? s.push(d) : s.push(`${n.connector} ${d}`);
+    e.forEach((r, n) => {
+      const l = r.hedge ? `${r.hedge} ` : "", d = `${r.variable} IS ${l}${r.term}`;
+      n === 0 ? s.push(d) : s.push(`${r.connector} ${d}`);
     });
     const a = s.join(" "), i = t.isConstant ? `${t.variable} IS ${t.constantValue}` : `${t.variable} IS ${t.term}`;
     return `IF ${a} THEN ${i}`;
@@ -2202,7 +2202,7 @@ let m = class extends z {
       this._error = "Please define at least one output consequent variable before creating rules.", this._activeTab = "outputs";
       return;
     }
-    const s = e[0], a = Object.keys(this._config.inputs[s]?.terms || {}), i = t[0], n = Object.keys(this._config.outputs[i]?.terms || {});
+    const s = e[0], a = Object.keys(this._config.inputs[s]?.terms || {}), i = t[0], r = Object.keys(this._config.outputs[i]?.terms || {});
     this._editingRuleIndex = -1, this._builderConditions = [
       {
         variable: s,
@@ -2212,7 +2212,7 @@ let m = class extends z {
       }
     ], this._builderConsequent = {
       variable: i,
-      term: n[0] || "low",
+      term: r[0] || "low",
       isConstant: !1,
       constantValue: 0
     }, this._showRuleBuilderModal = !0;
@@ -2223,12 +2223,12 @@ let m = class extends z {
     if (s)
       this._editingRuleIndex = e, this._builderConditions = s.conditions, this._builderConsequent = s.consequent, this._showRuleBuilderModal = !0;
     else {
-      const a = Object.keys(this._config.inputs || {}), i = Object.keys(this._config.outputs || {}), n = a[0] || "", r = Object.keys(this._config.inputs[n]?.terms || {}), l = i[0] || "", d = Object.keys(this._config.outputs[l]?.terms || {});
+      const a = Object.keys(this._config.inputs || {}), i = Object.keys(this._config.outputs || {}), r = a[0] || "", n = Object.keys(this._config.inputs[r]?.terms || {}), l = i[0] || "", d = Object.keys(this._config.outputs[l]?.terms || {});
       this._editingRuleIndex = e, this._builderConditions = [
         {
-          variable: n,
+          variable: r,
           hedge: "",
-          term: r[0] || "low",
+          term: n[0] || "low",
           connector: "AND"
         }
       ], this._builderConsequent = {
@@ -2668,7 +2668,7 @@ let m = class extends z {
       </div>
 
       ${s.length === 0 ? o`<p class="subtitle" style="padding: 20px 0;">No input variables defined yet.</p>` : s.map((a) => {
-      const i = t[a], n = i.entity_id && this.hass?.states ? this.hass.states[i.entity_id] : null, r = n && !isNaN(parseFloat(n.state)) ? parseFloat(n.state) : void 0, l = n?.attributes?.unit_of_measurement || "";
+      const i = t[a], r = i.entity_id && this.hass?.states ? this.hass.states[i.entity_id] : null, n = r && !isNaN(parseFloat(r.state)) ? parseFloat(r.state) : void 0, l = r?.attributes?.unit_of_measurement || "";
       return o`
               <div class="section-box">
                 <div class="section-header">
@@ -2726,12 +2726,12 @@ let m = class extends z {
                 <div style="margin-top: 14px;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <span class="form-label" style="margin: 0;">Membership Curves Preview</span>
-                    ${r !== void 0 ? o`<span class="chip" style="color: #34d399;">Live Sensor State: ${r}${l ? ` ${l}` : ""}</span>` : ""}
+                    ${n !== void 0 ? o`<span class="chip" style="color: #34d399;">Live Sensor State: ${n}${l ? ` ${l}` : ""}</span>` : ""}
                   </div>
                   <fuzzy-curve-canvas
                     .range=${i.range}
                     .terms=${i.terms || {}}
-                    .currentValue=${r}
+                    .currentValue=${n}
                     .unit=${l}
                   ></fuzzy-curve-canvas>
                 </div>
@@ -2758,7 +2758,7 @@ let m = class extends z {
       </div>
 
       ${s.length === 0 ? o`<p class="subtitle" style="padding: 20px 0;">No output variables defined yet.</p>` : s.map((a) => {
-      const i = t[a], n = this._findOutputSensor(a), r = n && !isNaN(parseFloat(n.state)) ? parseFloat(n.state) : void 0;
+      const i = t[a], r = this._findOutputSensor(a), n = r && !isNaN(parseFloat(r.state)) ? parseFloat(r.state) : void 0;
       return o`
               <div class="section-box">
                 <div class="section-header">
@@ -2819,12 +2819,12 @@ let m = class extends z {
                 <div style="margin-top: 14px;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <span class="form-label" style="margin: 0;">Output Membership Curves Preview</span>
-                    ${r !== void 0 ? o`<span class="chip" style="color: #34d399;">Live Sensor Output: ${r}${i.unit_of_measurement ? ` ${i.unit_of_measurement}` : ""}</span>` : ""}
+                    ${n !== void 0 ? o`<span class="chip" style="color: #34d399;">Live Sensor Output: ${n}${i.unit_of_measurement ? ` ${i.unit_of_measurement}` : ""}</span>` : ""}
                   </div>
                   <fuzzy-curve-canvas
                     .range=${i.range}
                     .terms=${i.terms || {}}
-                    .currentValue=${r}
+                    .currentValue=${n}
                     .unit=${i.unit_of_measurement || ""}
                   ></fuzzy-curve-canvas>
                 </div>
@@ -2846,10 +2846,10 @@ let m = class extends z {
                   class="btn btn-secondary"
                   style="font-size: 12px; padding: 4px 10px;"
                   @click=${() => {
-      const n = `term_${i.length + 1}`, r = (t[0] + t[1]) / 2, l = t[1] - t[0] || 10;
-      e[n] = {
+      const r = `term_${i.length + 1}`, n = (t[0] + t[1]) / 2, l = t[1] - t[0] || 10;
+      e[r] = {
         type: "trimf",
-        params: [r - l * 0.25, r, r + l * 0.25]
+        params: [n - l * 0.25, n, n + l * 0.25]
       }, a();
     }}
                 >
@@ -2859,24 +2859,24 @@ let m = class extends z {
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 8px;">
-          ${i.map((n) => {
-      const r = e[n];
+          ${i.map((r) => {
+      const n = e[r];
       return o`
               <div
                 style="display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.25); padding: 8px 12px; border-radius: var(--fuzzy-radius-md); border: 1px solid rgba(255, 255, 255, 0.04); flex-wrap: wrap;"
               >
                 <div style="min-width: 110px;">
-                  <strong style="color: var(--fuzzy-text); font-size: 13px;">${n}</strong>
+                  <strong style="color: var(--fuzzy-text); font-size: 13px;">${r}</strong>
                 </div>
 
                 <div style="width: 120px;">
                   <select
                     class="select-input"
                     style="padding: 4px 8px; font-size: 12px;"
-                    .value=${r.type || "trimf"}
+                    .value=${n.type || "trimf"}
                     ?disabled=${s}
                     @change=${(l) => {
-        r.type = l.target.value, a();
+        n.type = l.target.value, a();
       }}
                   >
                     <option value="trimf">trimf (a, b, c)</option>
@@ -2894,12 +2894,12 @@ let m = class extends z {
                     class="input-text"
                     style="padding: 4px 8px; font-size: 12px; font-family: monospace;"
                     type="text"
-                    .value=${Array.isArray(r.params) ? r.params.join(", ") : ""}
+                    .value=${Array.isArray(n.params) ? n.params.join(", ") : ""}
                     placeholder="e.g. 18, 21, 24"
                     ?disabled=${s}
                     @input=${(l) => {
         const d = l.target.value.split(",").map((p) => parseFloat(p.trim()));
-        d.every((p) => !isNaN(p)) && (r.params = d, a());
+        d.every((p) => !isNaN(p)) && (n.params = d, a());
       }}
                   />
                 </div>
@@ -2910,7 +2910,7 @@ let m = class extends z {
                         style="width: 26px; height: 26px; padding: 0;"
                         title="Delete Term"
                         @click=${() => {
-        delete e[n], a();
+        delete e[r], a();
       }}
                       >
                         ✕
@@ -2954,13 +2954,13 @@ let m = class extends z {
             </h4>
 
             ${s.length === 0 ? o`<p class="subtitle">No input variables defined yet.</p>` : s.map((i) => {
-      const n = e[i], r = n.range[0], l = n.range[1], d = (l - r) / 100 || 1, p = this._simInputs[i] ?? r;
+      const r = e[i], n = r.range[0], l = r.range[1], d = (l - n) / 100 || 1, p = this._simInputs[i] ?? n;
       return o`
                     <div class="section-box" style="margin-bottom: 14px; padding: 14px;">
                       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <div>
                           <strong style="color: var(--fuzzy-text); font-size: 14px;">${i}</strong>
-                          ${n.entity_id ? o`<span class="helper-text" style="margin-left: 6px;">(${n.entity_id})</span>` : ""}
+                          ${r.entity_id ? o`<span class="helper-text" style="margin-left: 6px;">(${r.entity_id})</span>` : ""}
                         </div>
                         <span class="badge badge-cyan" style="font-size: 13px; font-weight: 700;">
                           ${typeof p == "number" ? p.toFixed(2) : p}
@@ -2971,7 +2971,7 @@ let m = class extends z {
                         <input
                           type="range"
                           style="flex: 1; accent-color: #38bdf8; cursor: pointer;"
-                          min=${r}
+                          min=${n}
                           max=${l}
                           step=${d}
                           .value=${String(p)}
@@ -2981,7 +2981,7 @@ let m = class extends z {
                           class="input-text"
                           type="number"
                           style="width: 80px; padding: 4px 8px; font-size: 12px;"
-                          min=${r}
+                          min=${n}
                           max=${l}
                           step=${d}
                           .value=${String(p)}
@@ -2991,8 +2991,8 @@ let m = class extends z {
 
                       <!-- Real-time term membership degrees -->
                       <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
-                        ${Object.keys(n.terms || {}).map((c) => {
-        const u = n.terms[c], h = Pt(u.type, u.params, p, l - r), f = h > 0.01;
+                        ${Object.keys(r.terms || {}).map((c) => {
+        const u = r.terms[c], h = Vt(u.type, u.params, p, l - n), f = h > 0.01;
         return o`
                             <span
                               class="chip"
@@ -3015,29 +3015,29 @@ let m = class extends z {
             </h4>
 
             ${a.length === 0 ? o`<p class="subtitle">No output variables defined yet.</p>` : a.map((i) => {
-      const n = t[i], r = this._simResults ? this._simResults[i] : null, l = n.unit_of_measurement || "", d = this._config.inference === "mamdani";
+      const r = t[i], n = this._simResults ? this._simResults[i] : null, l = r.unit_of_measurement || "", d = this._config.inference === "mamdani";
       return o`
                     <div class="section-box" style="margin-bottom: 16px; padding: 14px;">
                       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                         <div>
                           <strong style="font-size: 15px; color: var(--fuzzy-text);">${i}</strong>
-                          <span class="chip" style="margin-left: 8px;">Range: [${n.range[0]}, ${n.range[1]}]</span>
+                          <span class="chip" style="margin-left: 8px;">Range: [${r.range[0]}, ${r.range[1]}]</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                          ${r?.dominant_term ? o`<span class="badge badge-amber">Dominant: ${r.dominant_term}</span>` : ""}
+                          ${n?.dominant_term ? o`<span class="badge badge-amber">Dominant: ${n.dominant_term}</span>` : ""}
                           <span class="badge badge-emerald" style="font-size: 14px; font-weight: 700;">
-                            ${r?.defuzzified_value !== void 0 && r?.defuzzified_value !== null ? `${r.defuzzified_value.toFixed(2)}${l ? ` ${l}` : ""}` : "N/A"}
+                            ${n?.defuzzified_value !== void 0 && n?.defuzzified_value !== null ? `${n.defuzzified_value.toFixed(2)}${l ? ` ${l}` : ""}` : "N/A"}
                           </span>
                         </div>
                       </div>
 
-                      ${d && r?.universe && r.universe.length > 0 ? o`
+                      ${d && n?.universe && n.universe.length > 0 ? o`
                             <fuzzy-aggregated-graph
-                              .universe=${r.universe}
-                              .aggregatedSet=${r.aggregated_set || []}
-                              .defuzzifiedValue=${r.defuzzified_value}
-                              .defuzzifier=${n.defuzzifier || this._config.defuzzifier || "cog"}
-                              .dominantTerm=${r.dominant_term || ""}
+                              .universe=${n.universe}
+                              .aggregatedSet=${n.aggregated_set || []}
+                              .defuzzifiedValue=${n.defuzzified_value}
+                              .defuzzifier=${r.defuzzifier || this._config.defuzzifier || "cog"}
+                              .dominantTerm=${n.dominant_term || ""}
                               .unit=${l}
                               .outputName=${i}
                             ></fuzzy-aggregated-graph>
@@ -3052,15 +3052,15 @@ let m = class extends z {
                                   ⚡ Sugeno Crisp Singleton Weighting (${this._config.defuzzifier || "weighted_average"})
                                 </div>
                                 <div style="font-size: 13px; color: var(--fuzzy-text);">
-                                  Weighted Output: <strong>${r?.defuzzified_value !== void 0 ? r.defuzzified_value.toFixed(2) : "0.00"}${l ? ` ${l}` : ""}</strong>
+                                  Weighted Output: <strong>${n?.defuzzified_value !== void 0 ? n.defuzzified_value.toFixed(2) : "0.00"}${l ? ` ${l}` : ""}</strong>
                                 </div>
                               </div>
                             `}
 
                       <!-- Term activations chips -->
-                      ${r?.term_activations ? o`
+                      ${n?.term_activations ? o`
                             <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
-                              ${Object.entries(r.term_activations).map(([p, c]) => {
+                              ${Object.entries(n.term_activations).map(([p, c]) => {
         const u = c > 0.01;
         return o`
                                   <span
@@ -3088,15 +3088,15 @@ let m = class extends z {
           ${!this._simResults || Object.keys(this._simResults).length === 0 ? o`<p class="subtitle">Run simulation to inspect rule firings.</p>` : o`
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                   ${(() => {
-      const i = a[0], n = this._simResults[i]?.rule_strengths || [];
-      return n.length === 0 ? o`<p class="subtitle">No rules fired or defined.</p>` : n.map((r) => {
-        const l = r.firing_strength || 0, d = l > 0.01;
+      const i = a[0], r = this._simResults[i]?.rule_strengths || [];
+      return r.length === 0 ? o`<p class="subtitle">No rules fired or defined.</p>` : r.map((n) => {
+        const l = n.firing_strength || 0, d = l > 0.01;
         return o`
                         <div
                           style="display: flex; align-items: center; gap: 12px; background: ${d ? "rgba(56, 189, 248, 0.08)" : "rgba(15, 23, 42, 0.5)"}; padding: 10px 14px; border-radius: var(--fuzzy-radius-md); border: 1px solid ${d ? "rgba(56, 189, 248, 0.35)" : "rgba(255, 255, 255, 0.08)"};"
                         >
                           <div style="font-family: monospace; font-size: 12px; flex: 1; color: ${d ? "#f8fafc" : "#cbd5e1"}; font-weight: ${d ? "600" : "400"};">
-                            ${r.rule}
+                            ${n.rule}
                           </div>
                           <div style="width: 140px; display: flex; align-items: center; gap: 8px;">
                             <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
@@ -3192,16 +3192,16 @@ let m = class extends z {
                     <span class="badge badge-purple" style="width: 24px; justify-content: center;">${a + 1}</span>
                     <span class="badge badge-cyan">IF</span>
                     ${i.conditions.map(
-        (n, r) => o`
-                        ${r > 0 ? o`<span class="badge badge-purple">${n.connector}</span>` : ""}
+        (r, n) => o`
+                        ${n > 0 ? o`<span class="badge badge-purple">${r.connector}</span>` : ""}
                         <span class="chip" style="font-weight: 600; color: #38bdf8; background: rgba(56, 189, 248, 0.1);">
-                          ${n.variable}
+                          ${r.variable}
                         </span>
                         <span class="chip" style="color: #94a3b8;">
-                          ${n.hedge ? `is ${n.hedge}` : "is"}
+                          ${r.hedge ? `is ${r.hedge}` : "is"}
                         </span>
                         <span class="chip" style="font-weight: 600; color: #34d399; background: rgba(52, 211, 153, 0.1);">
-                          ${n.term}
+                          ${r.term}
                         </span>
                       `
       )}
@@ -3362,8 +3362,8 @@ let m = class extends z {
                           class="input-select"
                           style="width: 85px; font-weight: 700; color: #c084fc; border-color: rgba(168, 85, 247, 0.4);"
                           .value=${s.connector}
-                          @change=${(n) => {
-        s.connector = n.target.value, this.requestUpdate();
+                          @change=${(r) => {
+        s.connector = r.target.value, this.requestUpdate();
       }}
                         >
                           <option value="AND">AND</option>
@@ -3376,9 +3376,9 @@ let m = class extends z {
                     class="input-select"
                     style="flex: 1; min-width: 140px; font-weight: 600;"
                     .value=${s.variable}
-                    @change=${(n) => this._onBuilderConditionVarChange(a, n.target.value)}
+                    @change=${(r) => this._onBuilderConditionVarChange(a, r.target.value)}
                   >
-                    ${e.map((n) => o`<option value=${n}>${n}</option>`)}
+                    ${e.map((r) => o`<option value=${r}>${r}</option>`)}
                   </select>
 
                   <!-- Hedge -->
@@ -3386,8 +3386,8 @@ let m = class extends z {
                     class="input-select"
                     style="width: 130px;"
                     .value=${s.hedge}
-                    @change=${(n) => {
-        s.hedge = n.target.value, this.requestUpdate();
+                    @change=${(r) => {
+        s.hedge = r.target.value, this.requestUpdate();
       }}
                   >
                     <option value="">IS</option>
@@ -3403,11 +3403,11 @@ let m = class extends z {
                     class="input-select"
                     style="flex: 1; min-width: 120px; font-weight: 600; color: #34d399;"
                     .value=${s.term}
-                    @change=${(n) => {
-        s.term = n.target.value, this.requestUpdate();
+                    @change=${(r) => {
+        s.term = r.target.value, this.requestUpdate();
       }}
                   >
-                    ${i.map((n) => o`<option value=${n}>${n}</option>`)}
+                    ${i.map((r) => o`<option value=${r}>${r}</option>`)}
                   </select>
 
                   ${this._builderConditions.length > 1 ? o`
@@ -3535,8 +3535,8 @@ let m = class extends z {
   }
 };
 m.styles = [
-  ct,
-  R`
+  ut,
+  T`
       .tabs {
         display: flex;
         gap: 8px;
@@ -3769,14 +3769,14 @@ b([
   g()
 ], m.prototype, "_rulesViewMode", 2);
 m = b([
-  L("fuzzy-system-editor")
+  j("fuzzy-system-editor")
 ], m);
-var Ie = Object.defineProperty, Ce = Object.getOwnPropertyDescriptor, P = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? Ce(t, s) : t, n = e.length - 1, r; n >= 0; n--)
-    (r = e[n]) && (i = (a ? r(t, s, i) : r(i)) || i);
+var Ie = Object.defineProperty, Te = Object.getOwnPropertyDescriptor, F = (e, t, s, a) => {
+  for (var i = a > 1 ? void 0 : a ? Te(t, s) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
   return a && i && Ie(t, s, i), i;
 };
-let C = class extends z {
+let E = class extends z {
   constructor() {
     super(...arguments), this._templates = [], this._selectedTemplate = null, this._systemId = "", this._systemName = "", this._loading = !1, this._error = "";
   }
@@ -3790,7 +3790,7 @@ let C = class extends z {
     if (this.hass) {
       this._loading = !0;
       try {
-        this._templates = await be(this.hass);
+        this._templates = await ve(this.hass);
       } catch (e) {
         this._error = e.message || "Failed to load templates";
       } finally {
@@ -3810,7 +3810,7 @@ let C = class extends z {
     }
     this._loading = !0, this._error = "";
     try {
-      const t = await ye(
+      const t = await _e(
         this.hass,
         this._selectedTemplate.id,
         e,
@@ -3908,9 +3908,9 @@ let C = class extends z {
     `;
   }
 };
-C.styles = [
-  ct,
-  R`
+E.styles = [
+  ut,
+  T`
       .template-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -3961,34 +3961,332 @@ C.styles = [
       }
     `
 ];
-P([
+F([
   v({ attribute: !1 })
-], C.prototype, "hass", 2);
-P([
+], E.prototype, "hass", 2);
+F([
   g()
-], C.prototype, "_templates", 2);
-P([
+], E.prototype, "_templates", 2);
+F([
   g()
-], C.prototype, "_selectedTemplate", 2);
-P([
+], E.prototype, "_selectedTemplate", 2);
+F([
   g()
-], C.prototype, "_systemId", 2);
-P([
+], E.prototype, "_systemId", 2);
+F([
   g()
-], C.prototype, "_systemName", 2);
-P([
+], E.prototype, "_systemName", 2);
+F([
   g()
-], C.prototype, "_loading", 2);
-P([
+], E.prototype, "_loading", 2);
+F([
   g()
-], C.prototype, "_error", 2);
-C = P([
-  L("fuzzy-template-modal")
-], C);
-var Ee = Object.defineProperty, Te = Object.getOwnPropertyDescriptor, vt = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? Te(t, s) : t, n = e.length - 1, r; n >= 0; n--)
-    (r = e[n]) && (i = (a ? r(t, s, i) : r(i)) || i);
-  return a && i && Ee(t, s, i), i;
+], E.prototype, "_error", 2);
+E = F([
+  j("fuzzy-template-modal")
+], E);
+var Oe = Object.defineProperty, Me = Object.getOwnPropertyDescriptor, _t = (e, t, s, a) => {
+  for (var i = a > 1 ? void 0 : a ? Me(t, s) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
+  return a && i && Oe(t, s, i), i;
+};
+let st = class extends z {
+  setConfig(e) {
+    this._config = {
+      show_graph: !0,
+      show_inputs: !0,
+      show_rules: !0,
+      ...e
+    };
+  }
+  _getAvailableSystems() {
+    const e = /* @__PURE__ */ new Set();
+    if (!this.hass?.states) return ["fan_simulator", "tipping"];
+    for (const [t, s] of Object.entries(this.hass.states)) {
+      const a = t.match(/^sensor\.fuzzy_([a-zA-Z0-9_-]+)_status$/);
+      a && e.add(a[1]), s.attributes?.system && e.add(s.attributes.system);
+    }
+    return e.size === 0 && (e.add("fan_simulator"), e.add("tipping")), Array.from(e).sort();
+  }
+  _valueChanged(e) {
+    if (!this._config) return;
+    const t = e.target, s = t.dataset.configValue;
+    if (!s) return;
+    let a;
+    t.type === "checkbox" ? a = t.checked : a = t.value, this._config = {
+      ...this._config,
+      [s]: a
+    };
+    const i = new CustomEvent("config-changed", {
+      detail: { config: this._config },
+      bubbles: !0,
+      composed: !0
+    });
+    this.dispatchEvent(i);
+  }
+  render() {
+    if (!this.hass || !this._config)
+      return o``;
+    const e = this._getAvailableSystems(), t = this._config.system_id || e[0] || "";
+    return o`
+      <div class="card-config">
+        <!-- Fuzzy System Selector -->
+        <div class="form-group">
+          <label class="form-label" for="system-select">
+            Target Fuzzy System
+            <span class="system-badge">${e.length} detected</span>
+          </label>
+          <select
+            id="system-select"
+            class="select-field"
+            data-config-value="system_id"
+            .value=${t}
+            @change=${this._valueChanged}
+          >
+            ${e.map(
+      (s) => o`
+                <option value=${s} ?selected=${s === t}>
+                  ${s} (${this.hass.states[`sensor.fuzzy_${s}_status`]?.state || "active"})
+                </option>
+              `
+    )}
+          </select>
+          <div class="form-helper">
+            Select the fuzzy logic controller to monitor and visualize on this dashboard card.
+          </div>
+        </div>
+
+        <!-- Custom Card Title -->
+        <div class="form-group">
+          <label class="form-label" for="card-title">Card Title (Optional)</label>
+          <input
+            id="card-title"
+            class="input-field"
+            type="text"
+            data-config-value="title"
+            placeholder="e.g. Living Room Fan Controller"
+            .value=${this._config.title || ""}
+            @input=${this._valueChanged}
+          />
+          <div class="form-helper">Leave blank to use the fuzzy system name automatically.</div>
+        </div>
+
+        <!-- Display Toggles -->
+        <div class="form-group">
+          <label class="form-label">Visual Card Components</label>
+          <div class="toggles-group">
+            <!-- Aggregated Graph Toggle -->
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-title">Aggregated Output Waveform</span>
+                <span class="toggle-desc">Real-time shaded fuzzy set distribution with defuzzification slice</span>
+              </div>
+              <div class="switch">
+                <input
+                  type="checkbox"
+                  data-config-value="show_graph"
+                  .checked=${this._config.show_graph !== !1}
+                  @change=${this._valueChanged}
+                />
+                <span class="slider"></span>
+              </div>
+            </label>
+
+            <!-- Inputs Grid Toggle -->
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-title">Live Inputs Grid</span>
+                <span class="toggle-desc">Show input metric pills and values feeding into the engine</span>
+              </div>
+              <div class="switch">
+                <input
+                  type="checkbox"
+                  data-config-value="show_inputs"
+                  .checked=${this._config.show_inputs !== !1}
+                  @change=${this._valueChanged}
+                />
+                <span class="slider"></span>
+              </div>
+            </label>
+
+            <!-- Rule Strengths Toggle -->
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-title">Active Rule Firing Strengths</span>
+                <span class="toggle-desc">Show firing strength progress bars for active rules</span>
+              </div>
+              <div class="switch">
+                <input
+                  type="checkbox"
+                  data-config-value="show_rules"
+                  .checked=${this._config.show_rules !== !1}
+                  @change=${this._valueChanged}
+                />
+                <span class="slider"></span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+};
+st.styles = T`
+    :host {
+      display: block;
+      padding: 16px 0;
+      color: var(--primary-text-color, #f8fafc);
+      font-family: var(--ha-font-family, sans-serif);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--primary-text-color, #e2e8f0);
+    }
+
+    .form-helper {
+      font-size: 11px;
+      color: var(--secondary-text-color, #94a3b8);
+      margin-top: 4px;
+    }
+
+    .input-field,
+    .select-field {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 14px;
+      background: var(--card-background-color, #1e293b);
+      border: 1px solid var(--divider-color, rgba(255, 255, 255, 0.12));
+      border-radius: 8px;
+      color: var(--primary-text-color, #f8fafc);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .input-field:focus,
+    .select-field:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+
+    .select-field option {
+      background: #1e293b;
+      color: #f8fafc;
+    }
+
+    .toggles-group {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .toggle-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toggle-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .toggle-desc {
+      font-size: 11px;
+      color: var(--secondary-text-color, #94a3b8);
+    }
+
+    /* Switch styling */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.15);
+      transition: 0.3s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #0284c7;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    .system-badge {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+    }
+  `;
+_t([
+  v({ attribute: !1 })
+], st.prototype, "hass", 2);
+_t([
+  g()
+], st.prototype, "_config", 2);
+st = _t([
+  j("fuzzy-system-card-editor")
+], st);
+var Re = Object.defineProperty, je = Object.getOwnPropertyDescriptor, xt = (e, t, s, a) => {
+  for (var i = a > 1 ? void 0 : a ? je(t, s) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
+  return a && i && Re(t, s, i), i;
 };
 window.customCards = window.customCards || [];
 window.customCards.some((e) => e.type === "fuzzy-system-card") || window.customCards.push({
@@ -3998,14 +4296,38 @@ window.customCards.some((e) => e.type === "fuzzy-system-card") || window.customC
   preview: !0,
   documentationURL: "https://github.com/dougransom/fuzzy_system"
 });
-let st = class extends z {
+let it = class extends z {
   constructor() {
     super(...arguments), this._config = {};
+  }
+  static async getConfigElement() {
+    return document.createElement("fuzzy-system-card-editor");
+  }
+  static getStubConfig(e) {
+    const t = /* @__PURE__ */ new Set();
+    if (e?.states)
+      for (const [a, i] of Object.entries(e.states)) {
+        const r = a.match(/^sensor\.fuzzy_([a-zA-Z0-9_-]+)_status$/);
+        r && t.add(r[1]), i.attributes?.system && t.add(i.attributes.system);
+      }
+    return {
+      type: "custom:fuzzy-system-card",
+      system_id: Array.from(t)[0] || "fan_simulator",
+      title: "",
+      show_graph: !0,
+      show_inputs: !0,
+      show_rules: !0
+    };
   }
   setConfig(e) {
     if (!e.system_id)
       throw new Error("Please define a 'system_id' for fuzzy-system-card (e.g. system_id: 'climate_controller').");
-    this._config = e;
+    this._config = {
+      show_graph: !0,
+      show_inputs: !0,
+      show_rules: !0,
+      ...e
+    };
   }
   getCardSize() {
     return 4;
@@ -4027,7 +4349,7 @@ let st = class extends z {
   render() {
     if (!this.hass || !this._config.system_id)
       return o`<ha-card><p style="padding: 16px;">Configuring fuzzy-system-card...</p></ha-card>`;
-    const { outputs: e } = this._findSensors(), t = this._config.system_id, s = this._config.title || `Fuzzy System: ${t}`, a = e[0], i = a?.stateObj?.attributes || {}, n = i.universe || [], r = i.aggregated_set || [], l = a?.stateObj?.state ? parseFloat(a.stateObj.state) : void 0, d = i.unit_of_measurement || "", p = i.defuzzifier || "cog", c = i.dominant_term || "", u = i.inputs || {}, h = i.rule_strengths || [];
+    const { outputs: e } = this._findSensors(), t = this._config.system_id, s = this._config.title || `Fuzzy System: ${t}`, a = e[0], i = a?.stateObj?.attributes || {}, r = i.universe || [], n = i.aggregated_set || [], l = a?.stateObj?.state ? parseFloat(a.stateObj.state) : void 0, d = i.unit_of_measurement || "", p = i.defuzzifier || "cog", c = i.dominant_term || "", u = i.inputs || {}, h = i.rule_strengths || [];
     return o`
       <ha-card>
         <div class="card-header">
@@ -4044,7 +4366,7 @@ let st = class extends z {
           </div>
         </div>
 
-        ${Object.keys(u).length > 0 ? o`
+        ${this._config.show_inputs !== !1 && Object.keys(u).length > 0 ? o`
               <div class="section-title">Live Inputs</div>
               <div class="inputs-grid">
                 ${Object.entries(u).map(
@@ -4058,18 +4380,18 @@ let st = class extends z {
               </div>
             ` : ""}
 
-        ${n.length > 0 ? o`
+        ${this._config.show_graph !== !1 && r.length > 0 ? o`
               <div class="section-title">Live Aggregated Output Set</div>
               <fuzzy-aggregated-graph
-                .universe=${n}
-                .aggregatedSet=${r}
+                .universe=${r}
+                .aggregatedSet=${n}
                 .defuzzifiedValue=${l}
                 .defuzzifier=${p}
                 .dominantTerm=${c}
                 .unit=${d}
                 .outputName=${a.entityId.replace(`sensor.fuzzy_${t}_`, "")}
               ></fuzzy-aggregated-graph>
-            ` : o`
+            ` : e.length > 0 ? o`
               <div class="section-title">Outputs</div>
               ${e.map(
       (f) => o`
@@ -4079,9 +4401,9 @@ let st = class extends z {
                   </div>
                 `
     )}
-            `}
+            ` : ""}
 
-        ${h.length > 0 ? o`
+        ${this._config.show_rules !== !1 && h.length > 0 ? o`
               <div class="section-title">Active Rule Firing Strengths</div>
               ${h.slice(0, 4).map(
       (f, y) => o`
@@ -4101,7 +4423,7 @@ let st = class extends z {
     `;
   }
 };
-st.styles = R`
+it.styles = T`
     :host {
       display: block;
     }
@@ -4234,19 +4556,19 @@ st.styles = R`
       transition: width 0.3s ease;
     }
   `;
-vt([
+xt([
   v({ attribute: !1 })
-], st.prototype, "hass", 2);
-vt([
+], it.prototype, "hass", 2);
+xt([
   g()
-], st.prototype, "_config", 2);
-st = vt([
-  L("fuzzy-system-card")
-], st);
-var Me = Object.defineProperty, Oe = Object.getOwnPropertyDescriptor, T = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? Oe(t, s) : t, n = e.length - 1, r; n >= 0; n--)
-    (r = e[n]) && (i = (a ? r(t, s, i) : r(i)) || i);
-  return a && i && Me(t, s, i), i;
+], it.prototype, "_config", 2);
+it = xt([
+  j("fuzzy-system-card")
+], it);
+var Ne = Object.defineProperty, Pe = Object.getOwnPropertyDescriptor, O = (e, t, s, a) => {
+  for (var i = a > 1 ? void 0 : a ? Pe(t, s) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
+  return a && i && Ne(t, s, i), i;
 };
 let w = class extends z {
   constructor() {
@@ -4300,8 +4622,8 @@ let w = class extends z {
   }
 };
 w.styles = [
-  ct,
-  R`
+  ut,
+  T`
       :host {
         display: block;
         min-height: 100vh;
@@ -4359,32 +4681,32 @@ w.styles = [
       }
     `
 ];
-T([
+O([
   v({ attribute: !1 })
 ], w.prototype, "hass", 2);
-T([
+O([
   v({ type: Boolean })
 ], w.prototype, "narrow", 2);
-T([
+O([
   v({ type: Object })
 ], w.prototype, "route", 2);
-T([
+O([
   v({ type: Object })
 ], w.prototype, "panel", 2);
-T([
+O([
   g()
 ], w.prototype, "_view", 2);
-T([
+O([
   g()
 ], w.prototype, "_selectedConfig", 2);
-T([
+O([
   g()
 ], w.prototype, "_selectedEntryId", 2);
-T([
+O([
   g()
 ], w.prototype, "_selectedSource", 2);
-w = T([
-  L("fuzzy-system-panel")
+w = O([
+  j("fuzzy-system-panel")
 ], w);
 export {
   w as FuzzySystemPanel

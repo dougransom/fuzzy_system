@@ -3,6 +3,7 @@ import { property, state } from "lit/decorators.js";
 import { safeCustomElement } from "../utils/custom-element";
 import { HomeAssistant } from "../types";
 import "./aggregated-graph";
+import "./fuzzy-system-card-editor";
 
 // Register custom card in Home Assistant's card picker
 (window as any).customCards = (window as any).customCards || [];
@@ -155,11 +156,40 @@ export class FuzzySystemCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config: any = {};
 
+  public static async getConfigElement() {
+    return document.createElement("fuzzy-system-card-editor");
+  }
+
+  public static getStubConfig(hass: any) {
+    const systems = new Set<string>();
+    if (hass?.states) {
+      for (const [entityId, stateObj] of Object.entries(hass.states as Record<string, any>)) {
+        const match = entityId.match(/^sensor\.fuzzy_([a-zA-Z0-9_-]+)_status$/);
+        if (match) systems.add(match[1]);
+        if (stateObj.attributes?.system) systems.add(stateObj.attributes.system);
+      }
+    }
+    const systemList = Array.from(systems);
+    return {
+      type: "custom:fuzzy-system-card",
+      system_id: systemList[0] || "fan_simulator",
+      title: "",
+      show_graph: true,
+      show_inputs: true,
+      show_rules: true,
+    };
+  }
+
   setConfig(config: any) {
     if (!config.system_id) {
       throw new Error("Please define a 'system_id' for fuzzy-system-card (e.g. system_id: 'climate_controller').");
     }
-    this._config = config;
+    this._config = {
+      show_graph: true,
+      show_inputs: true,
+      show_rules: true,
+      ...config,
+    };
   }
 
   getCardSize() {
@@ -230,7 +260,7 @@ export class FuzzySystemCard extends LitElement {
           </div>
         </div>
 
-        ${Object.keys(inputsMap).length > 0
+        ${this._config.show_inputs !== false && Object.keys(inputsMap).length > 0
           ? html`
               <div class="section-title">Live Inputs</div>
               <div class="inputs-grid">
@@ -246,7 +276,7 @@ export class FuzzySystemCard extends LitElement {
             `
           : ""}
 
-        ${universe.length > 0
+        ${this._config.show_graph !== false && universe.length > 0
           ? html`
               <div class="section-title">Live Aggregated Output Set</div>
               <fuzzy-aggregated-graph
@@ -259,7 +289,8 @@ export class FuzzySystemCard extends LitElement {
                 .outputName=${primaryOut.entityId.replace(`sensor.fuzzy_${sysId}_`, "")}
               ></fuzzy-aggregated-graph>
             `
-          : html`
+          : outputs.length > 0
+          ? html`
               <div class="section-title">Outputs</div>
               ${outputs.map(
                 (out) => html`
@@ -269,9 +300,10 @@ export class FuzzySystemCard extends LitElement {
                   </div>
                 `
               )}
-            `}
+            `
+          : ""}
 
-        ${ruleStrengths.length > 0
+        ${this._config.show_rules !== false && ruleStrengths.length > 0
           ? html`
               <div class="section-title">Active Rule Firing Strengths</div>
               ${ruleStrengths.slice(0, 4).map(

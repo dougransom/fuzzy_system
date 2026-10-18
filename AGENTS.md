@@ -37,3 +37,5 @@ Refer to [`README.md`](README.md) for the detailed project goals, technical spec
    - Run linting with `uv run ruff check`.
 5. **No Workspace Clutter**:
    - Keep all documentation, design docs, agent notes, and project goals localized inside `config/custom_components/fuzzy_system/`.
+6. **Documentation & Diagrams**:
+   - Always use Mermaid (`mermaid` code blocks) for diagrams, architectures, flowcharts, and state machines in markdown files.
