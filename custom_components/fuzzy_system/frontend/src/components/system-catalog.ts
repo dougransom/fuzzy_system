@@ -71,6 +71,120 @@ export class FuzzySystemCatalog extends LitElement {
         border-top: 1px solid var(--fuzzy-card-border);
       }
 
+      .card-live-outputs {
+        background: rgba(15, 23, 42, 0.45);
+        border: 1px solid var(--fuzzy-card-border);
+        border-radius: var(--fuzzy-radius-md);
+        padding: 12px 14px;
+        margin: 12px 0;
+      }
+
+      .live-outputs-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .live-outputs-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--fuzzy-text-secondary);
+      }
+
+      .live-outputs-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .output-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+        background: transparent;
+        color: var(--fuzzy-text);
+      }
+
+      .output-badge.live-active {
+        background: rgba(16, 185, 129, 0.12);
+        border-color: rgba(16, 185, 129, 0.35);
+        color: #34d399;
+      }
+
+      .output-badge.live-active:hover {
+        background: rgba(16, 185, 129, 0.22);
+        border-color: rgba(16, 185, 129, 0.6);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+      }
+
+      .output-badge.live-idle {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: var(--fuzzy-card-border);
+        color: var(--fuzzy-text-secondary);
+        cursor: default;
+      }
+
+      .output-name {
+        font-weight: 600;
+        color: var(--fuzzy-text);
+      }
+
+      .output-value {
+        font-weight: 700;
+      }
+
+      .dominant-term {
+        font-size: 11px;
+        opacity: 0.85;
+        font-style: italic;
+      }
+
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10b981;
+        box-shadow: 0 0 8px #10b981;
+        display: inline-block;
+        animation: pulse 2s infinite;
+      }
+
+      .idle-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #64748b;
+        display: inline-block;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(0.95);
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        70% {
+          transform: scale(1);
+          box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+        }
+        100% {
+          transform: scale(0.95);
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+      }
+
       .card-actions {
         display: flex;
         justify-content: flex-end;
@@ -162,6 +276,151 @@ export class FuzzySystemCatalog extends LitElement {
     }
   }
 
+  private _findOutputSensor(
+    systemId: string,
+    outputKey: string
+  ): { entityId: string; stateObj: any } | null {
+    if (!this.hass?.states) return null;
+    const sId = systemId.toLowerCase();
+    const oKey = outputKey.toLowerCase();
+
+    // Common entity ID patterns
+    const candidates = [
+      `sensor.fuzzy_${sId}_${oKey}`,
+      `sensor.${sId}_${oKey}`,
+      `sensor.fuzzy_${oKey}`,
+    ];
+
+    for (const id of candidates) {
+      if (this.hass.states[id]) {
+        return { entityId: id, stateObj: this.hass.states[id] };
+      }
+    }
+
+    // Fallback: search states by system attribute or substring
+    for (const [entityId, stateObj] of Object.entries(this.hass.states)) {
+      if (!entityId.startsWith("sensor.")) continue;
+      if (entityId.endsWith("_set") || entityId.endsWith("_status")) continue;
+
+      const attrs = stateObj.attributes || {};
+      if (
+        attrs.system === systemId &&
+        (entityId.endsWith(`_${oKey}`) || entityId.includes(oKey))
+      ) {
+        return { entityId, stateObj };
+      }
+    }
+
+    return null;
+  }
+
+  private _getInputsStatus(sys: SystemSummary): { total: number; bound: number } {
+    const inputs = sys.config?.inputs || {};
+    const total = Object.keys(inputs).length;
+    let bound = 0;
+    for (const inp of Object.values(inputs)) {
+      if (inp.entity_id && inp.entity_id.trim()) {
+        bound++;
+      }
+    }
+    return { total, bound };
+  }
+
+  private _openMoreInfo(entityId: string, e: Event) {
+    e.stopPropagation();
+    this.dispatchEvent(
+      new CustomEvent("hass-more-info", {
+        detail: { entityId },
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
+  private _renderLiveOutputs(sys: SystemSummary) {
+    const outputs = sys.config?.outputs || {};
+    const outputKeys = Object.keys(outputs);
+    if (outputKeys.length === 0) return html``;
+
+    const inputStatus = this._getInputsStatus(sys);
+
+    return html`
+      <div class="card-live-outputs">
+        <div class="live-outputs-header">
+          <span class="live-outputs-title">Live Runtime Outputs</span>
+          ${inputStatus.total > 0 && inputStatus.bound < inputStatus.total
+            ? html`
+                <span
+                  class="chip"
+                  style="color: #fbbf24; background: rgba(245, 158, 11, 0.1); font-size: 11px;"
+                  title="Some input antecedents do not have live sensor entities bound yet"
+                >
+                  ⚠️ ${inputStatus.total - inputStatus.bound} unbound input${inputStatus.total - inputStatus.bound > 1 ? "s" : ""}
+                </span>
+              `
+            : html`
+                <span
+                  class="chip"
+                  style="color: #34d399; background: rgba(52, 211, 153, 0.1); font-size: 11px;"
+                  title="Inputs bound to live sensors; rules actively evaluating"
+                >
+                  🟢 Reactive
+                </span>
+              `}
+        </div>
+
+        <div class="live-outputs-list">
+          ${outputKeys.map((outKey) => {
+            const outSensor = this._findOutputSensor(sys.system_id, outKey);
+            const outCfg = outputs[outKey] || {};
+            const unit =
+              outSensor?.stateObj?.attributes?.unit_of_measurement ||
+              outCfg.unit_of_measurement ||
+              "";
+            const dominantTerm = outSensor?.stateObj?.attributes?.dominant_term;
+            const stateVal = outSensor?.stateObj?.state;
+            const isValidNumber =
+              stateVal !== undefined &&
+              stateVal !== "unknown" &&
+              stateVal !== "unavailable" &&
+              !isNaN(parseFloat(stateVal));
+
+            if (outSensor && isValidNumber) {
+              const numDisplay = parseFloat(stateVal).toFixed(1);
+              return html`
+                <button
+                  class="output-badge live-active"
+                  @click=${(e: Event) => this._openMoreInfo(outSensor.entityId, e)}
+                  title="Entity: ${outSensor.entityId} — Click to view Home Assistant history graph and diagnostic attributes"
+                >
+                  <span class="pulse-dot"></span>
+                  <span class="output-name">${outKey}:</span>
+                  <span class="output-value">${numDisplay}${unit ? ` ${unit}` : ""}</span>
+                  ${dominantTerm
+                    ? html`<span class="dominant-term">(${dominantTerm})</span>`
+                    : ""}
+                </button>
+              `;
+            }
+
+            return html`
+              <div
+                class="output-badge live-idle"
+                title="${outSensor ? `Entity: ${outSensor.entityId} (State: ${stateVal})` : `Sensor entity not yet registered in Home Assistant`}"
+              >
+                <span class="idle-dot"></span>
+                <span class="output-name">${outKey}:</span>
+                <span class="output-value" style="color: var(--fuzzy-text-secondary);">
+                  ${stateVal === "unavailable" ? "Unavailable" : "Awaiting inputs"}
+                </span>
+              </div>
+            `;
+          })}
+        </div>
+      </div>
+    `;
+  }
+
   render() {
     const list = this._filteredSystems();
 
@@ -233,6 +492,8 @@ export class FuzzySystemCatalog extends LitElement {
                           </span>`
                         : ""}
                     </div>
+
+                    ${this._renderLiveOutputs(sys)}
 
                     <div class="card-metrics">
                       <span class="chip">${sys.input_count} inputs</span>
