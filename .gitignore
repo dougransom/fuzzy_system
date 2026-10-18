@@ -3,8 +3,8 @@
 env/
 venv/
 *.egg-info/
-dist/
-build/
+/dist/
+/build/
 
 # Python & Tool Caches
 __pycache__/
@@ -12,5 +12,5 @@ __pycache__/
 *.pyo
 .pytest_cache/
 .ruff_cache/
-.coverage
-htmlcov/
+# Node / Frontend
+node_modules/

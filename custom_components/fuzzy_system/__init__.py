@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
+from homeassistant.components import frontend
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import SERVICE_RELOAD, Platform
 from homeassistant.core import HomeAssistant, ServiceCall
@@ -172,6 +175,38 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         _LOGGER.info("Fuzzy System integration reloaded successfully")
 
     async_register_admin_service(hass, DOMAIN, SERVICE_RELOAD, _reload_config)
+
+    # Register static path for frontend assets and custom panel
+    frontend_dist_dir = Path(__file__).parent / "frontend" / "dist"
+    panel_file = frontend_dist_dir / "fuzzy-system-panel.js"
+    if panel_file.exists():
+        if hasattr(hass, "http"):
+            try:
+                await hass.http.async_register_static_paths(
+                    [
+                        StaticPathConfig(
+                            "/fuzzy_system_frontend",
+                            str(frontend_dist_dir),
+                            cache_headers=False,
+                        )
+                    ]
+                )
+            except Exception as err:
+                _LOGGER.debug("Could not register static path: %s", err)
+
+        try:
+            frontend.add_extra_js_url(hass, "/fuzzy_system_frontend/fuzzy-system-panel.js")
+            frontend.async_register_built_in_panel(
+                hass,
+                component_name="fuzzy-system-panel",
+                sidebar_title="Fuzzy Systems",
+                sidebar_icon="mdi:chart-bell-curve-cumulative",
+                frontend_url_path="fuzzy-system",
+                require_admin=True,
+            )
+            _LOGGER.info("Registered Fuzzy System frontend panel at /fuzzy-system")
+        except Exception as err:
+            _LOGGER.debug("Could not register frontend panel: %s", err)
 
     if DOMAIN in config:
         await _async_setup_fuzzy_systems(hass, config[DOMAIN], config)

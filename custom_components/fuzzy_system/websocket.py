@@ -17,10 +17,12 @@ from .const import (
     CONF_DEFUZZIFIER,
     CONF_DESCRIPTION,
     CONF_ENTITY_ID,
+    CONF_EPSILON,
     CONF_EXPOSE_SYSTEM_SENSOR,
     CONF_ICON,
     CONF_INFERENCE,
     CONF_INPUTS,
+    CONF_MAX_UPDATES_PER_PERIOD,
     CONF_NAME,
     CONF_OUTPUTS,
     CONF_RANGE,
@@ -29,9 +31,13 @@ from .const import (
     CONF_SYSTEM_ID,
     CONF_TERMS,
     CONF_UNIT_OF_MEASUREMENT,
+    CONF_UPDATE_PERIOD,
     DATA_ENTRIES,
     DATA_YAML_SYSTEMS,
     DEF_COG,
+    DEFAULT_EPSILON,
+    DEFAULT_MAX_UPDATES_PER_PERIOD,
+    DEFAULT_UPDATE_PERIOD,
     DOMAIN,
     INFERENCE_MAMDANI,
     SOURCE_CONFIG_ENTRY,
@@ -76,6 +82,7 @@ WS_OUTPUT_VAR_SCHEMA = vol.Schema(
         vol.Required(CONF_TERMS): vol.Schema({cv.string: WS_TERM_SCHEMA}),
         vol.Optional(CONF_RESOLUTION, default=100): vol.Coerce(int),
         vol.Optional(CONF_DEFUZZIFIER): vol.In(VALID_DEFUZZIFIERS),
+        vol.Optional(CONF_EPSILON): vol.All(vol.Coerce(float), vol.Range(min=0.0)),
         vol.Optional(CONF_NAME): cv.string,
         vol.Optional(CONF_ICON): cv.string,
         vol.Optional(CONF_UNIT_OF_MEASUREMENT): cv.string,
@@ -101,6 +108,27 @@ def _format_system_summary(
         "input_count": len(cfg.get(CONF_INPUTS, {})),
         "output_count": len(cfg.get(CONF_OUTPUTS, {})),
         "rule_count": len(cfg.get(CONF_RULES, [])),
+        "max_updates_per_period": cfg.get(
+            CONF_MAX_UPDATES_PER_PERIOD, DEFAULT_MAX_UPDATES_PER_PERIOD
+        ),
+        "update_period": cfg.get(CONF_UPDATE_PERIOD, DEFAULT_UPDATE_PERIOD),
+        "epsilon": cfg.get(CONF_EPSILON, DEFAULT_EPSILON),
+        "config": {
+            CONF_SYSTEM_ID: sys_id,
+            CONF_NAME: cfg.get(CONF_NAME, sys_id),
+            CONF_DESCRIPTION: cfg.get(CONF_DESCRIPTION, ""),
+            CONF_INFERENCE: cfg.get(CONF_INFERENCE, INFERENCE_MAMDANI),
+            CONF_DEFUZZIFIER: cfg.get(CONF_DEFUZZIFIER, DEF_COG),
+            CONF_EXPOSE_SYSTEM_SENSOR: cfg.get(CONF_EXPOSE_SYSTEM_SENSOR, True),
+            CONF_MAX_UPDATES_PER_PERIOD: cfg.get(
+                CONF_MAX_UPDATES_PER_PERIOD, DEFAULT_MAX_UPDATES_PER_PERIOD
+            ),
+            CONF_UPDATE_PERIOD: cfg.get(CONF_UPDATE_PERIOD, DEFAULT_UPDATE_PERIOD),
+            CONF_EPSILON: cfg.get(CONF_EPSILON, DEFAULT_EPSILON),
+            CONF_INPUTS: cfg.get(CONF_INPUTS, {}),
+            CONF_OUTPUTS: cfg.get(CONF_OUTPUTS, {}),
+            CONF_RULES: cfg.get(CONF_RULES, []),
+        },
     }
 
 
@@ -235,15 +263,25 @@ def _system_id_exists(
 @websocket_api.websocket_command(
     {
         vol.Required("type"): WS_TYPE_SAVE_SYSTEM,
-        vol.Required(CONF_SYSTEM_ID): cv.string,
+        vol.Optional(CONF_SYSTEM_ID): cv.string,
         vol.Optional(CONF_NAME): cv.string,
         vol.Optional(CONF_DESCRIPTION): cv.string,
         vol.Optional(CONF_INFERENCE, default=INFERENCE_MAMDANI): vol.In(VALID_INFERENCE_TYPES),
         vol.Optional(CONF_DEFUZZIFIER, default=DEF_COG): vol.In(VALID_DEFUZZIFIERS),
         vol.Optional(CONF_EXPOSE_SYSTEM_SENSOR, default=True): cv.boolean,
-        vol.Required(CONF_INPUTS): vol.Schema({cv.string: WS_INPUT_VAR_SCHEMA}),
-        vol.Required(CONF_OUTPUTS): vol.Schema({cv.string: WS_OUTPUT_VAR_SCHEMA}),
-        vol.Required(CONF_RULES): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional(CONF_MAX_UPDATES_PER_PERIOD, default=DEFAULT_MAX_UPDATES_PER_PERIOD): vol.All(
+            vol.Coerce(int), vol.Range(min=1)
+        ),
+        vol.Optional(CONF_UPDATE_PERIOD, default=DEFAULT_UPDATE_PERIOD): vol.All(
+            vol.Coerce(float), vol.Range(min=0.001)
+        ),
+        vol.Optional(CONF_EPSILON, default=DEFAULT_EPSILON): vol.All(
+            vol.Coerce(float), vol.Range(min=0.0)
+        ),
+        vol.Optional(CONF_INPUTS): vol.Schema({cv.string: WS_INPUT_VAR_SCHEMA}),
+        vol.Optional(CONF_OUTPUTS): vol.Schema({cv.string: WS_OUTPUT_VAR_SCHEMA}),
+        vol.Optional(CONF_RULES): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional("system"): dict,
         vol.Optional("entry_id"): cv.string,
     }
 )
@@ -255,7 +293,13 @@ async def ws_save_system(
     msg: dict[str, Any],
 ) -> None:
     """Save or update a fuzzy system as a ConfigEntry."""
-    system_id = cv.slugify(msg[CONF_SYSTEM_ID])
+    raw_system = msg.get("system") or msg
+    raw_sys_id = raw_system.get(CONF_SYSTEM_ID)
+    if not raw_sys_id:
+        connection.send_error(msg["id"], "invalid_format", "system_id is required.")
+        return
+
+    system_id = cv.slugify(raw_sys_id)
     domain_data = hass.data.get(DOMAIN, {})
     yaml_systems: dict[str, Any] = domain_data.get(DATA_YAML_SYSTEMS, {})
 
@@ -269,7 +313,7 @@ async def ws_save_system(
         )
         return
 
-    entry_id = msg.get("entry_id")
+    entry_id = msg.get("entry_id") or raw_system.get("entry_id")
 
     # Check for system_id collision with other entries
     if _system_id_exists(hass, system_id, exclude_entry_id=entry_id):
@@ -282,14 +326,19 @@ async def ws_save_system(
 
     system_data = {
         CONF_SYSTEM_ID: system_id,
-        CONF_NAME: msg.get(CONF_NAME) or system_id.replace("_", " ").title(),
-        CONF_DESCRIPTION: msg.get(CONF_DESCRIPTION, ""),
-        CONF_INFERENCE: msg[CONF_INFERENCE],
-        CONF_DEFUZZIFIER: msg[CONF_DEFUZZIFIER],
-        CONF_EXPOSE_SYSTEM_SENSOR: msg[CONF_EXPOSE_SYSTEM_SENSOR],
-        CONF_INPUTS: msg[CONF_INPUTS],
-        CONF_OUTPUTS: msg[CONF_OUTPUTS],
-        CONF_RULES: msg[CONF_RULES],
+        CONF_NAME: raw_system.get(CONF_NAME) or system_id.replace("_", " ").title(),
+        CONF_DESCRIPTION: raw_system.get(CONF_DESCRIPTION, ""),
+        CONF_INFERENCE: raw_system.get(CONF_INFERENCE, INFERENCE_MAMDANI),
+        CONF_DEFUZZIFIER: raw_system.get(CONF_DEFUZZIFIER, DEF_COG),
+        CONF_EXPOSE_SYSTEM_SENSOR: raw_system.get(CONF_EXPOSE_SYSTEM_SENSOR, True),
+        CONF_MAX_UPDATES_PER_PERIOD: raw_system.get(
+            CONF_MAX_UPDATES_PER_PERIOD, DEFAULT_MAX_UPDATES_PER_PERIOD
+        ),
+        CONF_UPDATE_PERIOD: raw_system.get(CONF_UPDATE_PERIOD, DEFAULT_UPDATE_PERIOD),
+        CONF_EPSILON: raw_system.get(CONF_EPSILON, DEFAULT_EPSILON),
+        CONF_INPUTS: raw_system.get(CONF_INPUTS, {}),
+        CONF_OUTPUTS: raw_system.get(CONF_OUTPUTS, {}),
+        CONF_RULES: raw_system.get(CONF_RULES, []),
     }
 
     # Case 1: Updating an existing config entry

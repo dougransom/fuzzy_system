@@ -1,0 +1,19 @@
+{
+  "name": "fuzzy-system-frontend",
+  "version": "0.1.0",
+  "description": "Visual Configuration UI and Workbench for Home Assistant Fuzzy System integration",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lit": "^3.2.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}
