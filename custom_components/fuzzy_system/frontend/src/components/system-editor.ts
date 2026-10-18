@@ -174,7 +174,7 @@ export class FuzzySystemEditor extends LitElement {
         name: "",
         description: "",
         inference: "mamdani",
-        defuzzifier: "centroid",
+        defuzzifier: "cog",
         expose_system_sensor: true,
         max_updates_per_period: 20,
         update_period: 0.05,
@@ -194,9 +194,9 @@ export class FuzzySystemEditor extends LitElement {
   private _handleInferenceChange(inference: "mamdani" | "sugeno") {
     this._config.inference = inference;
     if (inference === "sugeno") {
-      this._config.defuzzifier = "wtaverage";
+      this._config.defuzzifier = "weighted_average";
     } else {
-      this._config.defuzzifier = "centroid";
+      this._config.defuzzifier = "cog";
     }
     this.requestUpdate();
   }
@@ -455,7 +455,7 @@ export class FuzzySystemEditor extends LitElement {
     this._config.outputs[key] = {
       range: [0, 100],
       resolution: 100,
-      defuzzifier: this._config.inference === "sugeno" ? "wtaverage" : "centroid",
+      defuzzifier: this._config.inference === "sugeno" ? "weighted_average" : "cog",
       epsilon: this._config.epsilon ?? 0.01,
       unit_of_measurement: "%",
       terms: {
@@ -774,21 +774,23 @@ export class FuzzySystemEditor extends LitElement {
           <label class="form-label">Default Defuzzifier</label>
           <select
             class="input-select"
-            .value=${this._config.defuzzifier || "centroid"}
+            .value=${this._config.defuzzifier || (this._config.inference === "sugeno" ? "weighted_average" : "cog")}
             ?disabled=${isYaml}
             @change=${(e: any) => (this._config.defuzzifier = e.target.value)}
           >
             ${this._config.inference === "sugeno"
               ? html`
-                  <option value="wtaverage">Weighted Average (wtaverage)</option>
+                  <option value="weighted_average">Weighted Average (weighted_average)</option>
                   <option value="wtsum">Weighted Sum (wtsum)</option>
                 `
               : html`
-                  <option value="centroid">Centroid (Center of Gravity)</option>
-                  <option value="bisector">Bisector of Area</option>
+                  <option value="cog">Centroid / Center of Gravity (cog)</option>
+                  <option value="boa">Bisector of Area (boa)</option>
                   <option value="mom">Mean of Maximum (mom)</option>
                   <option value="som">Smallest of Maximum (som)</option>
                   <option value="lom">Largest of Maximum (lom)</option>
+                  <option value="cos">Center of Sums (cos)</option>
+                  <option value="coa">Center of Area (coa)</option>
                 `}
           </select>
         </div>

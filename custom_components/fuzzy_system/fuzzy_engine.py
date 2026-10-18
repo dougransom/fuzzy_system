@@ -13,7 +13,9 @@ import numpy as np
 import skfuzzy as fuzz
 
 from .const import (
+    DEF_BISECTOR,
     DEF_BOA,
+    DEF_CENTROID,
     DEF_COA,
     DEF_COG,
     DEF_COS,
@@ -21,6 +23,8 @@ from .const import (
     DEF_MOM,
     DEF_SOM,
     DEF_WEIGHTED_AVERAGE,
+    DEF_WTAVERAGE,
+    DEF_WTSUM,
     HEDGE_EXTREMELY,
     HEDGE_NOT,
     HEDGE_SLIGHTLY,
@@ -121,12 +125,16 @@ def _defuzz_cos(
 _DEFUZZIFIERS: dict[str, Callable[[np.ndarray, np.ndarray, list[np.ndarray]], float]] = {
     DEF_COG: lambda u, agg, _: float(fuzz.defuzz(u, agg, "centroid")),
     DEF_COA: lambda u, agg, _: float(fuzz.defuzz(u, agg, "centroid")),
+    DEF_CENTROID: lambda u, agg, _: float(fuzz.defuzz(u, agg, "centroid")),
     DEF_BOA: lambda u, agg, _: float(fuzz.defuzz(u, agg, "bisector")),
+    DEF_BISECTOR: lambda u, agg, _: float(fuzz.defuzz(u, agg, "bisector")),
     DEF_MOM: lambda u, agg, _: float(fuzz.defuzz(u, agg, "mom")),
     DEF_SOM: lambda u, agg, _: float(fuzz.defuzz(u, agg, "som")),
     DEF_LOM: lambda u, agg, _: float(fuzz.defuzz(u, agg, "lom")),
     DEF_COS: _defuzz_cos,
     DEF_WEIGHTED_AVERAGE: _defuzz_weighted_average,
+    DEF_WTAVERAGE: _defuzz_weighted_average,
+    DEF_WTSUM: _defuzz_weighted_average,
 }
 
 

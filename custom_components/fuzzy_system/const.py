@@ -12,6 +12,12 @@ DEF_MOM = "mom"  # Mean of Maxima
 DEF_SOM = "som"  # Smallest of Maxima
 DEF_LOM = "lom"  # Largest of Maxima
 
+# Defuzzification Aliases
+DEF_CENTROID = "centroid"
+DEF_BISECTOR = "bisector"
+DEF_WTAVERAGE = "wtaverage"
+DEF_WTSUM = "wtsum"
+
 VALID_DEFUZZIFIERS = [
     DEF_COG,
     DEF_COA,
@@ -21,6 +27,10 @@ VALID_DEFUZZIFIERS = [
     DEF_MOM,
     DEF_SOM,
     DEF_LOM,
+    DEF_CENTROID,
+    DEF_BISECTOR,
+    DEF_WTAVERAGE,
+    DEF_WTSUM,
 ]
 
 # Inference methods
