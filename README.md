@@ -4,6 +4,8 @@ The **Fuzzy System** custom component brings Mamdani and Sugeno fuzzy logic cont
 
 > **Credits & Acknowledgments**: Powered by [scikit-fuzzy (`skfuzzy`)](https://github.com/scikit-fuzzy/scikit-fuzzy) ([PyPI](https://pypi.org/project/scikit-fuzzy/)), a robust fuzzy logic library built on top of SciPy. Special thanks to the `scikit-fuzzy` maintainers and contributors for providing the underlying membership math and defuzzification algorithms!
 
+> 📖 **Visual Tutorial**: See our [**Step-by-Step Visual Tutorial & Walkthrough**](docs/tutorial.md) with interface screenshots for creating systems, dragging SVG curves, building rules visually, and setting up dashboard cards without writing YAML.
+
 ---
 
 ## Project Goals
