@@ -1,0 +1,23 @@
+{
+  "entity": {
+    "sensor": {
+      "fuzzy_output": {
+        "default": "mdi:variable"
+      },
+      "fuzzy_set": {
+        "default": "mdi:chart-bell-curve-cumulative"
+      },
+      "system_status": {
+        "default": "mdi:cpu-64-bit"
+      }
+    }
+  },
+  "services": {
+    "simulate": {
+      "service": "mdi:calculator"
+    },
+    "explain": {
+      "service": "mdi:comment-question-outline"
+    }
+  }
+}

@@ -20,8 +20,8 @@ The primary goal of this project is to implement **Fuzzy Control for Home Assist
 5. **Distribution & Setup Options**:
    - Support standard YAML configuration and UI Config Flow.
    - Maintain seamless installation via HACS (Home Assistant Community Store).
-6. **Code Quality & Testing**: Maintain rigorous unit and integration tests using `pytest` alongside Home Assistant core developer tooling (`ruff`, `hassfest`).
-7. **Eventual Home Assistant Core Integration**: Architect, test, and document the integration to meet Home Assistant Core architectural standards (Platinum quality scale, 100% typing, and strict separation of concerns) for eventual adoption into Home Assistant Core as a first-class built-in helper (alongside Threshold, Derivative, Min/Max, and Filter).
+6. **Code Quality & Quality Scale (Gold Certified)**: Certified **Gold** (minimum Silver) on the [Home Assistant Quality Scale](https://contributors.home-assistant.io/core/quality-scale/), enforcing strictly $\ge 95\%$ test coverage in CI, typed `entry.runtime_data` architecture, native diagnostics platform, reconfiguration flow, and automatic repair issue tracking.
+7. **Eventual Home Assistant Core Integration**: Architect, test, and document the integration to meet Home Assistant Core architectural standards for eventual adoption into Home Assistant Core as a first-class built-in helper (alongside Threshold, Derivative, Min/Max, and Filter).
 
 ---
 

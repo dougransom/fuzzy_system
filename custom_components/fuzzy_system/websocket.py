@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
+from functools import wraps
 from typing import Any
 
 import voluptuous as vol
@@ -13,24 +15,17 @@ from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers import config_validation as cv
 
 from .const import (
-    CONF_DEFAULT,
     CONF_DEFUZZIFIER,
     CONF_DESCRIPTION,
-    CONF_ENTITY_ID,
     CONF_EPSILON,
     CONF_EXPOSE_SYSTEM_SENSOR,
-    CONF_ICON,
     CONF_INFERENCE,
     CONF_INPUTS,
     CONF_MAX_UPDATES_PER_PERIOD,
     CONF_NAME,
     CONF_OUTPUTS,
-    CONF_RANGE,
-    CONF_RESOLUTION,
     CONF_RULES,
     CONF_SYSTEM_ID,
-    CONF_TERMS,
-    CONF_UNIT_OF_MEASUREMENT,
     CONF_UPDATE_PERIOD,
     DATA_ENTRIES,
     DATA_YAML_SYSTEMS,
@@ -43,7 +38,6 @@ from .const import (
     SOURCE_CONFIG_ENTRY,
     SOURCE_YAML,
     VALID_DEFUZZIFIERS,
-    VALID_HEDGES,
     VALID_INFERENCE_TYPES,
     WS_TYPE_DELETE_SYSTEM,
     WS_TYPE_GET_SYSTEM,
@@ -54,40 +48,39 @@ from .const import (
     WS_TYPE_SIMULATE,
 )
 from .fuzzy_engine import FuzzySystemEngine
+from .schema import WS_INPUT_VAR_SCHEMA, WS_OUTPUT_VAR_SCHEMA
+from .services import get_system_data
 from .templates import get_templates, instantiate_template
 
 _LOGGER = logging.getLogger(__name__)
 
-WS_TERM_SCHEMA = vol.Schema(
-    {
-        vol.Required("type"): cv.string,
-        vol.Required("params"): vol.All(cv.ensure_list, [vol.Coerce(float)]),
-        vol.Optional("hedge"): vol.In(VALID_HEDGES),
-    }
-)
 
-WS_INPUT_VAR_SCHEMA = vol.Schema(
-    {
-        vol.Optional(CONF_ENTITY_ID): cv.string,
-        vol.Required(CONF_RANGE): vol.All(cv.ensure_list, [vol.Coerce(float)]),
-        vol.Required(CONF_TERMS): vol.Schema({cv.string: WS_TERM_SCHEMA}),
-        vol.Optional(CONF_DEFAULT, default=0.0): vol.Coerce(float),
-        vol.Optional(CONF_RESOLUTION, default=100): vol.Coerce(int),
-    }
-)
+def ws_handle_errors(
+    error_code: str,
+    expected_exceptions: type[Exception] | tuple[type[Exception], ...] = Exception,
+    log_exception: bool = False,
+) -> Callable[..., Any]:
+    """Catch exceptions in async websocket commands and return standard error responses."""
 
-WS_OUTPUT_VAR_SCHEMA = vol.Schema(
-    {
-        vol.Required(CONF_RANGE): vol.All(cv.ensure_list, [vol.Coerce(float)]),
-        vol.Required(CONF_TERMS): vol.Schema({cv.string: WS_TERM_SCHEMA}),
-        vol.Optional(CONF_RESOLUTION, default=100): vol.Coerce(int),
-        vol.Optional(CONF_DEFUZZIFIER): vol.In(VALID_DEFUZZIFIERS),
-        vol.Optional(CONF_EPSILON): vol.All(vol.Coerce(float), vol.Range(min=0.0)),
-        vol.Optional(CONF_NAME): cv.string,
-        vol.Optional(CONF_ICON): cv.string,
-        vol.Optional(CONF_UNIT_OF_MEASUREMENT): cv.string,
-    }
-)
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        @wraps(func)
+        async def wrapper(
+            hass: HomeAssistant,
+            connection: websocket_api.ActiveConnection,
+            msg: dict[str, Any],
+            *args: Any,
+            **kwargs: Any,
+        ) -> None:
+            try:
+                await func(hass, connection, msg, *args, **kwargs)
+            except expected_exceptions as err:
+                if log_exception:
+                    _LOGGER.exception("WebSocket %s error: %s", func.__name__, err)
+                connection.send_error(msg["id"], error_code, str(err))
+
+        return wrapper
+
+    return decorator
 
 
 def _format_system_summary(
@@ -192,51 +185,18 @@ async def ws_get_system(
         )
         return
 
-    domain_data = hass.data.get(DOMAIN, {})
-    yaml_systems: dict[str, Any] = domain_data.get(DATA_YAML_SYSTEMS, {})
-    entry_systems: dict[str, Any] = domain_data.get(DATA_ENTRIES, {})
-
-    # Check by entry_id first
-    if entry_id and entry_id in entry_systems:
-        info = entry_systems[entry_id]
+    info = get_system_data(hass, system_id=sys_id, entry_id=entry_id)
+    if info:
         connection.send_result(
             msg["id"],
             {
                 "system_id": info.get("system_id"),
-                "source": SOURCE_CONFIG_ENTRY,
-                "entry_id": entry_id,
-                "config": info.get("config", {}),
+                "source": info.get("source"),
+                "entry_id": info.get("entry_id"),
+                "config": dict(info.get("config", {})),
             },
         )
         return
-
-    # Check by system_id
-    if sys_id:
-        if sys_id in yaml_systems:
-            info = yaml_systems[sys_id]
-            connection.send_result(
-                msg["id"],
-                {
-                    "system_id": sys_id,
-                    "source": SOURCE_YAML,
-                    "entry_id": None,
-                    "config": info.get("config", {}),
-                },
-            )
-            return
-
-        for e_id, info in entry_systems.items():
-            if info.get("system_id") == sys_id:
-                connection.send_result(
-                    msg["id"],
-                    {
-                        "system_id": sys_id,
-                        "source": SOURCE_CONFIG_ENTRY,
-                        "entry_id": e_id,
-                        "config": info.get("config", {}),
-                    },
-                )
-                return
 
     connection.send_error(
         msg["id"],
@@ -432,6 +392,7 @@ async def ws_delete_system(
 )
 @websocket_api.require_admin
 @websocket_api.async_response
+@ws_handle_errors(error_code="simulation_error", log_exception=True)
 async def ws_simulate(
     hass: HomeAssistant,
     connection: websocket_api.ActiveConnection,
@@ -440,14 +401,9 @@ async def ws_simulate(
     """Execute dry-run simulation of a fuzzy system without mutating sensor states."""
     system_config = msg["system_config"]
     inputs = msg["inputs"]
-
-    try:
-        engine = FuzzySystemEngine.from_dict(system_config)
-        simulation_result = engine.simulate(inputs)
-        connection.send_result(msg["id"], simulation_result)
-    except Exception as err:
-        _LOGGER.exception("Simulation execution failed: %s", err)
-        connection.send_error(msg["id"], "simulation_error", str(err))
+    engine = FuzzySystemEngine.from_dict(system_config)
+    simulation_result = engine.simulate(inputs)
+    connection.send_result(msg["id"], simulation_result)
 
 
 @websocket_api.websocket_command(
@@ -476,6 +432,7 @@ async def ws_list_templates(
 )
 @websocket_api.require_admin
 @websocket_api.async_response
+@ws_handle_errors(error_code="template_not_found", expected_exceptions=KeyError)
 async def ws_instantiate_template(
     hass: HomeAssistant,
     connection: websocket_api.ActiveConnection,
@@ -484,12 +441,8 @@ async def ws_instantiate_template(
     """Instantiate a new configuration dictionary from a chosen template."""
     template_id = msg["template_id"]
     system_id = msg.get(CONF_SYSTEM_ID)
-
-    try:
-        instantiated = instantiate_template(template_id, system_id)
-        connection.send_result(msg["id"], instantiated)
-    except KeyError as err:
-        connection.send_error(msg["id"], "template_not_found", str(err))
+    instantiated = instantiate_template(template_id, system_id)
+    connection.send_result(msg["id"], instantiated)
 
 
 def async_setup_websocket(hass: HomeAssistant) -> None:

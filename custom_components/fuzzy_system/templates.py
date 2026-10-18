@@ -28,6 +28,67 @@ from .const import (
     INFERENCE_SUGENO,
 )
 
+
+# -----------------------------------------------------------------------------
+# Declarative Schema Builders (DRY Helpers)
+# -----------------------------------------------------------------------------
+def _trim(a: float, b: float, c: float) -> dict[str, Any]:
+    """Create triangular membership function term definition."""
+    return {"type": "trimf", "params": [a, b, c]}
+
+
+def _trap(a: float, b: float, c: float, d: float) -> dict[str, Any]:
+    """Create trapezoidal membership function term definition."""
+    return {"type": "trapmf", "params": [a, b, c, d]}
+
+
+def _singleton(val: float) -> dict[str, Any]:
+    """Create singleton membership function term definition."""
+    return {"type": "singleton", "params": [val]}
+
+
+def _input_var(
+    entity_id: str,
+    var_range: list[float],
+    terms: dict[str, dict[str, Any]],
+    default: float = 0.0,
+    resolution: int = 100,
+) -> dict[str, Any]:
+    """Create input variable configuration dictionary."""
+    return {
+        CONF_ENTITY_ID: entity_id,
+        CONF_RANGE: var_range,
+        CONF_DEFAULT: default,
+        CONF_RESOLUTION: resolution,
+        CONF_TERMS: terms,
+    }
+
+
+def _output_var(
+    name: str,
+    var_range: list[float],
+    terms: dict[str, dict[str, Any]],
+    icon: str | None = None,
+    unit: str | None = None,
+    resolution: int = 100,
+) -> dict[str, Any]:
+    """Create output variable configuration dictionary."""
+    cfg: dict[str, Any] = {
+        CONF_NAME: name,
+        CONF_RANGE: var_range,
+        CONF_RESOLUTION: resolution,
+        CONF_TERMS: terms,
+    }
+    if icon is not None:
+        cfg[CONF_ICON] = icon
+    if unit is not None:
+        cfg[CONF_UNIT_OF_MEASUREMENT] = unit
+    return cfg
+
+
+# -----------------------------------------------------------------------------
+# Built-in Starter Template Catalog
+# -----------------------------------------------------------------------------
 TEMPLATES: dict[str, dict[str, Any]] = {
     "smart_fan_controller": {
         CONF_SYSTEM_ID: "smart_fan",
@@ -37,42 +98,38 @@ TEMPLATES: dict[str, dict[str, Any]] = {
         CONF_DEFUZZIFIER: DEF_COG,
         CONF_EXPOSE_SYSTEM_SENSOR: True,
         CONF_INPUTS: {
-            "room_temperature": {
-                CONF_ENTITY_ID: "sensor.room_temperature",
-                CONF_RANGE: [15.0, 35.0],
-                CONF_DEFAULT: 22.0,
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "cold": {"type": "trimf", "params": [15.0, 15.0, 22.0]},
-                    "comfortable": {"type": "trimf", "params": [20.0, 24.0, 28.0]},
-                    "hot": {"type": "trimf", "params": [26.0, 35.0, 35.0]},
+            "room_temperature": _input_var(
+                "sensor.room_temperature",
+                [15.0, 35.0],
+                {
+                    "cold": _trim(15.0, 15.0, 22.0),
+                    "comfortable": _trim(20.0, 24.0, 28.0),
+                    "hot": _trim(26.0, 35.0, 35.0),
                 },
-            },
-            "occupancy_probability": {
-                CONF_ENTITY_ID: "sensor.room_occupancy",
-                CONF_RANGE: [0.0, 100.0],
-                CONF_DEFAULT: 0.0,
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "empty": {"type": "trimf", "params": [0.0, 0.0, 40.0]},
-                    "occupied": {"type": "trimf", "params": [30.0, 100.0, 100.0]},
+                default=22.0,
+            ),
+            "occupancy_probability": _input_var(
+                "sensor.room_occupancy",
+                [0.0, 100.0],
+                {
+                    "empty": _trim(0.0, 0.0, 40.0),
+                    "occupied": _trim(30.0, 100.0, 100.0),
                 },
-            },
+            ),
         },
         CONF_OUTPUTS: {
-            "fan_speed": {
-                CONF_NAME: "Fan Speed",
-                CONF_ICON: "mdi:fan",
-                CONF_UNIT_OF_MEASUREMENT: "%",
-                CONF_RANGE: [0.0, 100.0],
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "off": {"type": "trimf", "params": [0.0, 0.0, 25.0]},
-                    "low": {"type": "trimf", "params": [15.0, 35.0, 55.0]},
-                    "medium": {"type": "trimf", "params": [45.0, 65.0, 85.0]},
-                    "high": {"type": "trimf", "params": [75.0, 100.0, 100.0]},
+            "fan_speed": _output_var(
+                "Fan Speed",
+                [0.0, 100.0],
+                {
+                    "off": _trim(0.0, 0.0, 25.0),
+                    "low": _trim(15.0, 35.0, 55.0),
+                    "medium": _trim(45.0, 65.0, 85.0),
+                    "high": _trim(75.0, 100.0, 100.0),
                 },
-            }
+                icon="mdi:fan",
+                unit="%",
+            ),
         },
         CONF_RULES: [
             "IF occupancy_probability IS empty THEN fan_speed IS off",
@@ -89,53 +146,49 @@ TEMPLATES: dict[str, dict[str, Any]] = {
         CONF_DEFUZZIFIER: DEF_COG,
         CONF_EXPOSE_SYSTEM_SENSOR: True,
         CONF_INPUTS: {
-            "co2_level": {
-                CONF_ENTITY_ID: "sensor.indoor_co2",
-                CONF_RANGE: [400.0, 2000.0],
-                CONF_DEFAULT: 450.0,
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "fresh": {"type": "trapmf", "params": [400.0, 400.0, 600.0, 800.0]},
-                    "moderate": {"type": "trapmf", "params": [700.0, 900.0, 1100.0, 1300.0]},
-                    "stale": {"type": "trapmf", "params": [1200.0, 1500.0, 2000.0, 2000.0]},
+            "co2_level": _input_var(
+                "sensor.indoor_co2",
+                [400.0, 2000.0],
+                {
+                    "fresh": _trap(400.0, 400.0, 600.0, 800.0),
+                    "moderate": _trap(700.0, 900.0, 1100.0, 1300.0),
+                    "stale": _trap(1200.0, 1500.0, 2000.0, 2000.0),
                 },
-            },
-            "voc_index": {
-                CONF_ENTITY_ID: "sensor.indoor_voc",
-                CONF_RANGE: [0.0, 500.0],
-                CONF_DEFAULT: 20.0,
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "clean": {"type": "trapmf", "params": [0.0, 0.0, 50.0, 100.0]},
-                    "elevated": {"type": "trapmf", "params": [80.0, 150.0, 250.0, 320.0]},
-                    "polluted": {"type": "trapmf", "params": [280.0, 380.0, 500.0, 500.0]},
+                default=450.0,
+            ),
+            "voc_index": _input_var(
+                "sensor.indoor_voc",
+                [0.0, 500.0],
+                {
+                    "clean": _trap(0.0, 0.0, 50.0, 100.0),
+                    "elevated": _trap(80.0, 150.0, 250.0, 320.0),
+                    "polluted": _trap(280.0, 380.0, 500.0, 500.0),
                 },
-            },
-            "relative_humidity": {
-                CONF_ENTITY_ID: "sensor.indoor_humidity",
-                CONF_RANGE: [20.0, 90.0],
-                CONF_DEFAULT: 45.0,
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "dry": {"type": "trapmf", "params": [20.0, 20.0, 30.0, 40.0]},
-                    "comfort": {"type": "trapmf", "params": [35.0, 45.0, 55.0, 65.0]},
-                    "humid": {"type": "trapmf", "params": [60.0, 70.0, 90.0, 90.0]},
+                default=20.0,
+            ),
+            "relative_humidity": _input_var(
+                "sensor.indoor_humidity",
+                [20.0, 90.0],
+                {
+                    "dry": _trap(20.0, 20.0, 30.0, 40.0),
+                    "comfort": _trap(35.0, 45.0, 55.0, 65.0),
+                    "humid": _trap(60.0, 70.0, 90.0, 90.0),
                 },
-            },
+                default=45.0,
+            ),
         },
         CONF_OUTPUTS: {
-            "exhaust_fan": {
-                CONF_NAME: "Exhaust Fan",
-                CONF_ICON: "mdi:fan",
-                CONF_UNIT_OF_MEASUREMENT: "%",
-                CONF_RANGE: [0.0, 100.0],
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "low": {"type": "trimf", "params": [0.0, 0.0, 35.0]},
-                    "medium": {"type": "trimf", "params": [25.0, 50.0, 75.0]},
-                    "boost": {"type": "trimf", "params": [65.0, 100.0, 100.0]},
+            "exhaust_fan": _output_var(
+                "Exhaust Fan",
+                [0.0, 100.0],
+                {
+                    "low": _trim(0.0, 0.0, 35.0),
+                    "medium": _trim(25.0, 50.0, 75.0),
+                    "boost": _trim(65.0, 100.0, 100.0),
                 },
-            }
+                icon="mdi:fan",
+                unit="%",
+            ),
         },
         CONF_RULES: [
             "IF co2_level IS fresh AND voc_index IS clean THEN exhaust_fan IS low",
@@ -151,54 +204,50 @@ TEMPLATES: dict[str, dict[str, Any]] = {
         CONF_DEFUZZIFIER: DEF_WEIGHTED_AVERAGE,
         CONF_EXPOSE_SYSTEM_SENSOR: True,
         CONF_INPUTS: {
-            "soil_moisture": {
-                CONF_ENTITY_ID: "sensor.soil_moisture",
-                CONF_RANGE: [0.0, 100.0],
-                CONF_DEFAULT: 50.0,
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "dry": {"type": "trimf", "params": [0.0, 0.0, 40.0]},
-                    "moist": {"type": "trimf", "params": [30.0, 60.0, 80.0]},
-                    "wet": {"type": "trimf", "params": [70.0, 100.0, 100.0]},
+            "soil_moisture": _input_var(
+                "sensor.soil_moisture",
+                [0.0, 100.0],
+                {
+                    "dry": _trim(0.0, 0.0, 40.0),
+                    "moist": _trim(30.0, 60.0, 80.0),
+                    "wet": _trim(70.0, 100.0, 100.0),
                 },
-            },
-            "ambient_temperature": {
-                CONF_ENTITY_ID: "sensor.outdoor_temperature",
-                CONF_RANGE: [0.0, 45.0],
-                CONF_DEFAULT: 20.0,
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "cool": {"type": "trimf", "params": [0.0, 0.0, 18.0]},
-                    "warm": {"type": "trimf", "params": [15.0, 25.0, 32.0]},
-                    "hot": {"type": "trimf", "params": [28.0, 45.0, 45.0]},
+                default=50.0,
+            ),
+            "ambient_temperature": _input_var(
+                "sensor.outdoor_temperature",
+                [0.0, 45.0],
+                {
+                    "cool": _trim(0.0, 0.0, 18.0),
+                    "warm": _trim(15.0, 25.0, 32.0),
+                    "hot": _trim(28.0, 45.0, 45.0),
                 },
-            },
-            "rain_forecast_24h": {
-                CONF_ENTITY_ID: "sensor.rain_forecast",
-                CONF_RANGE: [0.0, 50.0],
-                CONF_DEFAULT: 0.0,
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "none": {"type": "trimf", "params": [0.0, 0.0, 2.0]},
-                    "light": {"type": "trimf", "params": [1.0, 5.0, 15.0]},
-                    "heavy": {"type": "trimf", "params": [10.0, 50.0, 50.0]},
+                default=20.0,
+            ),
+            "rain_forecast_24h": _input_var(
+                "sensor.rain_forecast",
+                [0.0, 50.0],
+                {
+                    "none": _trim(0.0, 0.0, 2.0),
+                    "light": _trim(1.0, 5.0, 15.0),
+                    "heavy": _trim(10.0, 50.0, 50.0),
                 },
-            },
+                default=0.0,
+            ),
         },
         CONF_OUTPUTS: {
-            "watering_duration": {
-                CONF_NAME: "Watering Duration",
-                CONF_ICON: "mdi:sprinkler",
-                CONF_UNIT_OF_MEASUREMENT: "min",
-                CONF_RANGE: [0.0, 60.0],
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "zero": {"type": "singleton", "params": [0.0]},
-                    "short": {"type": "singleton", "params": [10.0]},
-                    "moderate": {"type": "singleton", "params": [25.0]},
-                    "long": {"type": "singleton", "params": [45.0]},
+            "watering_duration": _output_var(
+                "Watering Duration",
+                [0.0, 60.0],
+                {
+                    "zero": _singleton(0.0),
+                    "short": _singleton(10.0),
+                    "moderate": _singleton(25.0),
+                    "long": _singleton(45.0),
                 },
-            }
+                icon="mdi:sprinkler",
+                unit="min",
+            ),
         },
         CONF_RULES: [
             "IF rain_forecast_24h IS heavy OR soil_moisture IS wet THEN watering_duration IS zero",
@@ -216,54 +265,49 @@ TEMPLATES: dict[str, dict[str, Any]] = {
         CONF_DEFUZZIFIER: DEF_WEIGHTED_AVERAGE,
         CONF_EXPOSE_SYSTEM_SENSOR: True,
         CONF_INPUTS: {
-            "solar_surplus_watts": {
-                CONF_ENTITY_ID: "sensor.solar_surplus",
-                CONF_RANGE: [0.0, 5000.0],
-                CONF_DEFAULT: 0.0,
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "low": {"type": "trimf", "params": [0.0, 0.0, 800.0]},
-                    "medium": {"type": "trimf", "params": [500.0, 2000.0, 3500.0]},
-                    "high": {"type": "trimf", "params": [2500.0, 5000.0, 5000.0]},
+            "solar_surplus_watts": _input_var(
+                "sensor.solar_surplus",
+                [0.0, 5000.0],
+                {
+                    "low": _trim(0.0, 0.0, 800.0),
+                    "medium": _trim(500.0, 2000.0, 3500.0),
+                    "high": _trim(2500.0, 5000.0, 5000.0),
                 },
-            },
-            "grid_import_price": {
-                CONF_ENTITY_ID: "sensor.electricity_price",
-                CONF_RANGE: [0.0, 1.0],
-                CONF_DEFAULT: 0.20,
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "cheap": {"type": "trimf", "params": [0.0, 0.0, 0.15]},
-                    "normal": {"type": "trimf", "params": [0.10, 0.25, 0.40]},
-                    "peak": {"type": "trimf", "params": [0.35, 1.0, 1.0]},
+            ),
+            "grid_import_price": _input_var(
+                "sensor.electricity_price",
+                [0.0, 1.0],
+                {
+                    "cheap": _trim(0.0, 0.0, 0.15),
+                    "normal": _trim(0.10, 0.25, 0.40),
+                    "peak": _trim(0.35, 1.0, 1.0),
                 },
-            },
-            "hot_water_temp": {
-                CONF_ENTITY_ID: "sensor.water_heater_temp",
-                CONF_RANGE: [20.0, 85.0],
-                CONF_DEFAULT: 45.0,
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "cold": {"type": "trimf", "params": [20.0, 20.0, 45.0]},
-                    "optimal": {"type": "trimf", "params": [40.0, 55.0, 68.0]},
-                    "max": {"type": "trimf", "params": [65.0, 85.0, 85.0]},
+                default=0.20,
+            ),
+            "hot_water_temp": _input_var(
+                "sensor.water_heater_temp",
+                [20.0, 85.0],
+                {
+                    "cold": _trim(20.0, 20.0, 45.0),
+                    "optimal": _trim(40.0, 55.0, 68.0),
+                    "max": _trim(65.0, 85.0, 85.0),
                 },
-            },
+                default=45.0,
+            ),
         },
         CONF_OUTPUTS: {
-            "diverter_duty_cycle": {
-                CONF_NAME: "Diverter Duty Cycle",
-                CONF_ICON: "mdi:solar-power",
-                CONF_UNIT_OF_MEASUREMENT: "%",
-                CONF_RANGE: [0.0, 100.0],
-                CONF_RESOLUTION: 100,
-                CONF_TERMS: {
-                    "off": {"type": "singleton", "params": [0.0]},
-                    "quarter": {"type": "singleton", "params": [25.0]},
-                    "half": {"type": "singleton", "params": [50.0]},
-                    "full": {"type": "singleton", "params": [100.0]},
+            "diverter_duty_cycle": _output_var(
+                "Diverter Duty Cycle",
+                [0.0, 100.0],
+                {
+                    "off": _singleton(0.0),
+                    "quarter": _singleton(25.0),
+                    "half": _singleton(50.0),
+                    "full": _singleton(100.0),
                 },
-            }
+                icon="mdi:solar-power",
+                unit="%",
+            ),
         },
         CONF_RULES: [
             "IF hot_water_temp IS max THEN diverter_duty_cycle IS off",
@@ -293,9 +337,7 @@ def get_templates() -> list[dict[str, Any]]:
     ]
 
 
-def instantiate_template(
-    template_id: str, new_system_id: str | None = None
-) -> dict[str, Any]:
+def instantiate_template(template_id: str, new_system_id: str | None = None) -> dict[str, Any]:
     """Generate a fresh system configuration dictionary from a chosen template."""
     if template_id not in TEMPLATES:
         raise KeyError(f"Template '{template_id}' does not exist")

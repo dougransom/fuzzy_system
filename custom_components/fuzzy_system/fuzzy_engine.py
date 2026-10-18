@@ -51,11 +51,16 @@ _RE_OR = re.compile(r"\bOR\b", re.IGNORECASE)
 # -----------------------------------------------------------------------------
 # Functional Hedge Dispatch Table
 # -----------------------------------------------------------------------------
+def _power_hedge(exponent: float) -> Callable[[Any], Any]:
+    """Create an exponential hedge transformation (x -> x^exponent)."""
+    return lambda x: np.power(x, exponent)
+
+
 _HEDGE_FUNCTIONS: dict[str, Callable[[Any], Any]] = {
-    HEDGE_VERY: lambda x: np.power(x, 2.0),
-    HEDGE_EXTREMELY: lambda x: np.power(x, 3.0),
-    HEDGE_SOMEWHAT: lambda x: np.power(x, 0.5),
-    HEDGE_SLIGHTLY: lambda x: np.power(x, 1.0 / 3.0),
+    HEDGE_VERY: _power_hedge(2.0),
+    HEDGE_EXTREMELY: _power_hedge(3.0),
+    HEDGE_SOMEWHAT: _power_hedge(0.5),
+    HEDGE_SLIGHTLY: _power_hedge(1.0 / 3.0),
     HEDGE_NOT: lambda x: 1.0 - x,
 }
 
@@ -82,15 +87,24 @@ def apply_hedge(membership_values: np.ndarray, hedge: str) -> np.ndarray:
 # -----------------------------------------------------------------------------
 # Membership Function Factory Table
 # -----------------------------------------------------------------------------
+def _make_mf_factory(
+    fn: Callable[..., np.ndarray], *, unpack: bool = False
+) -> Callable[[list[float]], Callable[[np.ndarray], np.ndarray]]:
+    """Create a curried membership function factory (params -> universe -> mf)."""
+    return (lambda p: lambda u: fn(u, *p)) if unpack else (lambda p: lambda u: fn(u, p))
+
+
 _MF_FACTORIES: dict[str, Callable[[list[float]], Callable[[np.ndarray], np.ndarray]]] = {
-    "trimf": lambda p: lambda u: fuzz.trimf(u, p),
-    "trapmf": lambda p: lambda u: fuzz.trapmf(u, p),
-    "gaussmf": lambda p: lambda u: fuzz.gaussmf(u, p[0], p[1]),
-    "sigmf": lambda p: lambda u: fuzz.sigmf(u, p[0], p[1]),
-    "gbellmf": lambda p: lambda u: fuzz.gbellmf(u, p[0], p[1], p[2]),
-    "singleton": lambda p: lambda u: np.where(np.isclose(u, p[0], atol=1e-3), 1.0, 0.0),
-    "constant": lambda p: lambda u: np.where(np.isclose(u, p[0], atol=1e-3), 1.0, 0.0),
+    "trimf": _make_mf_factory(fuzz.trimf),
+    "trapmf": _make_mf_factory(fuzz.trapmf),
+    "gaussmf": _make_mf_factory(fuzz.gaussmf, unpack=True),
+    "sigmf": _make_mf_factory(fuzz.sigmf, unpack=True),
+    "gbellmf": _make_mf_factory(fuzz.gbellmf, unpack=True),
+    "singleton": _make_mf_factory(
+        lambda u, p: np.where(np.isclose(u, p[0], atol=1e-3), 1.0, 0.0)
+    ),
 }
+_MF_FACTORIES["constant"] = _MF_FACTORIES["singleton"]
 
 
 # -----------------------------------------------------------------------------
@@ -122,15 +136,22 @@ def _defuzz_cos(
     return _defuzz_weighted_average(universe, aggregated_mf, individual_rule_mfs)
 
 
+def _make_defuzz(
+    method: str,
+) -> Callable[[np.ndarray, np.ndarray, list[np.ndarray]], float]:
+    """Create a defuzzifier strategy wrapping scikit-fuzzy defuzz."""
+    return lambda u, agg, _: float(fuzz.defuzz(u, agg, method))
+
+
 _DEFUZZIFIERS: dict[str, Callable[[np.ndarray, np.ndarray, list[np.ndarray]], float]] = {
-    DEF_COG: lambda u, agg, _: float(fuzz.defuzz(u, agg, "centroid")),
-    DEF_COA: lambda u, agg, _: float(fuzz.defuzz(u, agg, "centroid")),
-    DEF_CENTROID: lambda u, agg, _: float(fuzz.defuzz(u, agg, "centroid")),
-    DEF_BOA: lambda u, agg, _: float(fuzz.defuzz(u, agg, "bisector")),
-    DEF_BISECTOR: lambda u, agg, _: float(fuzz.defuzz(u, agg, "bisector")),
-    DEF_MOM: lambda u, agg, _: float(fuzz.defuzz(u, agg, "mom")),
-    DEF_SOM: lambda u, agg, _: float(fuzz.defuzz(u, agg, "som")),
-    DEF_LOM: lambda u, agg, _: float(fuzz.defuzz(u, agg, "lom")),
+    DEF_COG: _make_defuzz("centroid"),
+    DEF_COA: _make_defuzz("centroid"),
+    DEF_CENTROID: _make_defuzz("centroid"),
+    DEF_BOA: _make_defuzz("bisector"),
+    DEF_BISECTOR: _make_defuzz("bisector"),
+    DEF_MOM: _make_defuzz("mom"),
+    DEF_SOM: _make_defuzz("som"),
+    DEF_LOM: _make_defuzz("lom"),
     DEF_COS: _defuzz_cos,
     DEF_WEIGHTED_AVERAGE: _defuzz_weighted_average,
     DEF_WTAVERAGE: _defuzz_weighted_average,
@@ -360,8 +381,8 @@ class FuzzyRule:
         self.antecedent_str, self.consequent_str = self._parse_rule(rule_str)
 
         # Pre-compile consequent structure
-        self.output_var, self.consequent_term, self.consequent_constant = (
-            self._compile_consequent(self.consequent_str)
+        self.output_var, self.consequent_term, self.consequent_constant = self._compile_consequent(
+            self.consequent_str
         )
 
         # Pre-bind callable Sugeno consequent evaluator
@@ -432,9 +453,7 @@ class FuzzyRule:
         """Export rule representation as Abstract Syntax Tree (AST)."""
         return {
             "raw": self.raw_rule,
-            "antecedent": [
-                [cond.to_dict() for cond in group] for group in self._antecedent_groups
-            ],
+            "antecedent": [[cond.to_dict() for cond in group] for group in self._antecedent_groups],
             "consequent": {
                 "variable": self.output_var,
                 "term": self.consequent_term,
@@ -612,9 +631,7 @@ class FuzzySystemEngine:
                 individual_rule_mfs.append(clipped_mf)
                 aggregated_mf = np.maximum(aggregated_mf, clipped_mf)
 
-            defuzz_value = defuzz_strategy(
-                out_var.universe, aggregated_mf, individual_rule_mfs
-            )
+            defuzz_value = defuzz_strategy(out_var.universe, aggregated_mf, individual_rule_mfs)
 
             results[out_name] = self._package_output_result(
                 out_var=out_var,

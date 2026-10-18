@@ -11,12 +11,14 @@ from contextlib import suppress
 from typing import Any
 
 from homeassistant.components.sensor import SensorEntity
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
+from . import FuzzyConfigEntry
 from .const import (
     CONF_DEFAULT,
     CONF_ENTITY_ID,
@@ -40,6 +42,8 @@ from .const import (
 from .fuzzy_engine import FuzzySystemEngine
 
 _LOGGER = logging.getLogger(__name__)
+
+PARALLEL_UPDATES = 0
 
 
 @functools.cache
@@ -216,21 +220,26 @@ async def async_setup_platform(
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: FuzzyConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Fuzzy System sensor entities from a config entry."""
-    domain_data = hass.data.get(DOMAIN, {})
-    entries_data = domain_data.get(DATA_ENTRIES, {})
-    entry_info = entries_data.get(entry.entry_id)
-
-    system_id = (
-        entry_info["system_id"]
-        if entry_info
-        else (entry.data.get(CONF_SYSTEM_ID) or entry.unique_id or entry.title)
-    )
-    engine = entry_info["engine"] if entry_info else FuzzySystemEngine.from_dict(entry.data)
-    sys_cfg = entry_info["config"] if entry_info else entry.data
+    data = getattr(entry, "runtime_data", None)
+    if data is not None:
+        system_id = data.system_id
+        engine = data.engine
+        sys_cfg = data.config
+    else:
+        domain_data = hass.data.get(DOMAIN, {})
+        entries_data = domain_data.get(DATA_ENTRIES, {})
+        entry_info = entries_data.get(entry.entry_id)
+        system_id = (
+            entry_info["system_id"]
+            if entry_info
+            else (entry.data.get(CONF_SYSTEM_ID) or entry.unique_id or entry.title)
+        )
+        engine = entry_info["engine"] if entry_info else FuzzySystemEngine.from_dict(entry.data)
+        sys_cfg = entry_info["config"] if entry_info else entry.data
 
     entities = _build_system_entities(hass, system_id, engine, sys_cfg)
     async_add_entities(entities)
@@ -238,6 +247,8 @@ async def async_setup_entry(
 
 class BaseFuzzySensor(SensorEntity):
     """Base sensor class for Fuzzy System entities handling input state tracking."""
+
+    _attr_has_entity_name = True
 
     def __init__(
         self,
@@ -274,6 +285,19 @@ class BaseFuzzySensor(SensorEntity):
             if ent_id:
                 state_obj = self._hass.states.get(ent_id)
                 val, _ = _parse_entity_numeric_state(state_obj, def_val)
+                if state_obj is None:
+                    ir.async_create_issue(
+                        self._hass,
+                        DOMAIN,
+                        f"missing_input_{self._system_name}_{ent_id}",
+                        is_fixable=False,
+                        severity=ir.IssueSeverity.WARNING,
+                        translation_key="missing_input_entity",
+                        translation_placeholders={
+                            "system_id": self._system_name,
+                            "entity_id": ent_id,
+                        },
+                    )
             self._input_values[var_name] = val
 
         self._reevaluate()
@@ -290,8 +314,14 @@ class BaseFuzzySensor(SensorEntity):
         """Handle state change event from input entities via O(1) table lookup."""
         if not (new_state := event.data.get("new_state")):
             return
-        if (var_name := self._entity_to_var.get(event.data.get("entity_id"))) is None:
+        entity_id = event.data.get("entity_id")
+        if (var_name := self._entity_to_var.get(entity_id)) is None:
             return
+
+        if entity_id:
+            ir.async_delete_issue(
+                self._hass, DOMAIN, f"missing_input_{self._system_name}_{entity_id}"
+            )
 
         with suppress(ValueError, TypeError):
             new_val = float(new_state.state)
@@ -300,6 +330,14 @@ class BaseFuzzySensor(SensorEntity):
             self._input_values[var_name] = new_val
             if self._reevaluate():
                 self.async_write_ha_state()
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Clean up when entity is removed."""
+        await super().async_will_remove_from_hass()
+        for ent_id in self._tracked_entity_ids:
+            ir.async_delete_issue(
+                self._hass, DOMAIN, f"missing_input_{self._system_name}_{ent_id}"
+            )
 
     def _reevaluate(self) -> bool:
         """Run fuzzy engine evaluation. Returns True if state changed and should commit."""
@@ -321,10 +359,14 @@ class FuzzyOutputSensor(BaseFuzzySensor):
         epsilon: float = DEFAULT_EPSILON,
     ) -> None:
         """Initialize fuzzy output numerical sensor entity."""
-        super().__init__(hass, system_name, output_name, engine, input_map, rate_limiter=rate_limiter)
+        super().__init__(
+            hass, system_name, output_name, engine, input_map, rate_limiter=rate_limiter
+        )
 
         output_cfg = output_config or {}
-        default_name = f"Fuzzy {_format_display_name(system_name)} {_format_display_name(output_name)}"
+        default_name = (
+            f"Fuzzy {_format_display_name(system_name)} {_format_display_name(output_name)}"
+        )
         self._attr_name = output_cfg.get(CONF_NAME) or default_name
         self._attr_unique_id = f"fuzzy_{system_name}_{output_name}"
         self._attr_icon = output_cfg.get(CONF_ICON, "mdi:calculator-variant")
@@ -385,6 +427,8 @@ class FuzzyOutputSensor(BaseFuzzySensor):
 class FuzzySetSensor(BaseFuzzySensor):
     """Pre-Defuzzified Dominant Fuzzy Set Sensor Entity."""
 
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
     def __init__(
         self,
         hass: HomeAssistant,
@@ -397,7 +441,9 @@ class FuzzySetSensor(BaseFuzzySensor):
         epsilon: float = DEFAULT_EPSILON,
     ) -> None:
         """Initialize fuzzy set sensor entity."""
-        super().__init__(hass, system_name, output_name, engine, input_map, rate_limiter=rate_limiter)
+        super().__init__(
+            hass, system_name, output_name, engine, input_map, rate_limiter=rate_limiter
+        )
 
         output_cfg = output_config or {}
         custom_name = output_cfg.get(CONF_NAME)
@@ -440,6 +486,9 @@ class FuzzySetSensor(BaseFuzzySensor):
 class FuzzySystemStatusSensor(SensorEntity):
     """System Status Sensor for monitoring an entire Fuzzy System instance."""
 
+    _attr_has_entity_name = True
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
     def __init__(
         self,
         hass: HomeAssistant,
@@ -479,6 +528,7 @@ class FuzzySystemStatusSensor(SensorEntity):
 
     async def async_added_to_hass(self) -> None:
         """Register state change tracking for all system input entities."""
+
         @callback
         def _async_input_changed(event: Any) -> None:
             if not (new_state := event.data.get("new_state")):
@@ -494,6 +544,7 @@ class FuzzySystemStatusSensor(SensorEntity):
                 self.async_write_ha_state()
 
         if self._rate_limiter:
+
             @callback
             def _async_on_throttled() -> None:
                 self._attr_native_value = "RUNAWAY_THROTTLED"

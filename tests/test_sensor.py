@@ -1,7 +1,9 @@
 """Integration tests for the Fuzzy System sensor platform."""
 
 import pytest
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import issue_registry as ir
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -266,6 +268,66 @@ async def test_fuzzy_system_reload_service(hass: HomeAssistant, enable_custom_in
 
     assert hass.services.has_service(DOMAIN, "reload")
 
+    from unittest.mock import patch
+
+    # 1. Successful reload
+    with patch(
+        "custom_components.fuzzy_system.async_integration_yaml_config",
+        return_value=base_config,
+    ):
+        await hass.services.async_call(DOMAIN, "reload", blocking=True)
+        await hass.async_block_till_done()
+
+    # 2. Empty reload config
+    with patch(
+        "custom_components.fuzzy_system.async_integration_yaml_config",
+        return_value=None,
+    ):
+        await hass.services.async_call(DOMAIN, "reload", blocking=True)
+        await hass.async_block_till_done()
+
+
+async def test_sensor_rate_limiter_and_status_unavailable(
+    hass: HomeAssistant, enable_custom_integrations
+) -> None:
+    """Test rate limiter 0 budget and system status sensor with unavailable input."""
+    from custom_components.fuzzy_system.sensor import SystemRateLimiter
+
+    rl = SystemRateLimiter(max_updates=0, period=0.0)
+    assert rl.can_update() is True
+
+    # Setup system where input entity is unavailable
+    bad_config = {
+        DOMAIN: {
+            "systems": {
+                "faulty_sys": {
+                    "inference": "mamdani",
+                    "inputs": {
+                        "t": {
+                            "entity_id": "sensor.missing_temp",
+                            "range": [0, 40],
+                            "terms": {"warm": {"type": "trimf", "params": [10, 20, 30]}},
+                        }
+                    },
+                    "outputs": {
+                        "fan": {
+                            "range": [0, 100],
+                            "terms": {"fast": {"type": "trimf", "params": [0, 50, 100]}},
+                        }
+                    },
+                    "rules": ["IF t IS warm THEN fan IS fast"],
+                }
+            }
+        }
+    }
+    hass.states.async_set("sensor.missing_temp", "unavailable")
+    assert await async_setup_component(hass, DOMAIN, bad_config)
+    await hass.async_block_till_done()
+
+    status_state = hass.states.get("sensor.fuzzy_system_faulty_sys")
+    assert status_state is not None
+    assert status_state.state == "Input Unavailable"
+
 
 async def test_config_entry_sensor_lifecycle(hass: HomeAssistant, enable_custom_integrations):
     """Test full sensor entity lifecycle driven by a ConfigEntry."""
@@ -343,4 +405,124 @@ async def test_config_entry_sensor_lifecycle(hass: HomeAssistant, enable_custom_
 
     unloaded_out = hass.states.get("sensor.fuzzy_office_comfort_fan")
     assert unloaded_out.state == "unavailable"
+
+
+async def test_missing_input_entity_repair_issue_lifecycle(
+    hass: HomeAssistant, enable_custom_integrations
+) -> None:
+    """Test that missing input entities generate repair issues and clear when resolved."""
+    issue_registry = ir.async_get(hass)
+
+    config_data = {
+        CONF_SYSTEM_ID: "repair_test",
+        CONF_NAME: "Repair Test",
+        CONF_INFERENCE: INFERENCE_MAMDANI,
+        CONF_DEFUZZIFIER: DEF_COG,
+        CONF_EXPOSE_SYSTEM_SENSOR: True,
+        CONF_INPUTS: {
+            "temp": {
+                "entity_id": "sensor.uncreated_temperature",
+                "range": [0.0, 50.0],
+                "default": 25.0,
+                "terms": {
+                    "low": {"type": "trimf", "params": [0, 0, 25]},
+                    "high": {"type": "trimf", "params": [25, 50, 50]},
+                },
+            }
+        },
+        CONF_OUTPUTS: {
+            "cooling": {
+                "range": [0.0, 100.0],
+                "terms": {
+                    "off": {"type": "trimf", "params": [0, 0, 50]},
+                    "on": {"type": "trimf", "params": [50, 100, 100]},
+                },
+            }
+        },
+        CONF_RULES: ["IF temp IS high THEN cooling IS on"],
+    }
+
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        unique_id="repair_test",
+        title="Repair Test",
+        data=config_data,
+    )
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    # Issue should exist for sensor.uncreated_temperature
+    issue_id = "missing_input_repair_test_sensor.uncreated_temperature"
+    assert issue_registry.async_get_issue(DOMAIN, issue_id) is not None
+
+    # Now create the entity with a state update
+    hass.states.async_set("sensor.uncreated_temperature", "30.0")
+    await hass.async_block_till_done()
+
+    # Issue should now be resolved/deleted
+    assert issue_registry.async_get_issue(DOMAIN, issue_id) is None
+
+
+async def test_diagnostic_entity_categories(
+    hass: HomeAssistant, enable_custom_integrations
+) -> None:
+    """Test that set sensors and status sensors are tagged with EntityCategory.DIAGNOSTIC."""
+    from homeassistant.helpers import entity_registry as er
+
+    hass.states.async_set("sensor.office_temperature", "22.0")
+    config_data = {
+        CONF_SYSTEM_ID: "cat_test",
+        CONF_NAME: "Cat Test",
+        CONF_INFERENCE: INFERENCE_MAMDANI,
+        CONF_DEFUZZIFIER: DEF_COG,
+        CONF_EXPOSE_SYSTEM_SENSOR: True,
+        CONF_INPUTS: {
+            "temp": {
+                "entity_id": "sensor.office_temperature",
+                "range": [0.0, 50.0],
+                "default": 20.0,
+                "terms": {
+                    "low": {"type": "trimf", "params": [0, 0, 25]},
+                    "high": {"type": "trimf", "params": [25, 50, 50]},
+                },
+            }
+        },
+        CONF_OUTPUTS: {
+            "cooling": {
+                "range": [0.0, 100.0],
+                "terms": {
+                    "off": {"type": "trimf", "params": [0, 0, 50]},
+                    "on": {"type": "trimf", "params": [50, 100, 100]},
+                },
+            }
+        },
+        CONF_RULES: ["IF temp IS high THEN cooling IS on"],
+    }
+
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        unique_id="cat_test",
+        title="Cat Test",
+        data=config_data,
+    )
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    ent_reg = er.async_get(hass)
+    # Output sensor is normal
+    output_entry = ent_reg.async_get("sensor.fuzzy_cat_test_cooling")
+    assert output_entry is not None
+    assert output_entry.entity_category is None
+
+    # Set sensor is DIAGNOSTIC
+    set_entry = ent_reg.async_get("sensor.fuzzy_cat_test_cooling_set")
+    assert set_entry is not None
+    assert set_entry.entity_category == EntityCategory.DIAGNOSTIC
+
+    # Status sensor is DIAGNOSTIC
+    status_entry = ent_reg.async_get("sensor.fuzzy_system_cat_test")
+    assert status_entry is not None
+    assert status_entry.entity_category == EntityCategory.DIAGNOSTIC
 

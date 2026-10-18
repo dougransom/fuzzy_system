@@ -17,9 +17,7 @@ async def test_panel_and_static_path_registration(
     hass.http = MagicMock()
     hass.http.async_register_static_paths = MagicMock()
 
-    with patch(
-        "homeassistant.components.panel_custom.async_register_panel"
-    ) as mock_panel:
+    with patch("homeassistant.components.panel_custom.async_register_panel") as mock_panel:
         result = await async_setup(hass, {})
         assert result is True
 

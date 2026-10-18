@@ -99,6 +99,51 @@ class FuzzySystemConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         title = import_config.get(CONF_NAME) or system_id.replace("_", " ").title()
         return self.async_create_entry(title=title, data=import_config)
 
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle reconfiguring an existing entry."""
+        entry = self._get_reconfigure_entry()
+
+        if user_input is not None:
+            new_title = user_input.get(CONF_NAME) or entry.title
+            return self.async_update_reload_and_abort(
+                entry,
+                title=new_title,
+                data_updates={
+                    CONF_NAME: new_title,
+                    CONF_INFERENCE: user_input.get(
+                        CONF_INFERENCE, entry.data.get(CONF_INFERENCE, INFERENCE_MAMDANI)
+                    ),
+                    CONF_DEFUZZIFIER: user_input.get(
+                        CONF_DEFUZZIFIER, entry.data.get(CONF_DEFUZZIFIER, DEF_COG)
+                    ),
+                },
+            )
+
+        current_data = entry.data
+        schema = vol.Schema(
+            {
+                vol.Optional(CONF_NAME, default=current_data.get(CONF_NAME, entry.title)): cv.string,
+                vol.Optional(
+                    CONF_INFERENCE,
+                    default=current_data.get(CONF_INFERENCE, INFERENCE_MAMDANI),
+                ): vol.In([INFERENCE_MAMDANI, INFERENCE_SUGENO]),
+                vol.Optional(
+                    CONF_DEFUZZIFIER,
+                    default=current_data.get(CONF_DEFUZZIFIER, DEF_COG),
+                ): vol.In(VALID_DEFUZZIFIERS),
+            }
+        )
+
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=schema,
+            description_placeholders={
+                "system_id": current_data.get(CONF_SYSTEM_ID, entry.title)
+            },
+        )
+
     @staticmethod
     @callback
     def async_get_options_flow(

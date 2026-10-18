@@ -12,5 +12,7 @@ __pycache__/
 *.pyo
 .pytest_cache/
 .ruff_cache/
+.coverage
+.coverage.*
 # Node / Frontend
 node_modules/

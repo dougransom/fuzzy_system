@@ -59,7 +59,10 @@ def test_fuzzy_rule_ast_roundtrip():
 
     # Recompile from AST
     recompiled = FuzzyRule.compile_from_ast(ast)
-    assert "IF temperature IS hot AND humidity IS dry OR temperature IS very cold THEN fan_speed IS high" == recompiled
+    assert (
+        "IF temperature IS hot AND humidity IS dry OR temperature IS very cold THEN fan_speed IS high"
+        == recompiled
+    )
 
 
 def test_fuzzy_engine_serialization_roundtrip():

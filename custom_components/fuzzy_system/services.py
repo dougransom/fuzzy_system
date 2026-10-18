@@ -7,7 +7,7 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 
 from .const import (
@@ -17,6 +17,8 @@ from .const import (
     DATA_ENTRIES,
     DATA_YAML_SYSTEMS,
     DOMAIN,
+    SOURCE_CONFIG_ENTRY,
+    SOURCE_YAML,
 )
 from .fuzzy_engine import FuzzySystemEngine
 
@@ -39,27 +41,65 @@ EXPLAIN_SCHEMA = vol.Schema(
 )
 
 
-def get_system_data(hass: HomeAssistant, system_id: str) -> dict[str, Any] | None:
-    """Find system configuration and engine by system_id."""
+def get_system_data(
+    hass: HomeAssistant,
+    system_id: str | None = None,
+    entry_id: str | None = None,
+) -> dict[str, Any] | None:
+    """Find system configuration and engine by system_id or entry_id."""
     domain_data = hass.data.get(DOMAIN, {})
-    yaml_systems = domain_data.get(DATA_YAML_SYSTEMS, {})
-    entries = domain_data.get(DATA_ENTRIES, {})
+    yaml_systems: dict[str, Any] = domain_data.get(DATA_YAML_SYSTEMS, {})
+    entries: dict[str, Any] = domain_data.get(DATA_ENTRIES, {})
 
+    # 1. Lookup by entry_id if provided
+    if entry_id and entry_id in entries:
+        info = dict(entries[entry_id])
+        info["source"] = SOURCE_CONFIG_ENTRY
+        info["entry_id"] = entry_id
+        return info
+
+    if not system_id:
+        return None
+
+    # 2. Exact match in YAML systems
     if system_id in yaml_systems:
-        return yaml_systems[system_id]
+        info = dict(yaml_systems[system_id])
+        info["source"] = SOURCE_YAML
+        info["entry_id"] = None
+        info.setdefault("system_id", system_id)
+        return info
 
-    for entry_info in entries.values():
-        if entry_info.get("system_id") == system_id or entry_info.get("config", {}).get("system_id") == system_id:
-            return entry_info
+    # 3. Exact match in config entries
+    for e_id, entry_info in entries.items():
+        if (
+            entry_info.get("system_id") == system_id
+            or entry_info.get("config", {}).get("system_id") == system_id
+        ):
+            info = dict(entry_info)
+            info["source"] = SOURCE_CONFIG_ENTRY
+            info["entry_id"] = e_id
+            info.setdefault("system_id", system_id)
+            return info
 
-    # Case-insensitive fallback
+    # 4. Case-insensitive fallback
     sys_lower = system_id.lower()
     for name, data in yaml_systems.items():
         if name.lower() == sys_lower:
-            return data
-    for entry_info in entries.values():
-        if entry_info.get("system_id", "").lower() == sys_lower or entry_info.get("config", {}).get("system_id", "").lower() == sys_lower:
-            return entry_info
+            info = dict(data)
+            info["source"] = SOURCE_YAML
+            info["entry_id"] = None
+            info.setdefault("system_id", name)
+            return info
+    for e_id, entry_info in entries.items():
+        if (
+            entry_info.get("system_id", "").lower() == sys_lower
+            or entry_info.get("config", {}).get("system_id", "").lower() == sys_lower
+        ):
+            info = dict(entry_info)
+            info["source"] = SOURCE_CONFIG_ENTRY
+            info["entry_id"] = e_id
+            info.setdefault("system_id", entry_info.get("system_id") or system_id)
+            return info
 
     return None
 
@@ -186,14 +226,24 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         inputs: dict[str, float] = call.data["inputs"]
         sys_data = get_system_data(hass, system_id)
         if not sys_data:
-            raise HomeAssistantError(f"Fuzzy system '{system_id}' not found.")
+            raise ServiceValidationError(
+                f"Fuzzy system '{system_id}' not found.",
+                translation_domain=DOMAIN,
+                translation_key="system_not_found",
+                translation_placeholders={"system_id": system_id},
+            )
         return _simulate_system(system_id, inputs, sys_data["engine"])
 
     async def _async_explain(call: ServiceCall) -> ServiceResponse:
         system_id: str = call.data["system_id"]
         sys_data = get_system_data(hass, system_id)
         if not sys_data:
-            raise HomeAssistantError(f"Fuzzy system '{system_id}' not found.")
+            raise ServiceValidationError(
+                f"Fuzzy system '{system_id}' not found.",
+                translation_domain=DOMAIN,
+                translation_key="system_not_found",
+                translation_placeholders={"system_id": system_id},
+            )
         live_inputs = _get_live_inputs(hass, sys_data.get("config", {}))
         return _explain_system(system_id, live_inputs, sys_data["engine"])
 

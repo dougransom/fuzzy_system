@@ -1,6 +1,5 @@
 """Tests for Fuzzy System WebSocket API commands."""
 
-
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -375,9 +374,7 @@ async def test_ws_save_system_update(
     assert len(updated_entry.data[CONF_RULES]) == 2
 
 
-async def test_ws_simulate(
-    hass: HomeAssistant, enable_custom_integrations, hass_ws_client
-) -> None:
+async def test_ws_simulate(hass: HomeAssistant, enable_custom_integrations, hass_ws_client) -> None:
     """Test dry-run simulation WebSocket endpoint."""
     assert await async_setup_component(hass, DOMAIN, {})
     await hass.async_block_till_done()
@@ -478,3 +475,170 @@ async def test_ws_non_admin_rejected(
     res = await client.receive_json()
     assert not res["success"]
     assert res["error"]["code"] == "unauthorized"
+
+
+async def test_ws_get_system_edge_cases(
+    hass: HomeAssistant, enable_custom_integrations, hass_ws_client
+) -> None:
+    """Test ws_get_system edge cases: by entry_id, missing parameters, and not found."""
+    assert await async_setup_component(hass, DOMAIN, {})
+    await hass.async_block_till_done()
+
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        unique_id="my_test_sys",
+        data={
+            CONF_SYSTEM_ID: "my_test_sys",
+            CONF_NAME: "My Test System",
+            CONF_INFERENCE: INFERENCE_MAMDANI,
+            CONF_DEFUZZIFIER: DEF_COG,
+            CONF_INPUTS: {},
+            CONF_OUTPUTS: {},
+            CONF_RULES: [],
+        },
+    )
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    client = await hass_ws_client(hass)
+
+    # 1. By entry_id
+    await client.send_json({"id": 70, "type": WS_TYPE_GET_SYSTEM, "entry_id": entry.entry_id})
+    res1 = await client.receive_json()
+    assert res1["success"]
+    assert res1["result"]["system_id"] == "my_test_sys"
+    assert res1["result"]["source"] == SOURCE_CONFIG_ENTRY
+
+    # 2. Missing both system_id and entry_id
+    await client.send_json({"id": 71, "type": WS_TYPE_GET_SYSTEM})
+    res2 = await client.receive_json()
+    assert not res2["success"]
+    assert res2["error"]["code"] == "invalid_parameters"
+
+    # 3. Not found
+    await client.send_json({"id": 72, "type": WS_TYPE_GET_SYSTEM, CONF_SYSTEM_ID: "does_not_exist"})
+    res3 = await client.receive_json()
+    assert not res3["success"]
+    assert res3["error"]["code"] == "not_found"
+
+
+async def test_ws_save_system_validation_errors(
+    hass: HomeAssistant, enable_custom_integrations, hass_ws_client
+) -> None:
+    """Test ws_save_system validation errors."""
+    assert await async_setup_component(hass, DOMAIN, {})
+    await hass.async_block_till_done()
+
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        unique_id="existing_alpha",
+        data={
+            CONF_SYSTEM_ID: "existing_alpha",
+            CONF_NAME: "Existing Alpha",
+            CONF_INFERENCE: INFERENCE_MAMDANI,
+            CONF_DEFUZZIFIER: DEF_COG,
+            CONF_INPUTS: {},
+            CONF_OUTPUTS: {},
+            CONF_RULES: [],
+        },
+    )
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    client = await hass_ws_client(hass)
+
+    # 1. Missing system_id
+    await client.send_json({"id": 80, "type": WS_TYPE_SAVE_SYSTEM, "system": {}})
+    res1 = await client.receive_json()
+    assert not res1["success"]
+    assert res1["error"]["code"] == "invalid_format"
+
+    # 2. Duplicate system_id collision
+    await client.send_json(
+        {
+            "id": 81,
+            "type": WS_TYPE_SAVE_SYSTEM,
+            "system": {CONF_SYSTEM_ID: "existing_alpha", CONF_NAME: "Duplicate"},
+        }
+    )
+    res2 = await client.receive_json()
+    assert not res2["success"]
+    assert res2["error"]["code"] == "id_exists"
+
+    # 3. Updating non-existent entry_id
+    await client.send_json(
+        {
+            "id": 82,
+            "type": WS_TYPE_SAVE_SYSTEM,
+            "entry_id": "non_existent_entry_id",
+            "system": {CONF_SYSTEM_ID: "some_new_id", CONF_NAME: "New"},
+        }
+    )
+    res3 = await client.receive_json()
+    assert not res3["success"]
+    assert res3["error"]["code"] == "not_found"
+
+
+async def test_ws_delete_system_not_found(
+    hass: HomeAssistant, enable_custom_integrations, hass_ws_client
+) -> None:
+    """Test deleting non-existent entry returns not_found error."""
+    assert await async_setup_component(hass, DOMAIN, {})
+    await hass.async_block_till_done()
+
+    client = await hass_ws_client(hass)
+    await client.send_json({"id": 90, "type": WS_TYPE_DELETE_SYSTEM, "entry_id": "missing_entry_123"})
+    res = await client.receive_json()
+    assert not res["success"]
+    assert res["error"]["code"] == "not_found"
+
+
+async def test_ws_simulate_and_template_errors(
+    hass: HomeAssistant, enable_custom_integrations, hass_ws_client
+) -> None:
+    """Test simulation error handling and invalid template ID."""
+    assert await async_setup_component(hass, DOMAIN, {})
+    await hass.async_block_till_done()
+
+    client = await hass_ws_client(hass)
+
+    # 1. Invalid simulation config
+    bad_sim_payload = {
+        "id": 95,
+        "type": WS_TYPE_SIMULATE,
+        "system_config": {
+            "inputs": {
+                "t": {
+                    "range": [0, 10],
+                    "terms": {"low": {"type": "unsupported_mf", "params": [0, 5, 10]}},
+                }
+            },
+            "outputs": {
+                "o": {
+                    "range": [0, 10],
+                    "terms": {"low": {"type": "trimf", "params": [0, 5, 10]}},
+                }
+            },
+            "rules": ["IF t IS low THEN o IS low"],
+        },
+        "inputs": {"t": 5.0},
+    }
+    await client.send_json(bad_sim_payload)
+    res1 = await client.receive_json()
+    assert not res1["success"]
+    assert res1["error"]["code"] == "simulation_error"
+
+    # 2. Template not found
+    await client.send_json(
+        {
+            "id": 96,
+            "type": WS_TYPE_INSTANTIATE_TEMPLATE,
+            "template_id": "non_existent_template_404",
+        }
+    )
+    res2 = await client.receive_json()
+    assert not res2["success"]
+    assert res2["error"]["code"] == "template_not_found"
+

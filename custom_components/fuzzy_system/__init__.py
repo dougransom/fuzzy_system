@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -21,24 +22,16 @@ from homeassistant.helpers.service import async_register_admin_service
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
-    CONF_DEFAULT,
     CONF_DEFUZZIFIER,
-    CONF_ENTITY_ID,
     CONF_EPSILON,
     CONF_EXPOSE_SYSTEM_SENSOR,
-    CONF_ICON,
     CONF_INFERENCE,
     CONF_INPUTS,
     CONF_MAX_UPDATES_PER_PERIOD,
-    CONF_NAME,
     CONF_OUTPUTS,
-    CONF_RANGE,
-    CONF_RESOLUTION,
     CONF_RULES,
     CONF_SYSTEM_ID,
     CONF_SYSTEMS,
-    CONF_TERMS,
-    CONF_UNIT_OF_MEASUREMENT,
     CONF_UPDATE_PERIOD,
     DATA_ENTRIES,
     DATA_YAML_SYSTEMS,
@@ -49,10 +42,10 @@ from .const import (
     DOMAIN,
     INFERENCE_MAMDANI,
     VALID_DEFUZZIFIERS,
-    VALID_HEDGES,
     VALID_INFERENCE_TYPES,
 )
 from .fuzzy_engine import FuzzySystemEngine
+from .schema import INPUT_VAR_SCHEMA, OUTPUT_VAR_SCHEMA
 from .services import async_setup_services
 from .websocket import async_setup_websocket
 
@@ -60,36 +53,17 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 
-TERM_SCHEMA = vol.Schema(
-    {
-        vol.Required("type"): cv.string,
-        vol.Required("params"): vol.All(cv.ensure_list, [vol.Coerce(float)]),
-        vol.Optional("hedge"): vol.In(VALID_HEDGES),
-    }
-)
 
-INPUT_VAR_SCHEMA = vol.Schema(
-    {
-        vol.Required(CONF_ENTITY_ID): cv.entity_id,
-        vol.Required(CONF_RANGE): vol.All(cv.ensure_list, [vol.Coerce(float)]),
-        vol.Required(CONF_TERMS): vol.Schema({cv.string: TERM_SCHEMA}),
-        vol.Optional(CONF_DEFAULT, default=0.0): vol.Coerce(float),
-        vol.Optional(CONF_RESOLUTION, default=100): vol.Coerce(int),
-    }
-)
+@dataclass
+class FuzzySystemData:
+    """Runtime data for Fuzzy System config entries."""
 
-OUTPUT_VAR_SCHEMA = vol.Schema(
-    {
-        vol.Required(CONF_RANGE): vol.All(cv.ensure_list, [vol.Coerce(float)]),
-        vol.Required(CONF_TERMS): vol.Schema({cv.string: TERM_SCHEMA}),
-        vol.Optional(CONF_RESOLUTION, default=100): vol.Coerce(int),
-        vol.Optional(CONF_DEFUZZIFIER): vol.In(VALID_DEFUZZIFIERS),
-        vol.Optional(CONF_EPSILON): vol.All(vol.Coerce(float), vol.Range(min=0.0)),
-        vol.Optional(CONF_NAME): cv.string,
-        vol.Optional(CONF_ICON): cv.icon,
-        vol.Optional(CONF_UNIT_OF_MEASUREMENT): cv.string,
-    }
-)
+    system_id: str
+    engine: FuzzySystemEngine
+    config: dict[str, Any]
+
+
+type FuzzyConfigEntry = ConfigEntry[FuzzySystemData]
 
 SYSTEM_SCHEMA = vol.Schema(
     {
@@ -234,12 +208,18 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     return True
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: FuzzyConfigEntry) -> bool:
     """Set up Fuzzy System from a config entry UI."""
     _init_domain_data(hass)
 
     system_id = entry.data.get(CONF_SYSTEM_ID) or entry.unique_id or entry.title
     engine = FuzzySystemEngine.from_dict(entry.data)
+
+    entry.runtime_data = FuzzySystemData(
+        system_id=system_id,
+        engine=engine,
+        config=dict(entry.data),
+    )
 
     hass.data[DOMAIN][DATA_ENTRIES][entry.entry_id] = {
         "system_id": system_id,
@@ -254,7 +234,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: FuzzyConfigEntry) -> bool:
     """Unload a config entry UI."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
@@ -264,6 +244,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return unload_ok
 
 
-async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+async def async_reload_entry(hass: HomeAssistant, entry: FuzzyConfigEntry) -> None:
     """Reload config entry."""
     await hass.config_entries.async_reload(entry.entry_id)

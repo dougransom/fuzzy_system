@@ -1,6 +1,5 @@
 """Pytest configuration and global fixtures for fuzzy_system tests."""
 
-
 try:
     import pycares
 

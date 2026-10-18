@@ -5,6 +5,8 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  release:
+    types: [ published ]
 
 jobs:
   validate:
@@ -20,13 +22,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff pytest pytest-asyncio pytest-homeassistant-custom-component scikit-fuzzy numpy scipy
+          pip install ruff pytest pytest-cov pytest-asyncio pytest-homeassistant-custom-component scikit-fuzzy numpy scipy
 
       - name: Run Ruff Linter
         run: ruff check .
 
-      - name: Run Pytest
-        run: pytest tests
+      - name: Run Pytest with Quality Scale Coverage Enforcement (>=95%)
+        run: pytest tests --cov=custom_components.fuzzy_system --cov-fail-under=95
 
       - name: Hassfest validation
         uses: home-assistant/actions/hassfest@master

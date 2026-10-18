@@ -20,14 +20,13 @@ from custom_components.fuzzy_system.const import (
     DEF_COG,
     DOMAIN,
     INFERENCE_MAMDANI,
+    INFERENCE_SUGENO,
 )
 
 
 async def test_flow_user_init(hass: HomeAssistant, enable_custom_integrations) -> None:
     """Test user step shows initial form."""
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": "user"}
-    )
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
     assert result["type"] == FlowResultType.FORM
     assert result["step_id"] == "user"
     assert result["errors"] == {}
@@ -181,3 +180,76 @@ async def test_options_flow(hass: HomeAssistant, enable_custom_integrations) -> 
         assert entry.data[CONF_DESCRIPTION] == "Updated description via options"
         assert entry.data[CONF_EXPOSE_SYSTEM_SENSOR] is False
         mock_reload.assert_called_once_with(entry.entry_id)
+
+
+async def test_flow_user_invalid_system_id(hass: HomeAssistant, enable_custom_integrations) -> None:
+    """Test rejecting empty or invalid slug system_id."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": "user"},
+        data={
+            CONF_SYSTEM_ID: "",
+            CONF_NAME: "Invalid System",
+        },
+    )
+    assert result["type"] == FlowResultType.FORM
+    assert result["errors"]["base"] == "invalid_system_id"
+
+
+async def test_flow_import_step(hass: HomeAssistant, enable_custom_integrations) -> None:
+    """Test importing configuration via import step."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": "import"},
+        data={
+            CONF_SYSTEM_ID: "yaml_imported_sys",
+            CONF_NAME: "YAML Imported System",
+            CONF_INFERENCE: INFERENCE_MAMDANI,
+            CONF_DEFUZZIFIER: DEF_COG,
+            CONF_INPUTS: {},
+            CONF_OUTPUTS: {},
+            CONF_RULES: [],
+        },
+    )
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+    assert result["title"] == "YAML Imported System"
+    assert result["data"][CONF_SYSTEM_ID] == "yaml_imported_sys"
+
+
+async def test_reconfigure_flow(hass: HomeAssistant, enable_custom_integrations) -> None:
+    """Test reconfiguring an existing fuzzy system."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        unique_id="reconfig_test",
+        title="Original Title",
+        data={
+            CONF_SYSTEM_ID: "reconfig_test",
+            CONF_NAME: "Original Title",
+            CONF_INFERENCE: INFERENCE_MAMDANI,
+            CONF_DEFUZZIFIER: DEF_COG,
+            CONF_INPUTS: {},
+            CONF_OUTPUTS: {},
+            CONF_RULES: [],
+        },
+    )
+    entry.add_to_hass(hass)
+
+    result = await entry.start_reconfigure_flow(hass)
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "reconfigure"
+
+    result2 = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        user_input={
+            CONF_NAME: "Reconfigured Title",
+            CONF_INFERENCE: INFERENCE_SUGENO,
+            CONF_DEFUZZIFIER: "wtaverage",
+        },
+    )
+    assert result2["type"] == FlowResultType.ABORT
+    assert result2["reason"] == "reconfigure_successful"
+    await hass.async_block_till_done()
+    assert entry.title == "Reconfigured Title"
+    assert entry.data[CONF_INFERENCE] == INFERENCE_SUGENO
+    assert entry.data[CONF_DEFUZZIFIER] == "wtaverage"
+
