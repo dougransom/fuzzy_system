@@ -3,18 +3,18 @@
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const F = globalThis, Z = F.ShadowRoot && (F.ShadyCSS === void 0 || F.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, K = Symbol(), se = /* @__PURE__ */ new WeakMap();
+const H = globalThis, Z = H.ShadowRoot && (H.ShadyCSS === void 0 || H.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, K = Symbol(), se = /* @__PURE__ */ new WeakMap();
 let he = class {
-  constructor(e, i, s) {
-    if (this._$cssResult$ = !0, s !== K) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
-    this.cssText = e, this.t = i;
+  constructor(e, s, i) {
+    if (this._$cssResult$ = !0, i !== K) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+    this.cssText = e, this.t = s;
   }
   get styleSheet() {
     let e = this.o;
-    const i = this.t;
+    const s = this.t;
     if (Z && e === void 0) {
-      const s = i !== void 0 && i.length === 1;
-      s && (e = se.get(i)), e === void 0 && ((this.o = e = new CSSStyleSheet()).replaceSync(this.cssText), s && se.set(i, e));
+      const i = s !== void 0 && s.length === 1;
+      i && (e = se.get(s)), e === void 0 && ((this.o = e = new CSSStyleSheet()).replaceSync(this.cssText), i && se.set(s, e));
     }
     return e;
   }
@@ -22,30 +22,30 @@ let he = class {
     return this.cssText;
   }
 };
-const _e = (t) => new he(typeof t == "string" ? t : t + "", void 0, K), H = (t, ...e) => {
-  const i = t.length === 1 ? t[0] : e.reduce((s, a, r) => s + ((n) => {
-    if (n._$cssResult$ === !0) return n.cssText;
-    if (typeof n == "number") return n;
-    throw Error("Value passed to 'css' function must be a 'css' function result: " + n + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
-  })(a) + t[r + 1], t[0]);
-  return new he(i, t, K);
-}, ye = (t, e) => {
-  if (Z) t.adoptedStyleSheets = e.map((i) => i instanceof CSSStyleSheet ? i : i.styleSheet);
-  else for (const i of e) {
-    const s = document.createElement("style"), a = F.litNonce;
-    a !== void 0 && s.setAttribute("nonce", a), s.textContent = i.cssText, t.appendChild(s);
+const ye = (t) => new he(typeof t == "string" ? t : t + "", void 0, K), q = (t, ...e) => {
+  const s = t.length === 1 ? t[0] : e.reduce((i, r, n) => i + ((a) => {
+    if (a._$cssResult$ === !0) return a.cssText;
+    if (typeof a == "number") return a;
+    throw Error("Value passed to 'css' function must be a 'css' function result: " + a + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
+  })(r) + t[n + 1], t[0]);
+  return new he(s, t, K);
+}, _e = (t, e) => {
+  if (Z) t.adoptedStyleSheets = e.map((s) => s instanceof CSSStyleSheet ? s : s.styleSheet);
+  else for (const s of e) {
+    const i = document.createElement("style"), r = H.litNonce;
+    r !== void 0 && i.setAttribute("nonce", r), i.textContent = s.cssText, t.appendChild(i);
   }
 }, ie = Z ? (t) => t : (t) => t instanceof CSSStyleSheet ? ((e) => {
-  let i = "";
-  for (const s of e.cssRules) i += s.cssText;
-  return _e(i);
+  let s = "";
+  for (const i of e.cssRules) s += i.cssText;
+  return ye(s);
 })(t) : t;
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: ve, defineProperty: $e, getOwnPropertyDescriptor: xe, getOwnPropertyNames: we, getOwnPropertySymbols: ze, getPrototypeOf: Se } = Object, V = globalThis, ae = V.trustedTypes, Ae = ae ? ae.emptyScript : "", Ee = V.reactiveElementPolyfillSupport, N = (t, e) => t, B = { toAttribute(t, e) {
+const { is: ve, defineProperty: xe, getOwnPropertyDescriptor: $e, getOwnPropertyNames: we, getOwnPropertySymbols: ze, getPrototypeOf: Se } = Object, F = globalThis, re = F.trustedTypes, Ae = re ? re.emptyScript : "", Ee = F.reactiveElementPolyfillSupport, P = (t, e) => t, L = { toAttribute(t, e) {
   switch (e) {
     case Boolean:
       t = t ? Ae : null;
@@ -56,86 +56,86 @@ const { is: ve, defineProperty: $e, getOwnPropertyDescriptor: xe, getOwnProperty
   }
   return t;
 }, fromAttribute(t, e) {
-  let i = t;
+  let s = t;
   switch (e) {
     case Boolean:
-      i = t !== null;
+      s = t !== null;
       break;
     case Number:
-      i = t === null ? null : Number(t);
+      s = t === null ? null : Number(t);
       break;
     case Object:
     case Array:
       try {
-        i = JSON.parse(t);
+        s = JSON.parse(t);
       } catch {
-        i = null;
+        s = null;
       }
   }
-  return i;
-} }, X = (t, e) => !ve(t, e), re = { attribute: !0, type: String, converter: B, reflect: !1, useDefault: !1, hasChanged: X };
-Symbol.metadata ??= Symbol("metadata"), V.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
-let k = class extends HTMLElement {
+  return s;
+} }, X = (t, e) => !ve(t, e), ne = { attribute: !0, type: String, converter: L, reflect: !1, useDefault: !1, hasChanged: X };
+Symbol.metadata ??= Symbol("metadata"), F.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
+let M = class extends HTMLElement {
   static addInitializer(e) {
     this._$Ei(), (this.l ??= []).push(e);
   }
   static get observedAttributes() {
     return this.finalize(), this._$Eh && [...this._$Eh.keys()];
   }
-  static createProperty(e, i = re) {
-    if (i.state && (i.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(e) && ((i = Object.create(i)).wrapped = !0), this.elementProperties.set(e, i), !i.noAccessor) {
-      const s = Symbol(), a = this.getPropertyDescriptor(e, s, i);
-      a !== void 0 && $e(this.prototype, e, a);
+  static createProperty(e, s = ne) {
+    if (s.state && (s.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(e) && ((s = Object.create(s)).wrapped = !0), this.elementProperties.set(e, s), !s.noAccessor) {
+      const i = Symbol(), r = this.getPropertyDescriptor(e, i, s);
+      r !== void 0 && xe(this.prototype, e, r);
     }
   }
-  static getPropertyDescriptor(e, i, s) {
-    const { get: a, set: r } = xe(this.prototype, e) ?? { get() {
-      return this[i];
-    }, set(n) {
-      this[i] = n;
+  static getPropertyDescriptor(e, s, i) {
+    const { get: r, set: n } = $e(this.prototype, e) ?? { get() {
+      return this[s];
+    }, set(a) {
+      this[s] = a;
     } };
-    return { get: a, set(n) {
-      const d = a?.call(this);
-      r?.call(this, n), this.requestUpdate(e, d, s);
+    return { get: r, set(a) {
+      const d = r?.call(this);
+      n?.call(this, a), this.requestUpdate(e, d, i);
     }, configurable: !0, enumerable: !0 };
   }
   static getPropertyOptions(e) {
-    return this.elementProperties.get(e) ?? re;
+    return this.elementProperties.get(e) ?? ne;
   }
   static _$Ei() {
-    if (this.hasOwnProperty(N("elementProperties"))) return;
+    if (this.hasOwnProperty(P("elementProperties"))) return;
     const e = Se(this);
     e.finalize(), e.l !== void 0 && (this.l = [...e.l]), this.elementProperties = new Map(e.elementProperties);
   }
   static finalize() {
-    if (this.hasOwnProperty(N("finalized"))) return;
-    if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(N("properties"))) {
-      const i = this.properties, s = [...we(i), ...ze(i)];
-      for (const a of s) this.createProperty(a, i[a]);
+    if (this.hasOwnProperty(P("finalized"))) return;
+    if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(P("properties"))) {
+      const s = this.properties, i = [...we(s), ...ze(s)];
+      for (const r of i) this.createProperty(r, s[r]);
     }
     const e = this[Symbol.metadata];
     if (e !== null) {
-      const i = litPropertyMetadata.get(e);
-      if (i !== void 0) for (const [s, a] of i) this.elementProperties.set(s, a);
+      const s = litPropertyMetadata.get(e);
+      if (s !== void 0) for (const [i, r] of s) this.elementProperties.set(i, r);
     }
     this._$Eh = /* @__PURE__ */ new Map();
-    for (const [i, s] of this.elementProperties) {
-      const a = this._$Eu(i, s);
-      a !== void 0 && this._$Eh.set(a, i);
+    for (const [s, i] of this.elementProperties) {
+      const r = this._$Eu(s, i);
+      r !== void 0 && this._$Eh.set(r, s);
     }
     this.elementStyles = this.finalizeStyles(this.styles);
   }
   static finalizeStyles(e) {
-    const i = [];
+    const s = [];
     if (Array.isArray(e)) {
-      const s = new Set(e.flat(1 / 0).reverse());
-      for (const a of s) i.unshift(ie(a));
-    } else e !== void 0 && i.push(ie(e));
-    return i;
+      const i = new Set(e.flat(1 / 0).reverse());
+      for (const r of i) s.unshift(ie(r));
+    } else e !== void 0 && s.push(ie(e));
+    return s;
   }
-  static _$Eu(e, i) {
-    const s = i.attribute;
-    return s === !1 ? void 0 : typeof s == "string" ? s : typeof e == "string" ? e.toLowerCase() : void 0;
+  static _$Eu(e, s) {
+    const i = s.attribute;
+    return i === !1 ? void 0 : typeof i == "string" ? i : typeof e == "string" ? e.toLowerCase() : void 0;
   }
   constructor() {
     super(), this._$Ep = void 0, this.isUpdatePending = !1, this.hasUpdated = !1, this._$Em = null, this._$Ev();
@@ -150,13 +150,13 @@ let k = class extends HTMLElement {
     this._$EO?.delete(e);
   }
   _$E_() {
-    const e = /* @__PURE__ */ new Map(), i = this.constructor.elementProperties;
-    for (const s of i.keys()) this.hasOwnProperty(s) && (e.set(s, this[s]), delete this[s]);
+    const e = /* @__PURE__ */ new Map(), s = this.constructor.elementProperties;
+    for (const i of s.keys()) this.hasOwnProperty(i) && (e.set(i, this[i]), delete this[i]);
     e.size > 0 && (this._$Ep = e);
   }
   createRenderRoot() {
     const e = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
-    return ye(e, this.constructor.elementStyles), e;
+    return _e(e, this.constructor.elementStyles), e;
   }
   connectedCallback() {
     this.renderRoot ??= this.createRenderRoot(), this.enableUpdating(!0), this._$EO?.forEach((e) => e.hostConnected?.());
@@ -166,42 +166,42 @@ let k = class extends HTMLElement {
   disconnectedCallback() {
     this._$EO?.forEach((e) => e.hostDisconnected?.());
   }
-  attributeChangedCallback(e, i, s) {
-    this._$AK(e, s);
+  attributeChangedCallback(e, s, i) {
+    this._$AK(e, i);
   }
-  _$ET(e, i) {
-    const s = this.constructor.elementProperties.get(e), a = this.constructor._$Eu(e, s);
-    if (a !== void 0 && s.reflect === !0) {
-      const r = (s.converter?.toAttribute !== void 0 ? s.converter : B).toAttribute(i, s.type);
-      this._$Em = e, r == null ? this.removeAttribute(a) : this.setAttribute(a, r), this._$Em = null;
+  _$ET(e, s) {
+    const i = this.constructor.elementProperties.get(e), r = this.constructor._$Eu(e, i);
+    if (r !== void 0 && i.reflect === !0) {
+      const n = (i.converter?.toAttribute !== void 0 ? i.converter : L).toAttribute(s, i.type);
+      this._$Em = e, n == null ? this.removeAttribute(r) : this.setAttribute(r, n), this._$Em = null;
     }
   }
-  _$AK(e, i) {
-    const s = this.constructor, a = s._$Eh.get(e);
-    if (a !== void 0 && this._$Em !== a) {
-      const r = s.getPropertyOptions(a), n = typeof r.converter == "function" ? { fromAttribute: r.converter } : r.converter?.fromAttribute !== void 0 ? r.converter : B;
-      this._$Em = a;
-      const d = n.fromAttribute(i, r.type);
-      this[a] = d ?? this._$Ej?.get(a) ?? d, this._$Em = null;
+  _$AK(e, s) {
+    const i = this.constructor, r = i._$Eh.get(e);
+    if (r !== void 0 && this._$Em !== r) {
+      const n = i.getPropertyOptions(r), a = typeof n.converter == "function" ? { fromAttribute: n.converter } : n.converter?.fromAttribute !== void 0 ? n.converter : L;
+      this._$Em = r;
+      const d = a.fromAttribute(s, n.type);
+      this[r] = d ?? this._$Ej?.get(r) ?? d, this._$Em = null;
     }
   }
-  requestUpdate(e, i, s, a = !1, r) {
+  requestUpdate(e, s, i, r = !1, n) {
     if (e !== void 0) {
-      const n = this.constructor;
-      if (a === !1 && (r = this[e]), s ??= n.getPropertyOptions(e), !((s.hasChanged ?? X)(r, i) || s.useDefault && s.reflect && r === this._$Ej?.get(e) && !this.hasAttribute(n._$Eu(e, s)))) return;
-      this.C(e, i, s);
+      const a = this.constructor;
+      if (r === !1 && (n = this[e]), i ??= a.getPropertyOptions(e), !((i.hasChanged ?? X)(n, s) || i.useDefault && i.reflect && n === this._$Ej?.get(e) && !this.hasAttribute(a._$Eu(e, i)))) return;
+      this.C(e, s, i);
     }
     this.isUpdatePending === !1 && (this._$ES = this._$EP());
   }
-  C(e, i, { useDefault: s, reflect: a, wrapped: r }, n) {
-    s && !(this._$Ej ??= /* @__PURE__ */ new Map()).has(e) && (this._$Ej.set(e, n ?? i ?? this[e]), r !== !0 || n !== void 0) || (this._$AL.has(e) || (this.hasUpdated || s || (i = void 0), this._$AL.set(e, i)), a === !0 && this._$Em !== e && (this._$Eq ??= /* @__PURE__ */ new Set()).add(e));
+  C(e, s, { useDefault: i, reflect: r, wrapped: n }, a) {
+    i && !(this._$Ej ??= /* @__PURE__ */ new Map()).has(e) && (this._$Ej.set(e, a ?? s ?? this[e]), n !== !0 || a !== void 0) || (this._$AL.has(e) || (this.hasUpdated || i || (s = void 0), this._$AL.set(e, s)), r === !0 && this._$Em !== e && (this._$Eq ??= /* @__PURE__ */ new Set()).add(e));
   }
   async _$EP() {
     this.isUpdatePending = !0;
     try {
       await this._$ES;
-    } catch (i) {
-      Promise.reject(i);
+    } catch (s) {
+      Promise.reject(s);
     }
     const e = this.scheduleUpdate();
     return e != null && await e, !this.isUpdatePending;
@@ -213,28 +213,28 @@ let k = class extends HTMLElement {
     if (!this.isUpdatePending) return;
     if (!this.hasUpdated) {
       if (this.renderRoot ??= this.createRenderRoot(), this._$Ep) {
-        for (const [a, r] of this._$Ep) this[a] = r;
+        for (const [r, n] of this._$Ep) this[r] = n;
         this._$Ep = void 0;
       }
-      const s = this.constructor.elementProperties;
-      if (s.size > 0) for (const [a, r] of s) {
-        const { wrapped: n } = r, d = this[a];
-        n !== !0 || this._$AL.has(a) || d === void 0 || this.C(a, void 0, r, d);
+      const i = this.constructor.elementProperties;
+      if (i.size > 0) for (const [r, n] of i) {
+        const { wrapped: a } = n, d = this[r];
+        a !== !0 || this._$AL.has(r) || d === void 0 || this.C(r, void 0, n, d);
       }
     }
     let e = !1;
-    const i = this._$AL;
+    const s = this._$AL;
     try {
-      e = this.shouldUpdate(i), e ? (this.willUpdate(i), this._$EO?.forEach((s) => s.hostUpdate?.()), this.update(i)) : this._$EM();
-    } catch (s) {
-      throw e = !1, this._$EM(), s;
+      e = this.shouldUpdate(s), e ? (this.willUpdate(s), this._$EO?.forEach((i) => i.hostUpdate?.()), this.update(s)) : this._$EM();
+    } catch (i) {
+      throw e = !1, this._$EM(), i;
     }
-    e && this._$AE(i);
+    e && this._$AE(s);
   }
   willUpdate(e) {
   }
   _$AE(e) {
-    this._$EO?.forEach((i) => i.hostUpdated?.()), this.hasUpdated || (this.hasUpdated = !0, this.firstUpdated(e)), this.updated(e);
+    this._$EO?.forEach((s) => s.hostUpdated?.()), this.hasUpdated || (this.hasUpdated = !0, this.firstUpdated(e)), this.updated(e);
   }
   _$EM() {
     this._$AL = /* @__PURE__ */ new Map(), this.isUpdatePending = !1;
@@ -249,84 +249,84 @@ let k = class extends HTMLElement {
     return !0;
   }
   update(e) {
-    this._$Eq &&= this._$Eq.forEach((i) => this._$ET(i, this[i])), this._$EM();
+    this._$Eq &&= this._$Eq.forEach((s) => this._$ET(s, this[s])), this._$EM();
   }
   updated(e) {
   }
   firstUpdated(e) {
   }
 };
-k.elementStyles = [], k.shadowRootOptions = { mode: "open" }, k[N("elementProperties")] = /* @__PURE__ */ new Map(), k[N("finalized")] = /* @__PURE__ */ new Map(), Ee?.({ ReactiveElement: k }), (V.reactiveElementVersions ??= []).push("2.1.2");
+M.elementStyles = [], M.shadowRootOptions = { mode: "open" }, M[P("elementProperties")] = /* @__PURE__ */ new Map(), M[P("finalized")] = /* @__PURE__ */ new Map(), Ee?.({ ReactiveElement: M }), (F.reactiveElementVersions ??= []).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const Y = globalThis, ne = (t) => t, q = Y.trustedTypes, oe = q ? q.createPolicy("lit-html", { createHTML: (t) => t }) : void 0, ge = "$lit$", z = `lit$${Math.random().toFixed(9).slice(2)}$`, me = "?" + z, Ie = `<${me}>`, T = document, U = () => T.createComment(""), R = (t) => t === null || typeof t != "object" && typeof t != "function", ee = Array.isArray, Te = (t) => ee(t) || typeof t?.[Symbol.iterator] == "function", G = `[ 	
-\f\r]`, O = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, le = /-->/g, de = />/g, E = RegExp(`>|${G}(?:([^\\s"'>=/]+)(${G}*=${G}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), pe = /'/g, ce = /"/g, fe = /^(?:script|style|textarea|title)$/i, Me = (t) => (e, ...i) => ({ _$litType$: t, strings: e, values: i }), o = Me(1), C = Symbol.for("lit-noChange"), g = Symbol.for("lit-nothing"), ue = /* @__PURE__ */ new WeakMap(), I = T.createTreeWalker(T, 129);
-function be(t, e) {
+const Y = globalThis, ae = (t) => t, V = Y.trustedTypes, oe = V ? V.createPolicy("lit-html", { createHTML: (t) => t }) : void 0, ge = "$lit$", S = `lit$${Math.random().toFixed(9).slice(2)}$`, be = "?" + S, Ce = `<${be}>`, k = document, U = () => k.createComment(""), j = (t) => t === null || typeof t != "object" && typeof t != "function", ee = Array.isArray, Ie = (t) => ee(t) || typeof t?.[Symbol.iterator] == "function", Q = `[ 	
+\f\r]`, N = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, le = /-->/g, de = />/g, C = RegExp(`>|${Q}(?:([^\\s"'>=/]+)(${Q}*=${Q}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g"), pe = /'/g, ce = /"/g, fe = /^(?:script|style|textarea|title)$/i, ke = (t) => (e, ...s) => ({ _$litType$: t, strings: e, values: s }), o = ke(1), O = Symbol.for("lit-noChange"), f = Symbol.for("lit-nothing"), ue = /* @__PURE__ */ new WeakMap(), I = k.createTreeWalker(k, 129);
+function me(t, e) {
   if (!ee(t) || !t.hasOwnProperty("raw")) throw Error("invalid template strings array");
   return oe !== void 0 ? oe.createHTML(e) : e;
 }
-const ke = (t, e) => {
-  const i = t.length - 1, s = [];
-  let a, r = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", n = O;
-  for (let d = 0; d < i; d++) {
+const Te = (t, e) => {
+  const s = t.length - 1, i = [];
+  let r, n = e === 2 ? "<svg>" : e === 3 ? "<math>" : "", a = N;
+  for (let d = 0; d < s; d++) {
     const l = t[d];
-    let h, f, c = -1, v = 0;
-    for (; v < l.length && (n.lastIndex = v, f = n.exec(l), f !== null); ) v = n.lastIndex, n === O ? f[1] === "!--" ? n = le : f[1] !== void 0 ? n = de : f[2] !== void 0 ? (fe.test(f[2]) && (a = RegExp("</" + f[2], "g")), n = E) : f[3] !== void 0 && (n = E) : n === E ? f[0] === ">" ? (n = a ?? O, c = -1) : f[1] === void 0 ? c = -2 : (c = n.lastIndex - f[2].length, h = f[1], n = f[3] === void 0 ? E : f[3] === '"' ? ce : pe) : n === ce || n === pe ? n = E : n === le || n === de ? n = O : (n = E, a = void 0);
-    const w = n === E && t[d + 1].startsWith("/>") ? " " : "";
-    r += n === O ? l + Ie : c >= 0 ? (s.push(h), l.slice(0, c) + ge + l.slice(c) + z + w) : l + z + (c === -2 ? d : w);
+    let g, b, c = -1, m = 0;
+    for (; m < l.length && (a.lastIndex = m, b = a.exec(l), b !== null); ) m = a.lastIndex, a === N ? b[1] === "!--" ? a = le : b[1] !== void 0 ? a = de : b[2] !== void 0 ? (fe.test(b[2]) && (r = RegExp("</" + b[2], "g")), a = C) : b[3] !== void 0 && (a = C) : a === C ? b[0] === ">" ? (a = r ?? N, c = -1) : b[1] === void 0 ? c = -2 : (c = a.lastIndex - b[2].length, g = b[1], a = b[3] === void 0 ? C : b[3] === '"' ? ce : pe) : a === ce || a === pe ? a = C : a === le || a === de ? a = N : (a = C, r = void 0);
+    const y = a === C && t[d + 1].startsWith("/>") ? " " : "";
+    n += a === N ? l + Ce : c >= 0 ? (i.push(g), l.slice(0, c) + ge + l.slice(c) + S + y) : l + S + (c === -2 ? d : y);
   }
-  return [be(t, r + (t[i] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), s];
+  return [me(t, n + (t[s] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), i];
 };
-class j {
-  constructor({ strings: e, _$litType$: i }, s) {
-    let a;
+class B {
+  constructor({ strings: e, _$litType$: s }, i) {
+    let r;
     this.parts = [];
-    let r = 0, n = 0;
-    const d = e.length - 1, l = this.parts, [h, f] = ke(e, i);
-    if (this.el = j.createElement(h, s), I.currentNode = this.el.content, i === 2 || i === 3) {
+    let n = 0, a = 0;
+    const d = e.length - 1, l = this.parts, [g, b] = Te(e, s);
+    if (this.el = B.createElement(g, i), I.currentNode = this.el.content, s === 2 || s === 3) {
       const c = this.el.content.firstChild;
       c.replaceWith(...c.childNodes);
     }
-    for (; (a = I.nextNode()) !== null && l.length < d; ) {
-      if (a.nodeType === 1) {
-        if (a.hasAttributes()) for (const c of a.getAttributeNames()) if (c.endsWith(ge)) {
-          const v = f[n++], w = a.getAttribute(c).split(z), L = /([.?@])?(.*)/.exec(v);
-          l.push({ type: 1, index: r, name: L[2], strings: w, ctor: L[1] === "." ? Pe : L[1] === "?" ? Oe : L[1] === "@" ? Ne : W }), a.removeAttribute(c);
-        } else c.startsWith(z) && (l.push({ type: 6, index: r }), a.removeAttribute(c));
-        if (fe.test(a.tagName)) {
-          const c = a.textContent.split(z), v = c.length - 1;
-          if (v > 0) {
-            a.textContent = q ? q.emptyScript : "";
-            for (let w = 0; w < v; w++) a.append(c[w], U()), I.nextNode(), l.push({ type: 2, index: ++r });
-            a.append(c[v], U());
+    for (; (r = I.nextNode()) !== null && l.length < d; ) {
+      if (r.nodeType === 1) {
+        if (r.hasAttributes()) for (const c of r.getAttributeNames()) if (c.endsWith(ge)) {
+          const m = b[a++], y = r.getAttribute(c).split(S), $ = /([.?@])?(.*)/.exec(m);
+          l.push({ type: 1, index: n, name: $[2], strings: y, ctor: $[1] === "." ? Oe : $[1] === "?" ? Re : $[1] === "@" ? Ne : W }), r.removeAttribute(c);
+        } else c.startsWith(S) && (l.push({ type: 6, index: n }), r.removeAttribute(c));
+        if (fe.test(r.tagName)) {
+          const c = r.textContent.split(S), m = c.length - 1;
+          if (m > 0) {
+            r.textContent = V ? V.emptyScript : "";
+            for (let y = 0; y < m; y++) r.append(c[y], U()), I.nextNode(), l.push({ type: 2, index: ++n });
+            r.append(c[m], U());
           }
         }
-      } else if (a.nodeType === 8) if (a.data === me) l.push({ type: 2, index: r });
+      } else if (r.nodeType === 8) if (r.data === be) l.push({ type: 2, index: n });
       else {
         let c = -1;
-        for (; (c = a.data.indexOf(z, c + 1)) !== -1; ) l.push({ type: 7, index: r }), c += z.length - 1;
+        for (; (c = r.data.indexOf(S, c + 1)) !== -1; ) l.push({ type: 7, index: n }), c += S.length - 1;
       }
-      r++;
+      n++;
     }
   }
-  static createElement(e, i) {
-    const s = T.createElement("template");
-    return s.innerHTML = e, s;
+  static createElement(e, s) {
+    const i = k.createElement("template");
+    return i.innerHTML = e, i;
   }
 }
-function P(t, e, i = t, s) {
-  if (e === C) return e;
-  let a = s !== void 0 ? i._$Co?.[s] : i._$Cl;
-  const r = R(e) ? void 0 : e._$litDirective$;
-  return a?.constructor !== r && (a?._$AO?.(!1), r === void 0 ? a = void 0 : (a = new r(t), a._$AT(t, i, s)), s !== void 0 ? (i._$Co ??= [])[s] = a : i._$Cl = a), a !== void 0 && (e = P(t, a._$AS(t, e.values), a, s)), e;
+function R(t, e, s = t, i) {
+  if (e === O) return e;
+  let r = i !== void 0 ? s._$Co?.[i] : s._$Cl;
+  const n = j(e) ? void 0 : e._$litDirective$;
+  return r?.constructor !== n && (r?._$AO?.(!1), n === void 0 ? r = void 0 : (r = new n(t), r._$AT(t, s, i)), i !== void 0 ? (s._$Co ??= [])[i] = r : s._$Cl = r), r !== void 0 && (e = R(t, r._$AS(t, e.values), r, i)), e;
 }
-class Ce {
-  constructor(e, i) {
-    this._$AV = [], this._$AN = void 0, this._$AD = e, this._$AM = i;
+class Me {
+  constructor(e, s) {
+    this._$AV = [], this._$AN = void 0, this._$AD = e, this._$AM = s;
   }
   get parentNode() {
     return this._$AM.parentNode;
@@ -335,34 +335,34 @@ class Ce {
     return this._$AM._$AU;
   }
   u(e) {
-    const { el: { content: i }, parts: s } = this._$AD, a = (e?.creationScope ?? T).importNode(i, !0);
-    I.currentNode = a;
-    let r = I.nextNode(), n = 0, d = 0, l = s[0];
+    const { el: { content: s }, parts: i } = this._$AD, r = (e?.creationScope ?? k).importNode(s, !0);
+    I.currentNode = r;
+    let n = I.nextNode(), a = 0, d = 0, l = i[0];
     for (; l !== void 0; ) {
-      if (n === l.index) {
-        let h;
-        l.type === 2 ? h = new D(r, r.nextSibling, this, e) : l.type === 1 ? h = new l.ctor(r, l.name, l.strings, this, e) : l.type === 6 && (h = new Ue(r, this, e)), this._$AV.push(h), l = s[++d];
+      if (a === l.index) {
+        let g;
+        l.type === 2 ? g = new D(n, n.nextSibling, this, e) : l.type === 1 ? g = new l.ctor(n, l.name, l.strings, this, e) : l.type === 6 && (g = new Pe(n, this, e)), this._$AV.push(g), l = i[++d];
       }
-      n !== l?.index && (r = I.nextNode(), n++);
+      a !== l?.index && (n = I.nextNode(), a++);
     }
-    return I.currentNode = T, a;
+    return I.currentNode = k, r;
   }
   p(e) {
-    let i = 0;
-    for (const s of this._$AV) s !== void 0 && (s.strings !== void 0 ? (s._$AI(e, s, i), i += s.strings.length - 2) : s._$AI(e[i])), i++;
+    let s = 0;
+    for (const i of this._$AV) i !== void 0 && (i.strings !== void 0 ? (i._$AI(e, i, s), s += i.strings.length - 2) : i._$AI(e[s])), s++;
   }
 }
 class D {
   get _$AU() {
     return this._$AM?._$AU ?? this._$Cv;
   }
-  constructor(e, i, s, a) {
-    this.type = 2, this._$AH = g, this._$AN = void 0, this._$AA = e, this._$AB = i, this._$AM = s, this.options = a, this._$Cv = a?.isConnected ?? !0;
+  constructor(e, s, i, r) {
+    this.type = 2, this._$AH = f, this._$AN = void 0, this._$AA = e, this._$AB = s, this._$AM = i, this.options = r, this._$Cv = r?.isConnected ?? !0;
   }
   get parentNode() {
     let e = this._$AA.parentNode;
-    const i = this._$AM;
-    return i !== void 0 && e?.nodeType === 11 && (e = i.parentNode), e;
+    const s = this._$AM;
+    return s !== void 0 && e?.nodeType === 11 && (e = s.parentNode), e;
   }
   get startNode() {
     return this._$AA;
@@ -370,8 +370,8 @@ class D {
   get endNode() {
     return this._$AB;
   }
-  _$AI(e, i = this) {
-    e = P(this, e, i), R(e) ? e === g || e == null || e === "" ? (this._$AH !== g && this._$AR(), this._$AH = g) : e !== this._$AH && e !== C && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : Te(e) ? this.k(e) : this._(e);
+  _$AI(e, s = this) {
+    e = R(this, e, s), j(e) ? e === f || e == null || e === "" ? (this._$AH !== f && this._$AR(), this._$AH = f) : e !== this._$AH && e !== O && this._(e) : e._$litType$ !== void 0 ? this.$(e) : e.nodeType !== void 0 ? this.T(e) : Ie(e) ? this.k(e) : this._(e);
   }
   O(e) {
     return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -380,31 +380,31 @@ class D {
     this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
   }
   _(e) {
-    this._$AH !== g && R(this._$AH) ? this._$AA.nextSibling.data = e : this.T(T.createTextNode(e)), this._$AH = e;
+    this._$AH !== f && j(this._$AH) ? this._$AA.nextSibling.data = e : this.T(k.createTextNode(e)), this._$AH = e;
   }
   $(e) {
-    const { values: i, _$litType$: s } = e, a = typeof s == "number" ? this._$AC(e) : (s.el === void 0 && (s.el = j.createElement(be(s.h, s.h[0]), this.options)), s);
-    if (this._$AH?._$AD === a) this._$AH.p(i);
+    const { values: s, _$litType$: i } = e, r = typeof i == "number" ? this._$AC(e) : (i.el === void 0 && (i.el = B.createElement(me(i.h, i.h[0]), this.options)), i);
+    if (this._$AH?._$AD === r) this._$AH.p(s);
     else {
-      const r = new Ce(a, this), n = r.u(this.options);
-      r.p(i), this.T(n), this._$AH = r;
+      const n = new Me(r, this), a = n.u(this.options);
+      n.p(s), this.T(a), this._$AH = n;
     }
   }
   _$AC(e) {
-    let i = ue.get(e.strings);
-    return i === void 0 && ue.set(e.strings, i = new j(e)), i;
+    let s = ue.get(e.strings);
+    return s === void 0 && ue.set(e.strings, s = new B(e)), s;
   }
   k(e) {
     ee(this._$AH) || (this._$AH = [], this._$AR());
-    const i = this._$AH;
-    let s, a = 0;
-    for (const r of e) a === i.length ? i.push(s = new D(this.O(U()), this.O(U()), this, this.options)) : s = i[a], s._$AI(r), a++;
-    a < i.length && (this._$AR(s && s._$AB.nextSibling, a), i.length = a);
+    const s = this._$AH;
+    let i, r = 0;
+    for (const n of e) r === s.length ? s.push(i = new D(this.O(U()), this.O(U()), this, this.options)) : i = s[r], i._$AI(n), r++;
+    r < s.length && (this._$AR(i && i._$AB.nextSibling, r), s.length = r);
   }
-  _$AR(e = this._$AA.nextSibling, i) {
-    for (this._$AP?.(!1, !0, i); e !== this._$AB; ) {
-      const s = ne(e).nextSibling;
-      ne(e).remove(), e = s;
+  _$AR(e = this._$AA.nextSibling, s) {
+    for (this._$AP?.(!1, !0, s); e !== this._$AB; ) {
+      const i = ae(e).nextSibling;
+      ae(e).remove(), e = i;
     }
   }
   setConnected(e) {
@@ -418,74 +418,74 @@ class W {
   get _$AU() {
     return this._$AM._$AU;
   }
-  constructor(e, i, s, a, r) {
-    this.type = 1, this._$AH = g, this._$AN = void 0, this.element = e, this.name = i, this._$AM = a, this.options = r, s.length > 2 || s[0] !== "" || s[1] !== "" ? (this._$AH = Array(s.length - 1).fill(new String()), this.strings = s) : this._$AH = g;
+  constructor(e, s, i, r, n) {
+    this.type = 1, this._$AH = f, this._$AN = void 0, this.element = e, this.name = s, this._$AM = r, this.options = n, i.length > 2 || i[0] !== "" || i[1] !== "" ? (this._$AH = Array(i.length - 1).fill(new String()), this.strings = i) : this._$AH = f;
   }
-  _$AI(e, i = this, s, a) {
-    const r = this.strings;
-    let n = !1;
-    if (r === void 0) e = P(this, e, i, 0), n = !R(e) || e !== this._$AH && e !== C, n && (this._$AH = e);
+  _$AI(e, s = this, i, r) {
+    const n = this.strings;
+    let a = !1;
+    if (n === void 0) e = R(this, e, s, 0), a = !j(e) || e !== this._$AH && e !== O, a && (this._$AH = e);
     else {
       const d = e;
-      let l, h;
-      for (e = r[0], l = 0; l < r.length - 1; l++) h = P(this, d[s + l], i, l), h === C && (h = this._$AH[l]), n ||= !R(h) || h !== this._$AH[l], h === g ? e = g : e !== g && (e += (h ?? "") + r[l + 1]), this._$AH[l] = h;
+      let l, g;
+      for (e = n[0], l = 0; l < n.length - 1; l++) g = R(this, d[i + l], s, l), g === O && (g = this._$AH[l]), a ||= !j(g) || g !== this._$AH[l], g === f ? e = f : e !== f && (e += (g ?? "") + n[l + 1]), this._$AH[l] = g;
     }
-    n && !a && this.j(e);
+    a && !r && this.j(e);
   }
   j(e) {
-    e === g ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
-  }
-}
-class Pe extends W {
-  constructor() {
-    super(...arguments), this.type = 3;
-  }
-  j(e) {
-    this.element[this.name] = e === g ? void 0 : e;
+    e === f ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
   }
 }
 class Oe extends W {
   constructor() {
+    super(...arguments), this.type = 3;
+  }
+  j(e) {
+    this.element[this.name] = e === f ? void 0 : e;
+  }
+}
+class Re extends W {
+  constructor() {
     super(...arguments), this.type = 4;
   }
   j(e) {
-    this.element.toggleAttribute(this.name, !!e && e !== g);
+    this.element.toggleAttribute(this.name, !!e && e !== f);
   }
 }
 class Ne extends W {
-  constructor(e, i, s, a, r) {
-    super(e, i, s, a, r), this.type = 5;
+  constructor(e, s, i, r, n) {
+    super(e, s, i, r, n), this.type = 5;
   }
-  _$AI(e, i = this) {
-    if ((e = P(this, e, i, 0) ?? g) === C) return;
-    const s = this._$AH, a = e === g && s !== g || e.capture !== s.capture || e.once !== s.once || e.passive !== s.passive, r = e !== g && (s === g || a);
-    a && this.element.removeEventListener(this.name, this, s), r && this.element.addEventListener(this.name, this, e), this._$AH = e;
+  _$AI(e, s = this) {
+    if ((e = R(this, e, s, 0) ?? f) === O) return;
+    const i = this._$AH, r = e === f && i !== f || e.capture !== i.capture || e.once !== i.once || e.passive !== i.passive, n = e !== f && (i === f || r);
+    r && this.element.removeEventListener(this.name, this, i), n && this.element.addEventListener(this.name, this, e), this._$AH = e;
   }
   handleEvent(e) {
     typeof this._$AH == "function" ? this._$AH.call(this.options?.host ?? this.element, e) : this._$AH.handleEvent(e);
   }
 }
-class Ue {
-  constructor(e, i, s) {
-    this.element = e, this.type = 6, this._$AN = void 0, this._$AM = i, this.options = s;
+class Pe {
+  constructor(e, s, i) {
+    this.element = e, this.type = 6, this._$AN = void 0, this._$AM = s, this.options = i;
   }
   get _$AU() {
     return this._$AM._$AU;
   }
   _$AI(e) {
-    P(this, e);
+    R(this, e);
   }
 }
-const Re = Y.litHtmlPolyfillSupport;
-Re?.(j, D), (Y.litHtmlVersions ??= []).push("3.3.3");
-const je = (t, e, i) => {
-  const s = i?.renderBefore ?? e;
-  let a = s._$litPart$;
-  if (a === void 0) {
-    const r = i?.renderBefore ?? null;
-    s._$litPart$ = a = new D(e.insertBefore(U(), r), r, void 0, i ?? {});
+const Ue = Y.litHtmlPolyfillSupport;
+Ue?.(B, D), (Y.litHtmlVersions ??= []).push("3.3.3");
+const je = (t, e, s) => {
+  const i = s?.renderBefore ?? e;
+  let r = i._$litPart$;
+  if (r === void 0) {
+    const n = s?.renderBefore ?? null;
+    i._$litPart$ = r = new D(e.insertBefore(U(), n), n, void 0, s ?? {});
   }
-  return a._$AI(t), a;
+  return r._$AI(t), r;
 };
 /**
  * @license
@@ -493,7 +493,7 @@ const je = (t, e, i) => {
  * SPDX-License-Identifier: BSD-3-Clause
  */
 const te = globalThis;
-class S extends k {
+class A extends M {
   constructor() {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
   }
@@ -502,8 +502,8 @@ class S extends k {
     return this.renderOptions.renderBefore ??= e.firstChild, e;
   }
   update(e) {
-    const i = this.render();
-    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = je(i, this.renderRoot, this.renderOptions);
+    const s = this.render();
+    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = je(s, this.renderRoot, this.renderOptions);
   }
   connectedCallback() {
     super.connectedCallback(), this._$Do?.setConnected(!0);
@@ -512,44 +512,44 @@ class S extends k {
     super.disconnectedCallback(), this._$Do?.setConnected(!1);
   }
   render() {
-    return C;
+    return O;
   }
 }
-S._$litElement$ = !0, S.finalized = !0, te.litElementHydrateSupport?.({ LitElement: S });
-const He = te.litElementPolyfillSupport;
-He?.({ LitElement: S });
+A._$litElement$ = !0, A.finalized = !0, te.litElementHydrateSupport?.({ LitElement: A });
+const Be = te.litElementPolyfillSupport;
+Be?.({ LitElement: A });
 (te.litElementVersions ??= []).push("4.2.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const De = { attribute: !0, type: String, converter: B, reflect: !1, hasChanged: X }, Le = (t = De, e, i) => {
-  const { kind: s, metadata: a } = i;
-  let r = globalThis.litPropertyMetadata.get(a);
-  if (r === void 0 && globalThis.litPropertyMetadata.set(a, r = /* @__PURE__ */ new Map()), s === "setter" && ((t = Object.create(t)).wrapped = !0), r.set(i.name, t), s === "accessor") {
-    const { name: n } = i;
+const qe = { attribute: !0, type: String, converter: L, reflect: !1, hasChanged: X }, De = (t = qe, e, s) => {
+  const { kind: i, metadata: r } = s;
+  let n = globalThis.litPropertyMetadata.get(r);
+  if (n === void 0 && globalThis.litPropertyMetadata.set(r, n = /* @__PURE__ */ new Map()), i === "setter" && ((t = Object.create(t)).wrapped = !0), n.set(s.name, t), i === "accessor") {
+    const { name: a } = s;
     return { set(d) {
       const l = e.get.call(this);
-      e.set.call(this, d), this.requestUpdate(n, l, t, !0, d);
+      e.set.call(this, d), this.requestUpdate(a, l, t, !0, d);
     }, init(d) {
-      return d !== void 0 && this.C(n, void 0, t, d), d;
+      return d !== void 0 && this.C(a, void 0, t, d), d;
     } };
   }
-  if (s === "setter") {
-    const { name: n } = i;
+  if (i === "setter") {
+    const { name: a } = s;
     return function(d) {
-      const l = this[n];
-      e.call(this, d), this.requestUpdate(n, l, t, !0, d);
+      const l = this[a];
+      e.call(this, d), this.requestUpdate(a, l, t, !0, d);
     };
   }
-  throw Error("Unsupported decorator location: " + s);
+  throw Error("Unsupported decorator location: " + i);
 };
-function _(t) {
-  return (e, i) => typeof i == "object" ? Le(t, e, i) : ((s, a, r) => {
-    const n = a.hasOwnProperty(r);
-    return a.constructor.createProperty(r, s), n ? Object.getOwnPropertyDescriptor(a, r) : void 0;
-  })(t, e, i);
+function v(t) {
+  return (e, s) => typeof s == "object" ? De(t, e, s) : ((i, r, n) => {
+    const a = r.hasOwnProperty(n);
+    return r.constructor.createProperty(n, i), a ? Object.getOwnPropertyDescriptor(r, n) : void 0;
+  })(t, e, s);
 }
 /**
  * @license
@@ -557,12 +557,12 @@ function _(t) {
  * SPDX-License-Identifier: BSD-3-Clause
  */
 function p(t) {
-  return _({ ...t, state: !0, attribute: !1 });
+  return v({ ...t, state: !0, attribute: !1 });
 }
 function J(t) {
   return (e) => (typeof customElements < "u" && !customElements.get(t) && customElements.define(t, e), e);
 }
-const Q = H`
+const G = q`
   :host {
     --fuzzy-primary: var(--primary-color, #0284c7);
     --fuzzy-primary-hover: var(--primary-color-hover, #0369a1);
@@ -802,16 +802,16 @@ const Q = H`
     padding: 28px;
     box-sizing: border-box;
   }
-`, Fe = "fuzzy_system/systems/list", Be = "fuzzy_system/systems/save", qe = "fuzzy_system/systems/delete", Ve = "fuzzy_system/templates/list", We = "fuzzy_system/templates/instantiate";
+`, He = "fuzzy_system/systems/list", Le = "fuzzy_system/systems/save", Ve = "fuzzy_system/systems/delete", Fe = "fuzzy_system/templates/list", We = "fuzzy_system/templates/instantiate";
 async function Je(t) {
   const e = await t.callWS({
-    type: Fe
+    type: He
   });
   return Array.isArray(e) ? e : e.systems || [];
 }
-async function Qe(t, e, i) {
+async function Ge(t, e, s) {
   return t.callWS({
-    type: Be,
+    type: Le,
     system_id: e.system_id,
     name: e.name,
     description: e.description,
@@ -824,34 +824,34 @@ async function Qe(t, e, i) {
     inputs: e.inputs,
     outputs: e.outputs,
     rules: e.rules,
-    entry_id: i
+    entry_id: s
   });
 }
-async function Ge(t, e) {
+async function Qe(t, e) {
   return t.callWS({
-    type: qe,
+    type: Ve,
     entry_id: e
   });
 }
 async function Ze(t) {
   return (await t.callWS({
-    type: Ve
+    type: Fe
   })).templates || [];
 }
-async function Ke(t, e, i, s) {
+async function Ke(t, e, s, i) {
   return t.callWS({
     type: We,
     template_id: e,
-    system_id: i,
-    name: s
+    system_id: s,
+    name: i
   });
 }
-var Xe = Object.defineProperty, Ye = Object.getOwnPropertyDescriptor, M = (t, e, i, s) => {
-  for (var a = s > 1 ? void 0 : s ? Ye(e, i) : e, r = t.length - 1, n; r >= 0; r--)
-    (n = t[r]) && (a = (s ? n(e, i, a) : n(a)) || a);
-  return s && a && Xe(e, i, a), a;
+var Xe = Object.defineProperty, Ye = Object.getOwnPropertyDescriptor, T = (t, e, s, i) => {
+  for (var r = i > 1 ? void 0 : i ? Ye(e, s) : e, n = t.length - 1, a; n >= 0; n--)
+    (a = t[n]) && (r = (i ? a(e, s, r) : a(r)) || r);
+  return i && r && Xe(e, s, r), r;
 };
-let $ = class extends S {
+let w = class extends A {
   constructor() {
     super(...arguments), this._systems = [], this._searchQuery = "", this._loading = !1, this._error = "", this._showTemplateModal = !1;
   }
@@ -900,7 +900,7 @@ let $ = class extends S {
   async _handleDelete(t) {
     if (t.entry_id && confirm(`Are you sure you want to delete '${t.name}'?`))
       try {
-        await Ge(this.hass, t.entry_id), await this.refresh();
+        await Qe(this.hass, t.entry_id), await this.refresh();
       } catch (e) {
         alert(e.message || "Failed to delete system");
       }
@@ -1013,9 +1013,9 @@ let $ = class extends S {
     `;
   }
 };
-$.styles = [
-  Q,
-  H`
+w.styles = [
+  G,
+  q`
       .header-row {
         display: flex;
         justify-content: space-between;
@@ -1092,35 +1092,40 @@ $.styles = [
       }
     `
 ];
-M([
-  _({ attribute: !1 })
-], $.prototype, "hass", 2);
-M([
+T([
+  v({ attribute: !1 })
+], w.prototype, "hass", 2);
+T([
   p()
-], $.prototype, "_systems", 2);
-M([
+], w.prototype, "_systems", 2);
+T([
   p()
-], $.prototype, "_searchQuery", 2);
-M([
+], w.prototype, "_searchQuery", 2);
+T([
   p()
-], $.prototype, "_loading", 2);
-M([
+], w.prototype, "_loading", 2);
+T([
   p()
-], $.prototype, "_error", 2);
-M([
+], w.prototype, "_error", 2);
+T([
   p()
-], $.prototype, "_showTemplateModal", 2);
-$ = M([
+], w.prototype, "_showTemplateModal", 2);
+w = T([
   J("fuzzy-system-catalog")
-], $);
-var et = Object.defineProperty, tt = Object.getOwnPropertyDescriptor, m = (t, e, i, s) => {
-  for (var a = s > 1 ? void 0 : s ? tt(e, i) : e, r = t.length - 1, n; r >= 0; r--)
-    (n = t[r]) && (a = (s ? n(e, i, a) : n(a)) || a);
-  return s && a && et(e, i, a), a;
+], w);
+var et = Object.defineProperty, tt = Object.getOwnPropertyDescriptor, h = (t, e, s, i) => {
+  for (var r = i > 1 ? void 0 : i ? tt(e, s) : e, n = t.length - 1, a; n >= 0; n--)
+    (a = t[n]) && (r = (i ? a(e, s, r) : a(r)) || r);
+  return i && r && et(e, s, r), r;
 };
-let u = class extends S {
+let u = class extends A {
   constructor() {
-    super(...arguments), this.source = "config_entry", this._activeTab = "general", this._rawJson = "", this._saving = !1, this._error = "", this._successMsg = "", this._showAddInputModal = !1, this._newInputEntityId = "", this._newInputVarName = "", this._newInputMin = 0, this._newInputMax = 100, this._newInputTermsPreset = "3_terms", this._newInputModalError = "";
+    super(...arguments), this.source = "config_entry", this._activeTab = "general", this._rawJson = "", this._saving = !1, this._error = "", this._successMsg = "", this._showAddInputModal = !1, this._newInputEntityId = "", this._newInputVarName = "", this._newInputMin = 0, this._newInputMax = 100, this._newInputTermsPreset = "3_terms", this._newInputModalError = "", this._showRuleBuilderModal = !1, this._editingRuleIndex = -1, this._builderConditions = [], this._builderConsequent = {
+      variable: "",
+      term: "",
+      isConstant: !1,
+      constantValue: 0
+    }, this._ruleBuilderError = "", this._rulesViewMode = "visual";
   }
   connectedCallback() {
     super.connectedCallback(), this._initForm();
@@ -1166,9 +1171,16 @@ let u = class extends S {
         this._error = `Invalid JSON: ${t.message}`;
         return;
       }
-    this._saving = !0;
+    this._config.rules && (this._config.rules = this._config.rules.map((t) => typeof t == "string" ? t.trim() : t).filter((t) => {
+      if (!t) return !1;
+      if (typeof t == "string") {
+        const e = t.toUpperCase();
+        return e !== "IF THEN" && e !== "IF  THEN" && !e.match(/^IF\s*THEN\s*$/);
+      }
+      return !0;
+    })), this._saving = !0;
     try {
-      const t = await Qe(this.hass, this._config, this.entryId);
+      const t = await Ge(this.hass, this._config, this.entryId);
       this._successMsg = `System '${t.system_id}' saved successfully!`, this.dispatchEvent(
         new CustomEvent("system-saved", {
           detail: { systemId: t.system_id, entryId: t.entry_id },
@@ -1190,10 +1202,10 @@ let u = class extends S {
     if (this._newInputEntityId = t, !t) return;
     const e = t.split(".")[1]?.replace(/[^a-z0-9_]/g, "_") || "";
     (!this._newInputVarName || this._newInputVarName.trim() === "") && (this._newInputVarName = e);
-    const i = this.hass?.states ? this.hass.states[t] : null;
-    if (i?.attributes) {
-      const s = i.attributes.unit_of_measurement;
-      s === "°C" ? (this._newInputMin = 10, this._newInputMax = 35) : s === "°F" ? (this._newInputMin = 50, this._newInputMax = 95) : s === "%" ? (this._newInputMin = 0, this._newInputMax = 100) : s === "lx" || s === "lux" ? (this._newInputMin = 0, this._newInputMax = 1e3) : s === "ppm" ? (this._newInputMin = 400, this._newInputMax = 2e3) : (s === "W" || s === "kW") && (this._newInputMin = 0, this._newInputMax = 5e3);
+    const s = this.hass?.states ? this.hass.states[t] : null;
+    if (s?.attributes) {
+      const i = s.attributes.unit_of_measurement;
+      i === "°C" ? (this._newInputMin = 10, this._newInputMax = 35) : i === "°F" ? (this._newInputMin = 50, this._newInputMax = 95) : i === "%" ? (this._newInputMin = 0, this._newInputMax = 100) : i === "lx" || i === "lux" ? (this._newInputMin = 0, this._newInputMax = 1e3) : i === "ppm" ? (this._newInputMin = 400, this._newInputMax = 2e3) : (i === "W" || i === "kW") && (this._newInputMin = 0, this._newInputMax = 5e3);
     }
     this.requestUpdate();
   }
@@ -1208,49 +1220,49 @@ let u = class extends S {
       this._newInputModalError = `An input variable named '${t}' already exists.`;
       return;
     }
-    const e = Number.isFinite(this._newInputMin) ? this._newInputMin : 0, i = Number.isFinite(this._newInputMax) && this._newInputMax > e ? this._newInputMax : e + 100, s = i - e;
-    let a;
-    this._newInputTermsPreset === "5_terms" ? a = {
-      very_low: { type: "trapmf", params: [e, e, e + s * 0.15, e + s * 0.3] },
-      low: { type: "trimf", params: [e + s * 0.15, e + s * 0.35, e + s * 0.55] },
-      medium: { type: "trimf", params: [e + s * 0.35, e + s * 0.5, e + s * 0.65] },
-      high: { type: "trimf", params: [e + s * 0.45, e + s * 0.65, e + s * 0.85] },
-      very_high: { type: "trapmf", params: [e + s * 0.7, e + s * 0.85, i, i] }
-    } : a = {
-      low: { type: "trapmf", params: [e, e, e + s * 0.25, e + s * 0.5] },
-      medium: { type: "trimf", params: [e + s * 0.25, e + s * 0.5, e + s * 0.75] },
-      high: { type: "trapmf", params: [e + s * 0.5, e + s * 0.75, i, i] }
+    const e = Number.isFinite(this._newInputMin) ? this._newInputMin : 0, s = Number.isFinite(this._newInputMax) && this._newInputMax > e ? this._newInputMax : e + 100, i = s - e;
+    let r;
+    this._newInputTermsPreset === "5_terms" ? r = {
+      very_low: { type: "trapmf", params: [e, e, e + i * 0.15, e + i * 0.3] },
+      low: { type: "trimf", params: [e + i * 0.15, e + i * 0.35, e + i * 0.55] },
+      medium: { type: "trimf", params: [e + i * 0.35, e + i * 0.5, e + i * 0.65] },
+      high: { type: "trimf", params: [e + i * 0.45, e + i * 0.65, e + i * 0.85] },
+      very_high: { type: "trapmf", params: [e + i * 0.7, e + i * 0.85, s, s] }
+    } : r = {
+      low: { type: "trapmf", params: [e, e, e + i * 0.25, e + i * 0.5] },
+      medium: { type: "trimf", params: [e + i * 0.25, e + i * 0.5, e + i * 0.75] },
+      high: { type: "trapmf", params: [e + i * 0.5, e + i * 0.75, s, s] }
     }, this._config.inputs || (this._config.inputs = {}), this._config.inputs[t] = {
       entity_id: this._newInputEntityId || "",
-      range: [e, i],
+      range: [e, s],
       resolution: 100,
       default: e,
-      terms: a
+      terms: r
     }, this._showAddInputModal = !1, this.requestUpdate();
   }
   _getAvailableEntities() {
     if (!this.hass?.states) return [];
     const t = [];
-    for (const [e, i] of Object.entries(this.hass.states)) {
-      const s = e.split(".")[0];
-      (s === "sensor" || s === "input_number" || s === "number" || s === "climate" || s === "weather") && t.push({
+    for (const [e, s] of Object.entries(this.hass.states)) {
+      const i = e.split(".")[0];
+      (i === "sensor" || i === "input_number" || i === "number" || i === "climate" || i === "weather") && t.push({
         entity_id: e,
-        friendly_name: i.attributes?.friendly_name || e,
-        unit: i.attributes?.unit_of_measurement || "",
-        state: i.state
+        friendly_name: s.attributes?.friendly_name || e,
+        unit: s.attributes?.unit_of_measurement || "",
+        state: s.state
       });
     }
-    return t.sort((e, i) => e.friendly_name.localeCompare(i.friendly_name)), t;
+    return t.sort((e, s) => e.friendly_name.localeCompare(s.friendly_name)), t;
   }
-  _renderEntityPicker(t, e, i) {
-    const s = !!customElements.get("ha-entity-picker"), a = this._getAvailableEntities();
-    return s ? o`
+  _renderEntityPicker(t, e, s) {
+    const i = !!customElements.get("ha-entity-picker"), r = this._getAvailableEntities();
+    return i ? o`
         <ha-entity-picker
           .hass=${this.hass}
           .value=${t || ""}
           ?disabled=${e}
           .includeDomains=${["sensor", "input_number", "number", "climate", "weather"]}
-          @value-changed=${(r) => i(r.detail.value || "")}
+          @value-changed=${(n) => s(n.detail.value || "")}
         ></ha-entity-picker>
       ` : o`
       <div style="position: relative;">
@@ -1261,13 +1273,13 @@ let u = class extends S {
           .value=${t || ""}
           ?disabled=${e}
           placeholder="Search entities (e.g. sensor.temperature)..."
-          @input=${(r) => i(r.target.value)}
+          @input=${(n) => s(n.target.value)}
         />
         <datalist id="ha-fuzzy-entities">
-          ${a.map(
-      (r) => o`
-              <option value=${r.entity_id}>
-                ${r.friendly_name} (${r.state} ${r.unit})
+          ${r.map(
+      (n) => o`
+              <option value=${n.entity_id}>
+                ${n.friendly_name} (${n.state} ${n.unit})
               </option>
             `
     )}
@@ -1289,10 +1301,10 @@ let u = class extends S {
           ❓ ${t} (Not found in HA)
         </span>
       `;
-    const i = e.attributes?.unit_of_measurement || "";
+    const s = e.attributes?.unit_of_measurement || "";
     return o`
       <span class="badge badge-emerald" title="Live sensor state in Home Assistant">
-        🟢 Live: ${e.state} ${i}
+        🟢 Live: ${e.state} ${s}
       </span>
     `;
   }
@@ -1324,9 +1336,150 @@ let u = class extends S {
   _removeOutput(t) {
     confirm(`Delete output variable '${t}'?`) && (delete this._config.outputs[t], this.requestUpdate());
   }
-  // --- Rules Handlers ---
+  // --- Rules Handlers & Visual Builder ---
+  _parseRuleToBuilder(t) {
+    if (!t || !t.trim()) return null;
+    const e = t.trim().match(/^IF\s+(.+)\s+THEN\s+(.+)$/i);
+    if (!e) return null;
+    const s = e[1].trim(), r = e[2].trim().match(/^([a-zA-Z0-9_]+)\s*(?:IS|=)\s*(.+)$/i);
+    if (!r) return null;
+    const n = r[1].trim(), a = r[2].trim(), d = parseFloat(a), l = !isNaN(d) && isFinite(d) && !a.match(/[a-zA-Z]/), g = s.split(/\s+(AND|OR)\s+/i), b = [];
+    let c = "AND";
+    for (let m = 0; m < g.length; m++) {
+      const y = g[m].trim();
+      if (!y) continue;
+      if (y.toUpperCase() === "AND") {
+        c = "AND";
+        continue;
+      }
+      if (y.toUpperCase() === "OR") {
+        c = "OR";
+        continue;
+      }
+      const $ = y.match(
+        /^([a-zA-Z0-9_]+)\s+IS\s+(?:(not|very|somewhat|extremely|slightly)\s+)?([a-zA-Z0-9_]+)$/i
+      );
+      if (!$) return null;
+      b.push({
+        variable: $[1].trim(),
+        hedge: ($[2] || "").trim().toLowerCase(),
+        term: $[3].trim(),
+        connector: b.length === 0 ? "AND" : c
+      });
+    }
+    return b.length === 0 ? null : {
+      conditions: b,
+      consequent: {
+        variable: n,
+        term: l ? "" : a,
+        isConstant: l,
+        constantValue: l ? d : 0
+      }
+    };
+  }
+  _compileRuleString(t, e) {
+    const s = [];
+    t.forEach((n, a) => {
+      const d = n.hedge ? `${n.hedge} ` : "", l = `${n.variable} IS ${d}${n.term}`;
+      a === 0 ? s.push(l) : s.push(`${n.connector} ${l}`);
+    });
+    const i = s.join(" "), r = e.isConstant ? `${e.variable} IS ${e.constantValue}` : `${e.variable} IS ${e.term}`;
+    return `IF ${i} THEN ${r}`;
+  }
+  _openAddRuleBuilder() {
+    this._ruleBuilderError = "";
+    const t = Object.keys(this._config.inputs || {}), e = Object.keys(this._config.outputs || {});
+    if (t.length === 0) {
+      this._error = "Please define at least one input antecedent variable before creating rules.", this._activeTab = "inputs";
+      return;
+    }
+    if (e.length === 0) {
+      this._error = "Please define at least one output consequent variable before creating rules.", this._activeTab = "outputs";
+      return;
+    }
+    const s = t[0], i = Object.keys(this._config.inputs[s]?.terms || {}), r = e[0], n = Object.keys(this._config.outputs[r]?.terms || {});
+    this._editingRuleIndex = -1, this._builderConditions = [
+      {
+        variable: s,
+        hedge: "",
+        term: i[0] || "low",
+        connector: "AND"
+      }
+    ], this._builderConsequent = {
+      variable: r,
+      term: n[0] || "low",
+      isConstant: !1,
+      constantValue: 0
+    }, this._showRuleBuilderModal = !0;
+  }
+  _openEditRuleBuilder(t) {
+    this._ruleBuilderError = "";
+    const e = this._config.rules[t] || "", s = this._parseRuleToBuilder(e);
+    if (s)
+      this._editingRuleIndex = t, this._builderConditions = s.conditions, this._builderConsequent = s.consequent, this._showRuleBuilderModal = !0;
+    else {
+      const i = Object.keys(this._config.inputs || {}), r = Object.keys(this._config.outputs || {}), n = i[0] || "", a = Object.keys(this._config.inputs[n]?.terms || {}), d = r[0] || "", l = Object.keys(this._config.outputs[d]?.terms || {});
+      this._editingRuleIndex = t, this._builderConditions = [
+        {
+          variable: n,
+          hedge: "",
+          term: a[0] || "low",
+          connector: "AND"
+        }
+      ], this._builderConsequent = {
+        variable: d,
+        term: l[0] || "low",
+        isConstant: !1,
+        constantValue: 0
+      }, this._ruleBuilderError = `Notice: Rule #${t + 1} uses non-standard formatting. Configuring it here will format it as canonical syntax.`, this._showRuleBuilderModal = !0;
+    }
+  }
+  _onBuilderConditionVarChange(t, e) {
+    const s = Object.keys(this._config.inputs[e]?.terms || {});
+    this._builderConditions[t].variable = e, this._builderConditions[t].term = s[0] || "", this.requestUpdate();
+  }
+  _onBuilderConsequentVarChange(t) {
+    const e = Object.keys(this._config.outputs[t]?.terms || {});
+    this._builderConsequent.variable = t, this._builderConsequent.isConstant || (this._builderConsequent.term = e[0] || ""), this.requestUpdate();
+  }
+  _addBuilderCondition(t = "AND") {
+    const s = Object.keys(this._config.inputs || {})[0] || "", i = Object.keys(this._config.inputs[s]?.terms || {});
+    this._builderConditions.push({
+      variable: s,
+      hedge: "",
+      term: i[0] || "",
+      connector: t
+    }), this.requestUpdate();
+  }
+  _removeBuilderCondition(t) {
+    this._builderConditions.length <= 1 || (this._builderConditions.splice(t, 1), this.requestUpdate());
+  }
+  _saveBuilderRule() {
+    if (this._ruleBuilderError = "", this._builderConditions.length === 0) {
+      this._ruleBuilderError = "At least one antecedent condition is required.";
+      return;
+    }
+    for (const e of this._builderConditions)
+      if (!e.variable || !e.term) {
+        this._ruleBuilderError = "All conditions must have an input variable and a term selected.";
+        return;
+      }
+    if (!this._builderConsequent.variable) {
+      this._ruleBuilderError = "An output consequent variable must be selected.";
+      return;
+    }
+    if (!this._builderConsequent.isConstant && !this._builderConsequent.term) {
+      this._ruleBuilderError = "An output linguistic term must be selected.";
+      return;
+    }
+    const t = this._compileRuleString(
+      this._builderConditions,
+      this._builderConsequent
+    );
+    this._editingRuleIndex >= 0 ? this._config.rules[this._editingRuleIndex] = t : this._config.rules = [...this._config.rules, t], this._showRuleBuilderModal = !1, this.requestUpdate();
+  }
   _addRule() {
-    this._config.rules = [...this._config.rules, "IF  THEN "], this.requestUpdate();
+    this._config.rules = [...this._config.rules, "IF  THEN "], this._rulesViewMode = "text", this.requestUpdate();
   }
   _updateRule(t, e) {
     this._config.rules[t] = e;
@@ -1410,6 +1563,7 @@ let u = class extends S {
       </div>
 
       ${this._showAddInputModal ? this._renderAddInputModal() : ""}
+      ${this._showRuleBuilderModal ? this._renderRuleBuilderModal() : ""}
     `;
   }
   _renderAddInputModal() {
@@ -1684,7 +1838,7 @@ let u = class extends S {
     `;
   }
   _renderInputsTab(t) {
-    const e = this._config.inputs || {}, i = Object.keys(e);
+    const e = this._config.inputs || {}, s = Object.keys(e);
     return o`
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <div>
@@ -1698,18 +1852,18 @@ let u = class extends S {
             `}
       </div>
 
-      ${i.length === 0 ? o`<p class="subtitle" style="padding: 20px 0;">No input variables defined yet.</p>` : i.map((s) => {
-      const a = e[s];
+      ${s.length === 0 ? o`<p class="subtitle" style="padding: 20px 0;">No input variables defined yet.</p>` : s.map((i) => {
+      const r = e[i];
       return o`
               <div class="section-box">
                 <div class="section-header">
                   <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                    <span class="badge badge-cyan">${s}</span>
-                    ${this._renderEntityStatusTag(a.entity_id)}
-                    <span class="chip">Range: [${a.range[0]}, ${a.range[1]}]</span>
+                    <span class="badge badge-cyan">${i}</span>
+                    ${this._renderEntityStatusTag(r.entity_id)}
+                    <span class="chip">Range: [${r.range[0]}, ${r.range[1]}]</span>
                   </div>
                   ${t ? "" : o`
-                        <button class="btn btn-danger btn-icon" @click=${() => this._removeInput(s)} title="Delete Input">
+                        <button class="btn btn-danger btn-icon" @click=${() => this._removeInput(i)} title="Delete Input">
                           ✕
                         </button>
                       `}
@@ -1718,11 +1872,11 @@ let u = class extends S {
                 <div class="grid-2">
                   <div class="form-group">
                     <label class="form-label">Bound Home Assistant Sensor Entity</label>
-                    ${this._renderEntityPicker(a.entity_id, t, (r) => {
-        a.entity_id = r, this.requestUpdate();
+                    ${this._renderEntityPicker(r.entity_id, t, (n) => {
+        r.entity_id = n, this.requestUpdate();
       })}
                     <div class="helper-text">
-                      ${a.entity_id ? o`Feeds live numerical measurements from <code>${a.entity_id}</code> into <code>${s}</code>.` : o`<span style="color: #fbbf24;">⚠️ Unbound: select an entity to evaluate live rules in HA.</span>`}
+                      ${r.entity_id ? o`Feeds live numerical measurements from <code>${r.entity_id}</code> into <code>${i}</code>.` : o`<span style="color: #fbbf24;">⚠️ Unbound: select an entity to evaluate live rules in HA.</span>`}
                     </div>
                   </div>
 
@@ -1732,10 +1886,10 @@ let u = class extends S {
                       <input
                         class="input-text"
                         type="number"
-                        .value=${String(a.range[0])}
+                        .value=${String(r.range[0])}
                         ?disabled=${t}
-                        @input=${(r) => {
-        a.range[0] = parseFloat(r.target.value), this.requestUpdate();
+                        @input=${(n) => {
+        r.range[0] = parseFloat(n.target.value), this.requestUpdate();
       }}
                       />
                     </div>
@@ -1744,10 +1898,10 @@ let u = class extends S {
                       <input
                         class="input-text"
                         type="number"
-                        .value=${String(a.range[1])}
+                        .value=${String(r.range[1])}
                         ?disabled=${t}
-                        @input=${(r) => {
-        a.range[1] = parseFloat(r.target.value), this.requestUpdate();
+                        @input=${(n) => {
+        r.range[1] = parseFloat(n.target.value), this.requestUpdate();
       }}
                       />
                     </div>
@@ -1756,8 +1910,8 @@ let u = class extends S {
 
                 <div style="margin-top: 8px;">
                   <span class="helper-text">Linguistic Terms: </span>
-                  ${Object.keys(a.terms || {}).map(
-        (r) => o`<span class="badge" style="margin-right: 4px;">${r} (${a.terms[r].type})</span>`
+                  ${Object.keys(r.terms || {}).map(
+        (n) => o`<span class="badge" style="margin-right: 4px;">${n} (${r.terms[n].type})</span>`
       )}
                 </div>
               </div>
@@ -1766,7 +1920,7 @@ let u = class extends S {
     `;
   }
   _renderOutputsTab(t) {
-    const e = this._config.outputs || {}, i = Object.keys(e);
+    const e = this._config.outputs || {}, s = Object.keys(e);
     return o`
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <div>
@@ -1780,18 +1934,18 @@ let u = class extends S {
             `}
       </div>
 
-      ${i.length === 0 ? o`<p class="subtitle" style="padding: 20px 0;">No output variables defined yet.</p>` : i.map((s) => {
-      const a = e[s];
+      ${s.length === 0 ? o`<p class="subtitle" style="padding: 20px 0;">No output variables defined yet.</p>` : s.map((i) => {
+      const r = e[i];
       return o`
               <div class="section-box">
                 <div class="section-header">
                   <div style="display: flex; align-items: center; gap: 8px;">
-                    <span class="badge badge-amber">${s}</span>
-                    <span class="chip">Range: [${a.range[0]}, ${a.range[1]}]</span>
-                    ${a.unit_of_measurement ? o`<span class="chip">${a.unit_of_measurement}</span>` : ""}
+                    <span class="badge badge-amber">${i}</span>
+                    <span class="chip">Range: [${r.range[0]}, ${r.range[1]}]</span>
+                    ${r.unit_of_measurement ? o`<span class="chip">${r.unit_of_measurement}</span>` : ""}
                   </div>
                   ${t ? "" : o`
-                        <button class="btn btn-danger btn-icon" @click=${() => this._removeOutput(s)} title="Delete Output">
+                        <button class="btn btn-danger btn-icon" @click=${() => this._removeOutput(i)} title="Delete Output">
                           ✕
                         </button>
                       `}
@@ -1803,10 +1957,10 @@ let u = class extends S {
                     <input
                       class="input-text"
                       type="number"
-                      .value=${String(a.range[0])}
+                      .value=${String(r.range[0])}
                       ?disabled=${t}
-                      @input=${(r) => {
-        a.range[0] = parseFloat(r.target.value), this.requestUpdate();
+                      @input=${(n) => {
+        r.range[0] = parseFloat(n.target.value), this.requestUpdate();
       }}
                     />
                   </div>
@@ -1815,10 +1969,10 @@ let u = class extends S {
                     <input
                       class="input-text"
                       type="number"
-                      .value=${String(a.range[1])}
+                      .value=${String(r.range[1])}
                       ?disabled=${t}
-                      @input=${(r) => {
-        a.range[1] = parseFloat(r.target.value), this.requestUpdate();
+                      @input=${(n) => {
+        r.range[1] = parseFloat(n.target.value), this.requestUpdate();
       }}
                     />
                   </div>
@@ -1829,11 +1983,11 @@ let u = class extends S {
                       type="number"
                       step="0.001"
                       placeholder="Inherit system default"
-                      .value=${a.epsilon !== void 0 ? String(a.epsilon) : ""}
+                      .value=${r.epsilon !== void 0 ? String(r.epsilon) : ""}
                       ?disabled=${t}
-                      @input=${(r) => {
-        const n = r.target.value.trim();
-        a.epsilon = n ? parseFloat(n) : void 0, this.requestUpdate();
+                      @input=${(n) => {
+        const a = n.target.value.trim();
+        r.epsilon = a ? parseFloat(a) : void 0, this.requestUpdate();
       }}
                     />
                   </div>
@@ -1841,8 +1995,8 @@ let u = class extends S {
 
                 <div style="margin-top: 8px;">
                   <span class="helper-text">Linguistic Terms: </span>
-                  ${Object.keys(a.terms || {}).map(
-        (r) => o`<span class="badge" style="margin-right: 4px;">${r} (${a.terms[r].type})</span>`
+                  ${Object.keys(r.terms || {}).map(
+        (n) => o`<span class="badge" style="margin-right: 4px;">${n} (${r.terms[n].type})</span>`
       )}
                 </div>
               </div>
@@ -1853,37 +2007,400 @@ let u = class extends S {
   _renderRulesTab(t) {
     const e = this._config.rules || [];
     return o`
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;"
+      >
         <div>
           <h3 class="section-title">Linguistic Rules</h3>
-          <p class="helper-text">IF &lt;antecedents&gt; THEN &lt;consequents&gt; with AND, OR, NOT and linguistic hedges</p>
+          <p class="helper-text">
+            Declarative IF &lt;antecedents&gt; THEN &lt;consequents&gt; with AND, OR, NOT and linguistic hedges
+          </p>
         </div>
         ${t ? "" : o`
-              <button class="btn btn-secondary" @click=${this._addRule}>
-                + Add Rule
-              </button>
+              <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <div
+                  style="display: inline-flex; background: rgba(255, 255, 255, 0.05); border-radius: var(--fuzzy-radius-md); padding: 2px; border: 1px solid var(--fuzzy-card-border);"
+                >
+                  <button
+                    class="btn ${this._rulesViewMode === "visual" ? "btn-primary" : "btn-secondary"}"
+                    style="padding: 6px 12px; font-size: 12px;"
+                    @click=${() => {
+      this._rulesViewMode = "visual", this.requestUpdate();
+    }}
+                  >
+                    🎨 Visual Cards
+                  </button>
+                  <button
+                    class="btn ${this._rulesViewMode === "text" ? "btn-primary" : "btn-secondary"}"
+                    style="padding: 6px 12px; font-size: 12px;"
+                    @click=${() => {
+      this._rulesViewMode = "text", this.requestUpdate();
+    }}
+                  >
+                    📝 Raw Text
+                  </button>
+                </div>
+                <button class="btn btn-primary" @click=${this._openAddRuleBuilder}>
+                  ✨ + Rule Builder
+                </button>
+                <button
+                  class="btn btn-secondary"
+                  @click=${this._addRule}
+                  title="Add empty rule string to type manually"
+                >
+                  + Quick Text
+                </button>
+              </div>
             `}
       </div>
 
-      ${e.length === 0 ? o`<p class="subtitle" style="padding: 20px 0;">No inference rules defined yet.</p>` : e.map(
-      (i, s) => o`
+      ${e.length === 0 ? o`
+            <div
+              style="text-align: center; padding: 40px 20px; background: rgba(15, 23, 42, 0.3); border-radius: var(--fuzzy-radius-md); border: 1px dashed var(--fuzzy-card-border);"
+            >
+              <div style="font-size: 28px; margin-bottom: 8px;">📜</div>
+              <h4 style="font-weight: 600; margin-bottom: 6px;">No Inference Rules Defined Yet</h4>
+              <p class="helper-text" style="margin-bottom: 18px;">
+                Rules map your input linguistic terms (e.g. temperature IS hot) to output targets (e.g. fan_speed IS fast).
+              </p>
+              ${t ? "" : o`
+                    <button class="btn btn-primary" @click=${this._openAddRuleBuilder}>
+                      ✨ Create First Rule with Builder
+                    </button>
+                  `}
+            </div>
+          ` : this._rulesViewMode === "visual" ? e.map((s, i) => {
+      const r = this._parseRuleToBuilder(s);
+      return r ? o`
+              <div class="rule-card">
+                <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
+                  <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <span class="badge badge-purple" style="width: 24px; justify-content: center;">${i + 1}</span>
+                    <span class="badge badge-cyan">IF</span>
+                    ${r.conditions.map(
+        (n, a) => o`
+                        ${a > 0 ? o`<span class="badge badge-purple">${n.connector}</span>` : ""}
+                        <span class="chip" style="font-weight: 600; color: #38bdf8; background: rgba(56, 189, 248, 0.1);">
+                          ${n.variable}
+                        </span>
+                        <span class="chip" style="color: #94a3b8;">
+                          ${n.hedge ? `is ${n.hedge}` : "is"}
+                        </span>
+                        <span class="chip" style="font-weight: 600; color: #34d399; background: rgba(52, 211, 153, 0.1);">
+                          ${n.term}
+                        </span>
+                      `
+      )}
+                    <span class="badge badge-amber">THEN</span>
+                    <span class="chip" style="font-weight: 600; color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
+                      ${r.consequent.variable}
+                    </span>
+                    <span class="chip" style="color: #94a3b8;">is</span>
+                    <span class="chip" style="font-weight: 600; color: #34d399; background: rgba(52, 211, 153, 0.1);">
+                      ${r.consequent.isConstant ? r.consequent.constantValue : r.consequent.term}
+                    </span>
+                  </div>
+                  <div style="font-family: monospace; font-size: 11px; color: var(--fuzzy-text-secondary); padding-left: 32px;">
+                    ${s}
+                  </div>
+                </div>
+
+                ${t ? "" : o`
+                      <div style="display: flex; gap: 8px; align-items: center;">
+                        <button
+                          class="btn btn-secondary"
+                          style="padding: 6px 12px; font-size: 12px;"
+                          @click=${() => this._openEditRuleBuilder(i)}
+                          title="Edit in Visual Builder"
+                        >
+                          ✏️ Edit
+                        </button>
+                        <button
+                          class="btn btn-danger btn-icon"
+                          @click=${() => this._removeRule(i)}
+                          title="Delete Rule"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    `}
+              </div>
+            ` : o`
+                <div class="rule-card">
+                  <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                    <span class="badge badge-purple" style="width: 24px; justify-content: center;">${i + 1}</span>
+                    <span style="font-family: monospace; font-size: 13px;">${s}</span>
+                  </div>
+                  ${t ? "" : o`
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                          <button
+                            class="btn btn-secondary"
+                            style="padding: 6px 12px; font-size: 12px;"
+                            @click=${() => this._openEditRuleBuilder(i)}
+                          >
+                            ✏️ Builder
+                          </button>
+                          <button
+                            class="btn btn-danger btn-icon"
+                            @click=${() => this._removeRule(i)}
+                            title="Delete Rule"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      `}
+                </div>
+              `;
+    }) : e.map(
+      (s, i) => o`
               <div class="rule-item">
-                <span class="badge badge-purple" style="width: 24px; justify-content: center;">${s + 1}</span>
+                <span class="badge badge-purple" style="width: 24px; justify-content: center;">${i + 1}</span>
                 <input
                   class="input-text rule-input"
                   type="text"
-                  .value=${i}
+                  .value=${s}
                   ?disabled=${t}
-                  @input=${(a) => this._updateRule(s, a.target.value)}
+                  @input=${(r) => this._updateRule(i, r.target.value)}
                 />
                 ${t ? "" : o`
-                      <button class="btn btn-danger btn-icon" @click=${() => this._removeRule(s)}>
+                      <button
+                        class="btn btn-secondary"
+                        style="padding: 6px 10px; font-size: 12px;"
+                        @click=${() => this._openEditRuleBuilder(i)}
+                        title="Edit in Visual Builder"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        class="btn btn-danger btn-icon"
+                        @click=${() => this._removeRule(i)}
+                        title="Delete Rule"
+                      >
                         ✕
                       </button>
                     `}
               </div>
             `
     )}
+    `;
+  }
+  _renderRuleBuilderModal() {
+    const t = Object.keys(this._config.inputs || {}), e = Object.keys(this._config.outputs || {});
+    return o`
+      <div
+        class="modal-overlay"
+        @click=${(s) => {
+      s.target.classList.contains("modal-overlay") && (this._showRuleBuilderModal = !1);
+    }}
+      >
+        <div class="modal-content" style="max-width: 780px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+            <h2 style="font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+              <span>🪄</span>
+              <span>${this._editingRuleIndex >= 0 ? `Edit Rule #${this._editingRuleIndex + 1}` : "Add Rule (Visual Builder)"}</span>
+            </h2>
+            <button
+              class="btn btn-icon"
+              @click=${() => this._showRuleBuilderModal = !1}
+              title="Close"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div
+            style="background: rgba(2, 132, 199, 0.1); border: 1px solid rgba(2, 132, 199, 0.25); border-radius: var(--fuzzy-radius-md); padding: 12px 16px; margin-bottom: 20px; font-size: 13px; line-height: 1.5;"
+          >
+            <div style="font-weight: 600; color: #38bdf8; margin-bottom: 2px;">
+              💡 Guided Linguistic Rule Builder
+            </div>
+            <div style="color: var(--fuzzy-text-secondary);">
+              Configure linguistic clauses using dropdown controls. Variables and terms are automatically populated from your system definition.
+            </div>
+          </div>
+
+          ${this._ruleBuilderError ? o`<div style="color: var(--fuzzy-danger); margin-bottom: 14px; font-size: 13px;">${this._ruleBuilderError}</div>` : ""}
+
+          <!-- Antecedents (IF) -->
+          <div
+            class="section-box"
+            style="background: rgba(14, 165, 233, 0.05); border: 1px solid rgba(14, 165, 233, 0.25); padding: 18px; margin-bottom: 18px; border-radius: var(--fuzzy-radius-md);"
+          >
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+              <span style="font-weight: 700; color: #38bdf8; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;">
+                🔹 IF (Antecedent Conditions)
+              </span>
+              <button
+                class="btn btn-secondary"
+                style="padding: 6px 12px; font-size: 12px;"
+                @click=${() => this._addBuilderCondition("AND")}
+              >
+                + Add Condition (AND)
+              </button>
+            </div>
+
+            ${this._builderConditions.map((s, i) => {
+      const r = Object.keys(this._config.inputs[s.variable]?.terms || {});
+      return o`
+                <div class="builder-row">
+                  ${i > 0 ? o`
+                        <select
+                          class="input-select"
+                          style="width: 85px; font-weight: 700; color: #c084fc; border-color: rgba(168, 85, 247, 0.4);"
+                          .value=${s.connector}
+                          @change=${(n) => {
+        s.connector = n.target.value, this.requestUpdate();
+      }}
+                        >
+                          <option value="AND">AND</option>
+                          <option value="OR">OR</option>
+                        </select>
+                      ` : o`<span class="badge badge-cyan" style="width: 70px; justify-content: center;">IF</span>`}
+
+                  <!-- Input Variable -->
+                  <select
+                    class="input-select"
+                    style="flex: 1; min-width: 140px; font-weight: 600;"
+                    .value=${s.variable}
+                    @change=${(n) => this._onBuilderConditionVarChange(i, n.target.value)}
+                  >
+                    ${t.map((n) => o`<option value=${n}>${n}</option>`)}
+                  </select>
+
+                  <!-- Hedge -->
+                  <select
+                    class="input-select"
+                    style="width: 130px;"
+                    .value=${s.hedge}
+                    @change=${(n) => {
+        s.hedge = n.target.value, this.requestUpdate();
+      }}
+                  >
+                    <option value="">IS</option>
+                    <option value="not">IS NOT</option>
+                    <option value="very">IS VERY</option>
+                    <option value="somewhat">IS SOMEWHAT</option>
+                    <option value="extremely">IS EXTREMELY</option>
+                    <option value="slightly">IS SLIGHTLY</option>
+                  </select>
+
+                  <!-- Linguistic Term -->
+                  <select
+                    class="input-select"
+                    style="flex: 1; min-width: 120px; font-weight: 600; color: #34d399;"
+                    .value=${s.term}
+                    @change=${(n) => {
+        s.term = n.target.value, this.requestUpdate();
+      }}
+                  >
+                    ${r.map((n) => o`<option value=${n}>${n}</option>`)}
+                  </select>
+
+                  ${this._builderConditions.length > 1 ? o`
+                        <button
+                          class="btn btn-danger btn-icon"
+                          title="Remove Condition"
+                          @click=${() => this._removeBuilderCondition(i)}
+                        >
+                          ✕
+                        </button>
+                      ` : ""}
+                </div>
+              `;
+    })}
+          </div>
+
+          <!-- Consequent (THEN) -->
+          <div
+            class="section-box"
+            style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.25); padding: 18px; margin-bottom: 20px; border-radius: var(--fuzzy-radius-md);"
+          >
+            <div style="font-weight: 700; color: #fbbf24; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px;">
+              🔸 THEN (Consequent Action)
+            </div>
+
+            <div class="builder-row">
+              <span class="badge badge-amber" style="width: 70px; justify-content: center;">THEN</span>
+
+              <!-- Output Variable -->
+              <select
+                class="input-select"
+                style="flex: 1; min-width: 150px; font-weight: 600;"
+                .value=${this._builderConsequent.variable}
+                @change=${(s) => this._onBuilderConsequentVarChange(s.target.value)}
+              >
+                ${e.map((s) => o`<option value=${s}>${s}</option>`)}
+              </select>
+
+              <span style="font-size: 13px; font-weight: 700; color: var(--fuzzy-text-secondary);">IS</span>
+
+              ${this._builderConsequent.isConstant ? o`
+                    <input
+                      class="input-text"
+                      style="flex: 1; min-width: 120px;"
+                      type="number"
+                      step="any"
+                      .value=${String(this._builderConsequent.constantValue)}
+                      @input=${(s) => {
+      this._builderConsequent.constantValue = parseFloat(s.target.value), this.requestUpdate();
+    }}
+                    />
+                  ` : o`
+                    <select
+                      class="input-select"
+                      style="flex: 1; min-width: 120px; font-weight: 600; color: #34d399;"
+                      .value=${this._builderConsequent.term}
+                      @change=${(s) => {
+      this._builderConsequent.term = s.target.value, this.requestUpdate();
+    }}
+                    >
+                      ${Object.keys(
+      this._config.outputs[this._builderConsequent.variable]?.terms || {}
+    ).map((s) => o`<option value=${s}>${s}</option>`)}
+                    </select>
+                  `}
+
+              ${this._config.inference === "sugeno" ? o`
+                    <label class="checkbox-label" style="font-size: 12px; margin-left: 8px;">
+                      <input
+                        type="checkbox"
+                        .checked=${this._builderConsequent.isConstant}
+                        @change=${(s) => {
+      this._builderConsequent.isConstant = s.target.checked, this.requestUpdate();
+    }}
+                      />
+                      Numeric Constant
+                    </label>
+                  ` : ""}
+            </div>
+          </div>
+
+          <!-- Live Preview -->
+          <div
+            style="background: #020617; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: var(--fuzzy-radius-md); padding: 14px 18px; margin-bottom: 24px;"
+          >
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fuzzy-text-secondary); font-weight: 600;">
+                Live Linguistic Rule Preview
+              </span>
+              <span class="badge badge-emerald" style="font-size: 10px;">✓ Canonical Syntax</span>
+            </div>
+            <div style="font-family: monospace; font-size: 14px; color: #e2e8f0; word-break: break-all;">
+              ${this._compileRuleString(this._builderConditions, this._builderConsequent)}
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; justify-content: flex-end; gap: 12px;">
+            <button class="btn btn-secondary" @click=${() => this._showRuleBuilderModal = !1}>
+              Cancel
+            </button>
+            <button class="btn btn-primary" @click=${this._saveBuilderRule}>
+              ${this._editingRuleIndex >= 0 ? "Update Rule" : "+ Add Rule to System"}
+            </button>
+          </div>
+        </div>
+      </div>
     `;
   }
   _renderRawTab(t) {
@@ -1904,8 +2421,8 @@ let u = class extends S {
   }
 };
 u.styles = [
-  Q,
-  H`
+  G,
+  q`
       .tabs {
         display: flex;
         gap: 8px;
@@ -1993,6 +2510,33 @@ u.styles = [
         flex: 1;
       }
 
+      .rule-card {
+        background: rgba(15, 23, 42, 0.45);
+        border: 1px solid var(--fuzzy-card-border);
+        border-radius: var(--fuzzy-radius-md);
+        padding: 14px 18px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        transition: all 0.2s ease;
+      }
+
+      .rule-card:hover {
+        border-color: rgba(56, 189, 248, 0.3);
+        background: rgba(15, 23, 42, 0.65);
+      }
+
+      .builder-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+
       .yaml-banner {
         background: rgba(168, 85, 247, 0.12);
         border: 1px solid rgba(168, 85, 247, 0.3);
@@ -2029,66 +2573,84 @@ u.styles = [
       }
     `
 ];
-m([
-  _({ attribute: !1 })
+h([
+  v({ attribute: !1 })
 ], u.prototype, "hass", 2);
-m([
-  _({ type: Object })
+h([
+  v({ type: Object })
 ], u.prototype, "systemConfig", 2);
-m([
-  _({ type: String })
+h([
+  v({ type: String })
 ], u.prototype, "entryId", 2);
-m([
-  _({ type: String })
+h([
+  v({ type: String })
 ], u.prototype, "source", 2);
-m([
+h([
   p()
 ], u.prototype, "_activeTab", 2);
-m([
+h([
   p()
 ], u.prototype, "_config", 2);
-m([
+h([
   p()
 ], u.prototype, "_rawJson", 2);
-m([
+h([
   p()
 ], u.prototype, "_saving", 2);
-m([
+h([
   p()
 ], u.prototype, "_error", 2);
-m([
+h([
   p()
 ], u.prototype, "_successMsg", 2);
-m([
+h([
   p()
 ], u.prototype, "_showAddInputModal", 2);
-m([
+h([
   p()
 ], u.prototype, "_newInputEntityId", 2);
-m([
+h([
   p()
 ], u.prototype, "_newInputVarName", 2);
-m([
+h([
   p()
 ], u.prototype, "_newInputMin", 2);
-m([
+h([
   p()
 ], u.prototype, "_newInputMax", 2);
-m([
+h([
   p()
 ], u.prototype, "_newInputTermsPreset", 2);
-m([
+h([
   p()
 ], u.prototype, "_newInputModalError", 2);
-u = m([
+h([
+  p()
+], u.prototype, "_showRuleBuilderModal", 2);
+h([
+  p()
+], u.prototype, "_editingRuleIndex", 2);
+h([
+  p()
+], u.prototype, "_builderConditions", 2);
+h([
+  p()
+], u.prototype, "_builderConsequent", 2);
+h([
+  p()
+], u.prototype, "_ruleBuilderError", 2);
+h([
+  p()
+], u.prototype, "_rulesViewMode", 2);
+u = h([
   J("fuzzy-system-editor")
 ], u);
-var st = Object.defineProperty, it = Object.getOwnPropertyDescriptor, A = (t, e, i, s) => {
-  for (var a = s > 1 ? void 0 : s ? it(e, i) : e, r = t.length - 1, n; r >= 0; r--)
-    (n = t[r]) && (a = (s ? n(e, i, a) : n(a)) || a);
-  return s && a && st(e, i, a), a;
+var st = Object.defineProperty, it = Object.getOwnPropertyDescriptor, E = (t, e, s, i) => {
+  for (var r = i > 1 ? void 0 : i ? it(e, s) : e, n = t.length - 1, a; n >= 0; n--)
+    (a = t[n]) && (r = (i ? a(e, s, r) : a(r)) || r);
+  return i && r && st(e, s, r), r;
 };
-let y = class extends S {
+let x = class extends A {
   constructor() {
     super(...arguments), this._templates = [], this._selectedTemplate = null, this._systemId = "", this._systemName = "", this._loading = !1, this._error = "";
   }
@@ -2220,9 +2782,9 @@ let y = class extends S {
     `;
   }
 };
-y.styles = [
-  Q,
-  H`
+x.styles = [
+  G,
+  q`
       .template-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -2273,36 +2835,36 @@ y.styles = [
       }
     `
 ];
-A([
-  _({ attribute: !1 })
-], y.prototype, "hass", 2);
-A([
+E([
+  v({ attribute: !1 })
+], x.prototype, "hass", 2);
+E([
   p()
-], y.prototype, "_templates", 2);
-A([
+], x.prototype, "_templates", 2);
+E([
   p()
-], y.prototype, "_selectedTemplate", 2);
-A([
+], x.prototype, "_selectedTemplate", 2);
+E([
   p()
-], y.prototype, "_systemId", 2);
-A([
+], x.prototype, "_systemId", 2);
+E([
   p()
-], y.prototype, "_systemName", 2);
-A([
+], x.prototype, "_systemName", 2);
+E([
   p()
-], y.prototype, "_loading", 2);
-A([
+], x.prototype, "_loading", 2);
+E([
   p()
-], y.prototype, "_error", 2);
-y = A([
+], x.prototype, "_error", 2);
+x = E([
   J("fuzzy-template-modal")
-], y);
-var at = Object.defineProperty, rt = Object.getOwnPropertyDescriptor, x = (t, e, i, s) => {
-  for (var a = s > 1 ? void 0 : s ? rt(e, i) : e, r = t.length - 1, n; r >= 0; r--)
-    (n = t[r]) && (a = (s ? n(e, i, a) : n(a)) || a);
-  return s && a && at(e, i, a), a;
+], x);
+var rt = Object.defineProperty, nt = Object.getOwnPropertyDescriptor, z = (t, e, s, i) => {
+  for (var r = i > 1 ? void 0 : i ? nt(e, s) : e, n = t.length - 1, a; n >= 0; n--)
+    (a = t[n]) && (r = (i ? a(e, s, r) : a(r)) || r);
+  return i && r && rt(e, s, r), r;
 };
-let b = class extends S {
+let _ = class extends A {
   constructor() {
     super(...arguments), this.narrow = !1, this._view = "catalog", this._selectedSource = "config_entry";
   }
@@ -2353,9 +2915,9 @@ let b = class extends S {
     `;
   }
 };
-b.styles = [
-  Q,
-  H`
+_.styles = [
+  G,
+  q`
       :host {
         display: block;
         min-height: 100vh;
@@ -2413,33 +2975,33 @@ b.styles = [
       }
     `
 ];
-x([
-  _({ attribute: !1 })
-], b.prototype, "hass", 2);
-x([
-  _({ type: Boolean })
-], b.prototype, "narrow", 2);
-x([
-  _({ type: Object })
-], b.prototype, "route", 2);
-x([
-  _({ type: Object })
-], b.prototype, "panel", 2);
-x([
+z([
+  v({ attribute: !1 })
+], _.prototype, "hass", 2);
+z([
+  v({ type: Boolean })
+], _.prototype, "narrow", 2);
+z([
+  v({ type: Object })
+], _.prototype, "route", 2);
+z([
+  v({ type: Object })
+], _.prototype, "panel", 2);
+z([
   p()
-], b.prototype, "_view", 2);
-x([
+], _.prototype, "_view", 2);
+z([
   p()
-], b.prototype, "_selectedConfig", 2);
-x([
+], _.prototype, "_selectedConfig", 2);
+z([
   p()
-], b.prototype, "_selectedEntryId", 2);
-x([
+], _.prototype, "_selectedEntryId", 2);
+z([
   p()
-], b.prototype, "_selectedSource", 2);
-b = x([
+], _.prototype, "_selectedSource", 2);
+_ = z([
   J("fuzzy-system-panel")
-], b);
+], _);
 export {
-  b as FuzzySystemPanel
+  _ as FuzzySystemPanel
 };

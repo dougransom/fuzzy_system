@@ -725,6 +725,9 @@ class FuzzySystemEngine:
 
         for rule in data.get("rules", []):
             rule_str = FuzzyRule.compile_from_ast(rule) if isinstance(rule, dict) else str(rule)
+            trimmed = rule_str.strip() if rule_str else ""
+            if not trimmed or trimmed.upper() in ("IF THEN", "IF  THEN", "IF   THEN"):
+                continue
             engine.add_rule(rule_str)
 
         return engine

@@ -5,6 +5,20 @@ import { FuzzySystemConfig, HomeAssistant, InputVariableConfig, OutputVariableCo
 import { saveSystem } from "../api/websocket";
 import { sharedStyles } from "../styles/shared-styles";
 
+interface RuleCondition {
+  variable: string;
+  hedge: string; // "" | "not" | "very" | "somewhat" | "extremely" | "slightly"
+  term: string;
+  connector: "AND" | "OR";
+}
+
+interface RuleConsequent {
+  variable: string;
+  term: string;
+  isConstant: boolean;
+  constantValue: number;
+}
+
 @safeCustomElement("fuzzy-system-editor")
 export class FuzzySystemEditor extends LitElement {
   static styles = [
@@ -97,6 +111,33 @@ export class FuzzySystemEditor extends LitElement {
         flex: 1;
       }
 
+      .rule-card {
+        background: rgba(15, 23, 42, 0.45);
+        border: 1px solid var(--fuzzy-card-border);
+        border-radius: var(--fuzzy-radius-md);
+        padding: 14px 18px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        transition: all 0.2s ease;
+      }
+
+      .rule-card:hover {
+        border-color: rgba(56, 189, 248, 0.3);
+        background: rgba(15, 23, 42, 0.65);
+      }
+
+      .builder-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+
       .yaml-banner {
         background: rgba(168, 85, 247, 0.12);
         border: 1px solid rgba(168, 85, 247, 0.3);
@@ -154,6 +195,19 @@ export class FuzzySystemEditor extends LitElement {
   @state() private _newInputMax = 100;
   @state() private _newInputTermsPreset: "3_terms" | "5_terms" = "3_terms";
   @state() private _newInputModalError = "";
+
+  // Rule Builder Modal state
+  @state() private _showRuleBuilderModal = false;
+  @state() private _editingRuleIndex = -1;
+  @state() private _builderConditions: RuleCondition[] = [];
+  @state() private _builderConsequent: RuleConsequent = {
+    variable: "",
+    term: "",
+    isConstant: false,
+    constantValue: 0,
+  };
+  @state() private _ruleBuilderError = "";
+  @state() private _rulesViewMode: "visual" | "text" = "visual";
 
   connectedCallback() {
     super.connectedCallback();
@@ -225,6 +279,19 @@ export class FuzzySystemEditor extends LitElement {
         this._error = `Invalid JSON: ${e.message}`;
         return;
       }
+    }
+
+    if (this._config.rules) {
+      this._config.rules = this._config.rules
+        .map((r) => (typeof r === "string" ? r.trim() : r))
+        .filter((r) => {
+          if (!r) return false;
+          if (typeof r === "string") {
+            const up = r.toUpperCase();
+            return up !== "IF THEN" && up !== "IF  THEN" && !up.match(/^IF\s*THEN\s*$/);
+          }
+          return true;
+        });
     }
 
     this._saving = true;
@@ -474,9 +541,237 @@ export class FuzzySystemEditor extends LitElement {
     this.requestUpdate();
   }
 
-  // --- Rules Handlers ---
+  // --- Rules Handlers & Visual Builder ---
+  private _parseRuleToBuilder(
+    ruleStr: string
+  ): { conditions: RuleCondition[]; consequent: RuleConsequent } | null {
+    if (!ruleStr || !ruleStr.trim()) return null;
+    const match = ruleStr.trim().match(/^IF\s+(.+)\s+THEN\s+(.+)$/i);
+    if (!match) return null;
+    const antStr = match[1].trim();
+    const conStr = match[2].trim();
+
+    // Parse consequent
+    const conMatch = conStr.match(/^([a-zA-Z0-9_]+)\s*(?:IS|=)\s*(.+)$/i);
+    if (!conMatch) return null;
+    const conVar = conMatch[1].trim();
+    const termOrVal = conMatch[2].trim();
+    const numVal = parseFloat(termOrVal);
+    const isConstant = !isNaN(numVal) && isFinite(numVal) && !termOrVal.match(/[a-zA-Z]/);
+
+    // Parse antecedent clauses
+    const tokens = antStr.split(/\s+(AND|OR)\s+/i);
+    const conditions: RuleCondition[] = [];
+    let currentConnector: "AND" | "OR" = "AND";
+
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i].trim();
+      if (!token) continue;
+      if (token.toUpperCase() === "AND") {
+        currentConnector = "AND";
+        continue;
+      }
+      if (token.toUpperCase() === "OR") {
+        currentConnector = "OR";
+        continue;
+      }
+
+      const clauseMatch = token.match(
+        /^([a-zA-Z0-9_]+)\s+IS\s+(?:(not|very|somewhat|extremely|slightly)\s+)?([a-zA-Z0-9_]+)$/i
+      );
+      if (!clauseMatch) return null;
+
+      conditions.push({
+        variable: clauseMatch[1].trim(),
+        hedge: (clauseMatch[2] || "").trim().toLowerCase(),
+        term: clauseMatch[3].trim(),
+        connector: conditions.length === 0 ? "AND" : currentConnector,
+      });
+    }
+
+    if (conditions.length === 0) return null;
+
+    return {
+      conditions,
+      consequent: {
+        variable: conVar,
+        term: isConstant ? "" : termOrVal,
+        isConstant,
+        constantValue: isConstant ? numVal : 0,
+      },
+    };
+  }
+
+  private _compileRuleString(
+    conditions: RuleCondition[],
+    consequent: RuleConsequent
+  ): string {
+    const antParts: string[] = [];
+    conditions.forEach((cond, idx) => {
+      const hedgePart = cond.hedge ? `${cond.hedge} ` : "";
+      const clause = `${cond.variable} IS ${hedgePart}${cond.term}`;
+      if (idx === 0) {
+        antParts.push(clause);
+      } else {
+        antParts.push(`${cond.connector} ${clause}`);
+      }
+    });
+    const antStr = antParts.join(" ");
+    const conStr = consequent.isConstant
+      ? `${consequent.variable} IS ${consequent.constantValue}`
+      : `${consequent.variable} IS ${consequent.term}`;
+    return `IF ${antStr} THEN ${conStr}`;
+  }
+
+  private _openAddRuleBuilder() {
+    this._ruleBuilderError = "";
+    const inputKeys = Object.keys(this._config.inputs || {});
+    const outputKeys = Object.keys(this._config.outputs || {});
+
+    if (inputKeys.length === 0) {
+      this._error = "Please define at least one input antecedent variable before creating rules.";
+      this._activeTab = "inputs";
+      return;
+    }
+    if (outputKeys.length === 0) {
+      this._error = "Please define at least one output consequent variable before creating rules.";
+      this._activeTab = "outputs";
+      return;
+    }
+
+    const firstInput = inputKeys[0];
+    const firstInputTerms = Object.keys(this._config.inputs[firstInput]?.terms || {});
+    const firstOutput = outputKeys[0];
+    const firstOutputTerms = Object.keys(this._config.outputs[firstOutput]?.terms || {});
+
+    this._editingRuleIndex = -1;
+    this._builderConditions = [
+      {
+        variable: firstInput,
+        hedge: "",
+        term: firstInputTerms[0] || "low",
+        connector: "AND",
+      },
+    ];
+    this._builderConsequent = {
+      variable: firstOutput,
+      term: firstOutputTerms[0] || "low",
+      isConstant: false,
+      constantValue: 0,
+    };
+    this._showRuleBuilderModal = true;
+  }
+
+  private _openEditRuleBuilder(index: number) {
+    this._ruleBuilderError = "";
+    const ruleStr = this._config.rules[index] || "";
+    const parsed = this._parseRuleToBuilder(ruleStr);
+
+    if (parsed) {
+      this._editingRuleIndex = index;
+      this._builderConditions = parsed.conditions;
+      this._builderConsequent = parsed.consequent;
+      this._showRuleBuilderModal = true;
+    } else {
+      const inputKeys = Object.keys(this._config.inputs || {});
+      const outputKeys = Object.keys(this._config.outputs || {});
+      const firstInput = inputKeys[0] || "";
+      const firstInputTerms = Object.keys(this._config.inputs[firstInput]?.terms || {});
+      const firstOutput = outputKeys[0] || "";
+      const firstOutputTerms = Object.keys(this._config.outputs[firstOutput]?.terms || {});
+
+      this._editingRuleIndex = index;
+      this._builderConditions = [
+        {
+          variable: firstInput,
+          hedge: "",
+          term: firstInputTerms[0] || "low",
+          connector: "AND",
+        },
+      ];
+      this._builderConsequent = {
+        variable: firstOutput,
+        term: firstOutputTerms[0] || "low",
+        isConstant: false,
+        constantValue: 0,
+      };
+      this._ruleBuilderError = `Notice: Rule #${index + 1} uses non-standard formatting. Configuring it here will format it as canonical syntax.`;
+      this._showRuleBuilderModal = true;
+    }
+  }
+
+  private _onBuilderConditionVarChange(idx: number, newVar: string) {
+    const terms = Object.keys(this._config.inputs[newVar]?.terms || {});
+    this._builderConditions[idx].variable = newVar;
+    this._builderConditions[idx].term = terms[0] || "";
+    this.requestUpdate();
+  }
+
+  private _onBuilderConsequentVarChange(newVar: string) {
+    const terms = Object.keys(this._config.outputs[newVar]?.terms || {});
+    this._builderConsequent.variable = newVar;
+    if (!this._builderConsequent.isConstant) {
+      this._builderConsequent.term = terms[0] || "";
+    }
+    this.requestUpdate();
+  }
+
+  private _addBuilderCondition(connector: "AND" | "OR" = "AND") {
+    const inputKeys = Object.keys(this._config.inputs || {});
+    const firstInput = inputKeys[0] || "";
+    const terms = Object.keys(this._config.inputs[firstInput]?.terms || {});
+    this._builderConditions.push({
+      variable: firstInput,
+      hedge: "",
+      term: terms[0] || "",
+      connector,
+    });
+    this.requestUpdate();
+  }
+
+  private _removeBuilderCondition(idx: number) {
+    if (this._builderConditions.length <= 1) return;
+    this._builderConditions.splice(idx, 1);
+    this.requestUpdate();
+  }
+
+  private _saveBuilderRule() {
+    this._ruleBuilderError = "";
+    if (this._builderConditions.length === 0) {
+      this._ruleBuilderError = "At least one antecedent condition is required.";
+      return;
+    }
+    for (const c of this._builderConditions) {
+      if (!c.variable || !c.term) {
+        this._ruleBuilderError = "All conditions must have an input variable and a term selected.";
+        return;
+      }
+    }
+    if (!this._builderConsequent.variable) {
+      this._ruleBuilderError = "An output consequent variable must be selected.";
+      return;
+    }
+    if (!this._builderConsequent.isConstant && !this._builderConsequent.term) {
+      this._ruleBuilderError = "An output linguistic term must be selected.";
+      return;
+    }
+
+    const compiled = this._compileRuleString(
+      this._builderConditions,
+      this._builderConsequent
+    );
+    if (this._editingRuleIndex >= 0) {
+      this._config.rules[this._editingRuleIndex] = compiled;
+    } else {
+      this._config.rules = [...this._config.rules, compiled];
+    }
+    this._showRuleBuilderModal = false;
+    this.requestUpdate();
+  }
+
   private _addRule() {
     this._config.rules = [...this._config.rules, "IF  THEN "];
+    this._rulesViewMode = "text";
     this.requestUpdate();
   }
 
@@ -571,6 +866,7 @@ export class FuzzySystemEditor extends LitElement {
       </div>
 
       ${this._showAddInputModal ? this._renderAddInputModal() : ""}
+      ${this._showRuleBuilderModal ? this._renderRuleBuilderModal() : ""}
     `;
   }
 
@@ -1054,22 +1350,170 @@ export class FuzzySystemEditor extends LitElement {
     const rules = this._config.rules || [];
 
     return html`
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;"
+      >
         <div>
           <h3 class="section-title">Linguistic Rules</h3>
-          <p class="helper-text">IF &lt;antecedents&gt; THEN &lt;consequents&gt; with AND, OR, NOT and linguistic hedges</p>
+          <p class="helper-text">
+            Declarative IF &lt;antecedents&gt; THEN &lt;consequents&gt; with AND, OR, NOT and linguistic hedges
+          </p>
         </div>
         ${!isYaml
           ? html`
-              <button class="btn btn-secondary" @click=${this._addRule}>
-                + Add Rule
-              </button>
+              <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <div
+                  style="display: inline-flex; background: rgba(255, 255, 255, 0.05); border-radius: var(--fuzzy-radius-md); padding: 2px; border: 1px solid var(--fuzzy-card-border);"
+                >
+                  <button
+                    class="btn ${this._rulesViewMode === "visual" ? "btn-primary" : "btn-secondary"}"
+                    style="padding: 6px 12px; font-size: 12px;"
+                    @click=${() => {
+                      this._rulesViewMode = "visual";
+                      this.requestUpdate();
+                    }}
+                  >
+                    🎨 Visual Cards
+                  </button>
+                  <button
+                    class="btn ${this._rulesViewMode === "text" ? "btn-primary" : "btn-secondary"}"
+                    style="padding: 6px 12px; font-size: 12px;"
+                    @click=${() => {
+                      this._rulesViewMode = "text";
+                      this.requestUpdate();
+                    }}
+                  >
+                    📝 Raw Text
+                  </button>
+                </div>
+                <button class="btn btn-primary" @click=${this._openAddRuleBuilder}>
+                  ✨ + Rule Builder
+                </button>
+                <button
+                  class="btn btn-secondary"
+                  @click=${this._addRule}
+                  title="Add empty rule string to type manually"
+                >
+                  + Quick Text
+                </button>
+              </div>
             `
           : ""}
       </div>
 
       ${rules.length === 0
-        ? html`<p class="subtitle" style="padding: 20px 0;">No inference rules defined yet.</p>`
+        ? html`
+            <div
+              style="text-align: center; padding: 40px 20px; background: rgba(15, 23, 42, 0.3); border-radius: var(--fuzzy-radius-md); border: 1px dashed var(--fuzzy-card-border);"
+            >
+              <div style="font-size: 28px; margin-bottom: 8px;">📜</div>
+              <h4 style="font-weight: 600; margin-bottom: 6px;">No Inference Rules Defined Yet</h4>
+              <p class="helper-text" style="margin-bottom: 18px;">
+                Rules map your input linguistic terms (e.g. temperature IS hot) to output targets (e.g. fan_speed IS fast).
+              </p>
+              ${!isYaml
+                ? html`
+                    <button class="btn btn-primary" @click=${this._openAddRuleBuilder}>
+                      ✨ Create First Rule with Builder
+                    </button>
+                  `
+                : ""}
+            </div>
+          `
+        : this._rulesViewMode === "visual"
+        ? rules.map((rule, idx) => {
+            const parsed = this._parseRuleToBuilder(rule);
+            if (!parsed) {
+              return html`
+                <div class="rule-card">
+                  <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                    <span class="badge badge-purple" style="width: 24px; justify-content: center;">${idx + 1}</span>
+                    <span style="font-family: monospace; font-size: 13px;">${rule}</span>
+                  </div>
+                  ${!isYaml
+                    ? html`
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                          <button
+                            class="btn btn-secondary"
+                            style="padding: 6px 12px; font-size: 12px;"
+                            @click=${() => this._openEditRuleBuilder(idx)}
+                          >
+                            ✏️ Builder
+                          </button>
+                          <button
+                            class="btn btn-danger btn-icon"
+                            @click=${() => this._removeRule(idx)}
+                            title="Delete Rule"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      `
+                    : ""}
+                </div>
+              `;
+            }
+
+            return html`
+              <div class="rule-card">
+                <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
+                  <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <span class="badge badge-purple" style="width: 24px; justify-content: center;">${idx + 1}</span>
+                    <span class="badge badge-cyan">IF</span>
+                    ${parsed.conditions.map(
+                      (c, cIdx) => html`
+                        ${cIdx > 0 ? html`<span class="badge badge-purple">${c.connector}</span>` : ""}
+                        <span class="chip" style="font-weight: 600; color: #38bdf8; background: rgba(56, 189, 248, 0.1);">
+                          ${c.variable}
+                        </span>
+                        <span class="chip" style="color: #94a3b8;">
+                          ${c.hedge ? `is ${c.hedge}` : "is"}
+                        </span>
+                        <span class="chip" style="font-weight: 600; color: #34d399; background: rgba(52, 211, 153, 0.1);">
+                          ${c.term}
+                        </span>
+                      `
+                    )}
+                    <span class="badge badge-amber">THEN</span>
+                    <span class="chip" style="font-weight: 600; color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
+                      ${parsed.consequent.variable}
+                    </span>
+                    <span class="chip" style="color: #94a3b8;">is</span>
+                    <span class="chip" style="font-weight: 600; color: #34d399; background: rgba(52, 211, 153, 0.1);">
+                      ${parsed.consequent.isConstant
+                        ? parsed.consequent.constantValue
+                        : parsed.consequent.term}
+                    </span>
+                  </div>
+                  <div style="font-family: monospace; font-size: 11px; color: var(--fuzzy-text-secondary); padding-left: 32px;">
+                    ${rule}
+                  </div>
+                </div>
+
+                ${!isYaml
+                  ? html`
+                      <div style="display: flex; gap: 8px; align-items: center;">
+                        <button
+                          class="btn btn-secondary"
+                          style="padding: 6px 12px; font-size: 12px;"
+                          @click=${() => this._openEditRuleBuilder(idx)}
+                          title="Edit in Visual Builder"
+                        >
+                          ✏️ Edit
+                        </button>
+                        <button
+                          class="btn btn-danger btn-icon"
+                          @click=${() => this._removeRule(idx)}
+                          title="Delete Rule"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    `
+                  : ""}
+              </div>
+            `;
+          })
         : rules.map(
             (rule, idx) => html`
               <div class="rule-item">
@@ -1083,7 +1527,19 @@ export class FuzzySystemEditor extends LitElement {
                 />
                 ${!isYaml
                   ? html`
-                      <button class="btn btn-danger btn-icon" @click=${() => this._removeRule(idx)}>
+                      <button
+                        class="btn btn-secondary"
+                        style="padding: 6px 10px; font-size: 12px;"
+                        @click=${() => this._openEditRuleBuilder(idx)}
+                        title="Edit in Visual Builder"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        class="btn btn-danger btn-icon"
+                        @click=${() => this._removeRule(idx)}
+                        title="Delete Rule"
+                      >
                         ✕
                       </button>
                     `
@@ -1091,6 +1547,246 @@ export class FuzzySystemEditor extends LitElement {
               </div>
             `
           )}
+    `;
+  }
+
+  private _renderRuleBuilderModal() {
+    const inputKeys = Object.keys(this._config.inputs || {});
+    const outputKeys = Object.keys(this._config.outputs || {});
+
+    return html`
+      <div
+        class="modal-overlay"
+        @click=${(e: any) => {
+          if (e.target.classList.contains("modal-overlay")) {
+            this._showRuleBuilderModal = false;
+          }
+        }}
+      >
+        <div class="modal-content" style="max-width: 780px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+            <h2 style="font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+              <span>🪄</span>
+              <span>${this._editingRuleIndex >= 0 ? `Edit Rule #${this._editingRuleIndex + 1}` : "Add Rule (Visual Builder)"}</span>
+            </h2>
+            <button
+              class="btn btn-icon"
+              @click=${() => (this._showRuleBuilderModal = false)}
+              title="Close"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div
+            style="background: rgba(2, 132, 199, 0.1); border: 1px solid rgba(2, 132, 199, 0.25); border-radius: var(--fuzzy-radius-md); padding: 12px 16px; margin-bottom: 20px; font-size: 13px; line-height: 1.5;"
+          >
+            <div style="font-weight: 600; color: #38bdf8; margin-bottom: 2px;">
+              💡 Guided Linguistic Rule Builder
+            </div>
+            <div style="color: var(--fuzzy-text-secondary);">
+              Configure linguistic clauses using dropdown controls. Variables and terms are automatically populated from your system definition.
+            </div>
+          </div>
+
+          ${this._ruleBuilderError
+            ? html`<div style="color: var(--fuzzy-danger); margin-bottom: 14px; font-size: 13px;">${this._ruleBuilderError}</div>`
+            : ""}
+
+          <!-- Antecedents (IF) -->
+          <div
+            class="section-box"
+            style="background: rgba(14, 165, 233, 0.05); border: 1px solid rgba(14, 165, 233, 0.25); padding: 18px; margin-bottom: 18px; border-radius: var(--fuzzy-radius-md);"
+          >
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+              <span style="font-weight: 700; color: #38bdf8; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;">
+                🔹 IF (Antecedent Conditions)
+              </span>
+              <button
+                class="btn btn-secondary"
+                style="padding: 6px 12px; font-size: 12px;"
+                @click=${() => this._addBuilderCondition("AND")}
+              >
+                + Add Condition (AND)
+              </button>
+            </div>
+
+            ${this._builderConditions.map((cond, idx) => {
+              const inputTerms = Object.keys(this._config.inputs[cond.variable]?.terms || {});
+              return html`
+                <div class="builder-row">
+                  ${idx > 0
+                    ? html`
+                        <select
+                          class="input-select"
+                          style="width: 85px; font-weight: 700; color: #c084fc; border-color: rgba(168, 85, 247, 0.4);"
+                          .value=${cond.connector}
+                          @change=${(e: any) => {
+                            cond.connector = e.target.value;
+                            this.requestUpdate();
+                          }}
+                        >
+                          <option value="AND">AND</option>
+                          <option value="OR">OR</option>
+                        </select>
+                      `
+                    : html`<span class="badge badge-cyan" style="width: 70px; justify-content: center;">IF</span>`}
+
+                  <!-- Input Variable -->
+                  <select
+                    class="input-select"
+                    style="flex: 1; min-width: 140px; font-weight: 600;"
+                    .value=${cond.variable}
+                    @change=${(e: any) => this._onBuilderConditionVarChange(idx, e.target.value)}
+                  >
+                    ${inputKeys.map((inpKey) => html`<option value=${inpKey}>${inpKey}</option>`)}
+                  </select>
+
+                  <!-- Hedge -->
+                  <select
+                    class="input-select"
+                    style="width: 130px;"
+                    .value=${cond.hedge}
+                    @change=${(e: any) => {
+                      cond.hedge = e.target.value;
+                      this.requestUpdate();
+                    }}
+                  >
+                    <option value="">IS</option>
+                    <option value="not">IS NOT</option>
+                    <option value="very">IS VERY</option>
+                    <option value="somewhat">IS SOMEWHAT</option>
+                    <option value="extremely">IS EXTREMELY</option>
+                    <option value="slightly">IS SLIGHTLY</option>
+                  </select>
+
+                  <!-- Linguistic Term -->
+                  <select
+                    class="input-select"
+                    style="flex: 1; min-width: 120px; font-weight: 600; color: #34d399;"
+                    .value=${cond.term}
+                    @change=${(e: any) => {
+                      cond.term = e.target.value;
+                      this.requestUpdate();
+                    }}
+                  >
+                    ${inputTerms.map((termKey) => html`<option value=${termKey}>${termKey}</option>`)}
+                  </select>
+
+                  ${this._builderConditions.length > 1
+                    ? html`
+                        <button
+                          class="btn btn-danger btn-icon"
+                          title="Remove Condition"
+                          @click=${() => this._removeBuilderCondition(idx)}
+                        >
+                          ✕
+                        </button>
+                      `
+                    : ""}
+                </div>
+              `;
+            })}
+          </div>
+
+          <!-- Consequent (THEN) -->
+          <div
+            class="section-box"
+            style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.25); padding: 18px; margin-bottom: 20px; border-radius: var(--fuzzy-radius-md);"
+          >
+            <div style="font-weight: 700; color: #fbbf24; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px;">
+              🔸 THEN (Consequent Action)
+            </div>
+
+            <div class="builder-row">
+              <span class="badge badge-amber" style="width: 70px; justify-content: center;">THEN</span>
+
+              <!-- Output Variable -->
+              <select
+                class="input-select"
+                style="flex: 1; min-width: 150px; font-weight: 600;"
+                .value=${this._builderConsequent.variable}
+                @change=${(e: any) => this._onBuilderConsequentVarChange(e.target.value)}
+              >
+                ${outputKeys.map((outKey) => html`<option value=${outKey}>${outKey}</option>`)}
+              </select>
+
+              <span style="font-size: 13px; font-weight: 700; color: var(--fuzzy-text-secondary);">IS</span>
+
+              ${this._builderConsequent.isConstant
+                ? html`
+                    <input
+                      class="input-text"
+                      style="flex: 1; min-width: 120px;"
+                      type="number"
+                      step="any"
+                      .value=${String(this._builderConsequent.constantValue)}
+                      @input=${(e: any) => {
+                        this._builderConsequent.constantValue = parseFloat(e.target.value);
+                        this.requestUpdate();
+                      }}
+                    />
+                  `
+                : html`
+                    <select
+                      class="input-select"
+                      style="flex: 1; min-width: 120px; font-weight: 600; color: #34d399;"
+                      .value=${this._builderConsequent.term}
+                      @change=${(e: any) => {
+                        this._builderConsequent.term = e.target.value;
+                        this.requestUpdate();
+                      }}
+                    >
+                      ${Object.keys(
+                        this._config.outputs[this._builderConsequent.variable]?.terms || {}
+                      ).map((tKey) => html`<option value=${tKey}>${tKey}</option>`)}
+                    </select>
+                  `}
+
+              ${this._config.inference === "sugeno"
+                ? html`
+                    <label class="checkbox-label" style="font-size: 12px; margin-left: 8px;">
+                      <input
+                        type="checkbox"
+                        .checked=${this._builderConsequent.isConstant}
+                        @change=${(e: any) => {
+                          this._builderConsequent.isConstant = e.target.checked;
+                          this.requestUpdate();
+                        }}
+                      />
+                      Numeric Constant
+                    </label>
+                  `
+                : ""}
+            </div>
+          </div>
+
+          <!-- Live Preview -->
+          <div
+            style="background: #020617; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: var(--fuzzy-radius-md); padding: 14px 18px; margin-bottom: 24px;"
+          >
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fuzzy-text-secondary); font-weight: 600;">
+                Live Linguistic Rule Preview
+              </span>
+              <span class="badge badge-emerald" style="font-size: 10px;">✓ Canonical Syntax</span>
+            </div>
+            <div style="font-family: monospace; font-size: 14px; color: #e2e8f0; word-break: break-all;">
+              ${this._compileRuleString(this._builderConditions, this._builderConsequent)}
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; justify-content: flex-end; gap: 12px;">
+            <button class="btn btn-secondary" @click=${() => (this._showRuleBuilderModal = false)}>
+              Cancel
+            </button>
+            <button class="btn btn-primary" @click=${this._saveBuilderRule}>
+              ${this._editingRuleIndex >= 0 ? "Update Rule" : "+ Add Rule to System"}
+            </button>
+          </div>
+        </div>
+      </div>
     `;
   }
 
