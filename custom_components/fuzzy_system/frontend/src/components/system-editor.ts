@@ -145,6 +145,15 @@ export class FuzzySystemEditor extends LitElement {
   @state() private _error = "";
   @state() private _successMsg = "";
 
+  // Add Input Modal state
+  @state() private _showAddInputModal = false;
+  @state() private _newInputEntityId = "";
+  @state() private _newInputVarName = "";
+  @state() private _newInputMin = 0;
+  @state() private _newInputMax = 100;
+  @state() private _newInputTermsPreset: "3_terms" | "5_terms" = "3_terms";
+  @state() private _newInputModalError = "";
+
   connectedCallback() {
     super.connectedCallback();
     this._initForm();
@@ -236,28 +245,194 @@ export class FuzzySystemEditor extends LitElement {
   }
 
   // --- Inputs Handlers ---
-  private _addInput() {
-    const inputName = prompt("Enter input variable name (e.g., temperature):");
-    if (!inputName || !inputName.trim()) return;
-    const key = inputName.trim().toLowerCase().replace(/[^a-z0-9_]/g, "_");
+  private _openAddInputModal() {
+    this._newInputEntityId = "";
+    this._newInputVarName = "";
+    this._newInputMin = 0;
+    this._newInputMax = 100;
+    this._newInputTermsPreset = "3_terms";
+    this._newInputModalError = "";
+    this._showAddInputModal = true;
+  }
 
-    if (this._config.inputs[key]) {
-      alert(`Input '${key}' already exists.`);
+  private _onNewInputEntitySelected(entityId: string) {
+    this._newInputEntityId = entityId;
+    if (!entityId) return;
+
+    // Auto-derive linguistic variable name if blank
+    const entitySlug = entityId.split(".")[1]?.replace(/[^a-z0-9_]/g, "_") || "";
+    if (!this._newInputVarName || this._newInputVarName.trim() === "") {
+      this._newInputVarName = entitySlug;
+    }
+
+    // Auto-detect unit and adjust range
+    const stateObj = this.hass?.states ? this.hass.states[entityId] : null;
+    if (stateObj?.attributes) {
+      const uom = stateObj.attributes.unit_of_measurement;
+      if (uom === "°C") {
+        this._newInputMin = 10;
+        this._newInputMax = 35;
+      } else if (uom === "°F") {
+        this._newInputMin = 50;
+        this._newInputMax = 95;
+      } else if (uom === "%") {
+        this._newInputMin = 0;
+        this._newInputMax = 100;
+      } else if (uom === "lx" || uom === "lux") {
+        this._newInputMin = 0;
+        this._newInputMax = 1000;
+      } else if (uom === "ppm") {
+        this._newInputMin = 400;
+        this._newInputMax = 2000;
+      } else if (uom === "W" || uom === "kW") {
+        this._newInputMin = 0;
+        this._newInputMax = 5000;
+      }
+    }
+    this.requestUpdate();
+  }
+
+  private _confirmAddInput() {
+    this._newInputModalError = "";
+    const key = (this._newInputVarName || "").trim().toLowerCase().replace(/[^a-z0-9_]/g, "_");
+
+    if (!key) {
+      this._newInputModalError = "Please specify a linguistic variable name.";
       return;
     }
 
+    if (this._config.inputs && this._config.inputs[key]) {
+      this._newInputModalError = `An input variable named '${key}' already exists.`;
+      return;
+    }
+
+    const min = Number.isFinite(this._newInputMin) ? this._newInputMin : 0;
+    const max = Number.isFinite(this._newInputMax) && this._newInputMax > min ? this._newInputMax : min + 100;
+    const span = max - min;
+
+    let terms: Record<string, { type: string; params: number[] }>;
+    if (this._newInputTermsPreset === "5_terms") {
+      terms = {
+        very_low: { type: "trapmf", params: [min, min, min + span * 0.15, min + span * 0.3] },
+        low: { type: "trimf", params: [min + span * 0.15, min + span * 0.35, min + span * 0.55] },
+        medium: { type: "trimf", params: [min + span * 0.35, min + span * 0.5, min + span * 0.65] },
+        high: { type: "trimf", params: [min + span * 0.45, min + span * 0.65, min + span * 0.85] },
+        very_high: { type: "trapmf", params: [min + span * 0.7, min + span * 0.85, max, max] },
+      };
+    } else {
+      terms = {
+        low: { type: "trapmf", params: [min, min, min + span * 0.25, min + span * 0.5] },
+        medium: { type: "trimf", params: [min + span * 0.25, min + span * 0.5, min + span * 0.75] },
+        high: { type: "trapmf", params: [min + span * 0.5, min + span * 0.75, max, max] },
+      };
+    }
+
+    if (!this._config.inputs) {
+      this._config.inputs = {};
+    }
+
     this._config.inputs[key] = {
-      entity_id: "",
-      range: [0, 100],
+      entity_id: this._newInputEntityId || "",
+      range: [min, max],
       resolution: 100,
-      default: 0,
-      terms: {
-        low: { type: "trapmf", params: [0, 0, 20, 40] },
-        medium: { type: "trimf", params: [30, 50, 70] },
-        high: { type: "trapmf", params: [60, 80, 100, 100] },
-      },
+      default: min,
+      terms,
     };
+
+    this._showAddInputModal = false;
     this.requestUpdate();
+  }
+
+  private _getAvailableEntities(): Array<{ entity_id: string; friendly_name: string; unit: string; state: string }> {
+    if (!this.hass?.states) return [];
+    const list: Array<{ entity_id: string; friendly_name: string; unit: string; state: string }> = [];
+    for (const [entity_id, stateObj] of Object.entries(this.hass.states)) {
+      const domain = entity_id.split(".")[0];
+      if (
+        domain === "sensor" ||
+        domain === "input_number" ||
+        domain === "number" ||
+        domain === "climate" ||
+        domain === "weather"
+      ) {
+        list.push({
+          entity_id,
+          friendly_name: stateObj.attributes?.friendly_name || entity_id,
+          unit: stateObj.attributes?.unit_of_measurement || "",
+          state: stateObj.state,
+        });
+      }
+    }
+    list.sort((a, b) => a.friendly_name.localeCompare(b.friendly_name));
+    return list;
+  }
+
+  private _renderEntityPicker(
+    value: string,
+    disabled: boolean,
+    onChange: (val: string) => void
+  ) {
+    const isHaPickerAvailable = Boolean(customElements.get("ha-entity-picker"));
+    const entities = this._getAvailableEntities();
+
+    if (isHaPickerAvailable) {
+      return html`
+        <ha-entity-picker
+          .hass=${this.hass}
+          .value=${value || ""}
+          ?disabled=${disabled}
+          .includeDomains=${["sensor", "input_number", "number", "climate", "weather"]}
+          @value-changed=${(e: CustomEvent) => onChange(e.detail.value || "")}
+        ></ha-entity-picker>
+      `;
+    }
+
+    return html`
+      <div style="position: relative;">
+        <input
+          class="input-text"
+          type="text"
+          list="ha-fuzzy-entities"
+          .value=${value || ""}
+          ?disabled=${disabled}
+          placeholder="Search entities (e.g. sensor.temperature)..."
+          @input=${(e: any) => onChange(e.target.value)}
+        />
+        <datalist id="ha-fuzzy-entities">
+          ${entities.map(
+            (ent) => html`
+              <option value=${ent.entity_id}>
+                ${ent.friendly_name} (${ent.state} ${ent.unit})
+              </option>
+            `
+          )}
+        </datalist>
+      </div>
+    `;
+  }
+
+  private _renderEntityStatusTag(entityId: string) {
+    if (!entityId || !entityId.trim()) {
+      return html`
+        <span class="badge badge-amber" title="This variable has no live sensor bound yet">
+          ⚠️ Unbound (Add entity to track live values)
+        </span>
+      `;
+    }
+    const stateObj = this.hass?.states ? this.hass.states[entityId] : null;
+    if (!stateObj) {
+      return html`
+        <span class="badge" style="background: rgba(239,68,68,0.15); color: #f87171;">
+          ❓ ${entityId} (Not found in HA)
+        </span>
+      `;
+    }
+    const unit = stateObj.attributes?.unit_of_measurement || "";
+    return html`
+      <span class="badge badge-emerald" title="Live sensor state in Home Assistant">
+        🟢 Live: ${stateObj.state} ${unit}
+      </span>
+    `;
   }
 
   private _removeInput(key: string) {
@@ -392,6 +567,134 @@ export class FuzzySystemEditor extends LitElement {
         </div>
 
         ${this._renderActiveTab(isYaml)}
+      </div>
+
+      ${this._showAddInputModal ? this._renderAddInputModal() : ""}
+    `;
+  }
+
+  private _renderAddInputModal() {
+    return html`
+      <div
+        class="modal-overlay"
+        @click=${(e: any) => {
+          if (e.target.classList.contains("modal-overlay")) {
+            this._showAddInputModal = false;
+          }
+        }}
+      >
+        <div class="modal-content" style="max-width: 640px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+            <h2 style="font-size: 20px; font-weight: 700;">Add Input Antecedent Variable</h2>
+            <button
+              class="btn btn-icon"
+              @click=${() => (this._showAddInputModal = false)}
+              title="Close"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div
+            style="background: rgba(2, 132, 199, 0.1); border: 1px solid rgba(2, 132, 199, 0.25); border-radius: var(--fuzzy-radius-md); padding: 14px; margin-bottom: 20px; font-size: 13px; line-height: 1.5;"
+          >
+            <div style="font-weight: 600; color: #38bdf8; margin-bottom: 4px;">
+              💡 Linguistic Variable vs. Bound Sensor Entity
+            </div>
+            <div>
+              • <strong>Bound Sensor Entity</strong>: The Home Assistant device feeding real-time numeric measurements.<br />
+              • <strong>Linguistic Variable Name</strong>: The identifier used in rules (e.g. <code>IF indoor_temp IS hot THEN ...</code>).
+            </div>
+          </div>
+
+          ${this._newInputModalError
+            ? html`<div style="color: var(--fuzzy-danger); margin-bottom: 14px; font-size: 13px;">${this._newInputModalError}</div>`
+            : ""}
+
+          <div class="form-group">
+            <label class="form-label" style="font-weight: 600;">1. Select Home Assistant Sensor Entity</label>
+            ${this._renderEntityPicker(
+              this._newInputEntityId,
+              false,
+              (val) => this._onNewInputEntitySelected(val)
+            )}
+            <div class="helper-text">
+              Search and pick a live entity. Selecting one will auto-suggest the linguistic name and range.
+            </div>
+          </div>
+
+          ${this._newInputEntityId
+            ? html`
+                <div
+                  style="margin-bottom: 18px; padding: 10px 14px; background: rgba(255,255,255,0.03); border-radius: var(--fuzzy-radius-sm); display: flex; align-items: center; justify-content: space-between;"
+                >
+                  <span style="font-size: 13px; color: var(--fuzzy-text-secondary);">Current Entity State:</span>
+                  ${this._renderEntityStatusTag(this._newInputEntityId)}
+                </div>
+              `
+            : ""}
+
+          <div class="form-group">
+            <label class="form-label" style="font-weight: 600;">2. Linguistic Variable Name (for rules)</label>
+            <input
+              class="input-text"
+              type="text"
+              placeholder="e.g. indoor_temperature"
+              .value=${this._newInputVarName}
+              @input=${(e: any) =>
+                (this._newInputVarName = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "_"))}
+            />
+            <div class="helper-text">
+              Used in rules: <code>IF ${this._newInputVarName || "variable_name"} IS &lt;term&gt; THEN ...</code>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Range Minimum</label>
+              <input
+                class="input-text"
+                type="number"
+                .value=${String(this._newInputMin)}
+                @input=${(e: any) => (this._newInputMin = parseFloat(e.target.value))}
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Range Maximum</label>
+              <input
+                class="input-text"
+                type="number"
+                .value=${String(this._newInputMax)}
+                @input=${(e: any) => (this._newInputMax = parseFloat(e.target.value))}
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Initial Linguistic Terms Preset</label>
+            <select
+              class="input-select"
+              .value=${this._newInputTermsPreset}
+              @change=${(e: any) => (this._newInputTermsPreset = e.target.value)}
+            >
+              <option value="3_terms">3 Terms (Low, Medium, High)</option>
+              <option value="5_terms">5 Terms (Very Low, Low, Medium, High, Very High)</option>
+            </select>
+            <div class="helper-text">You can fine-tune or add custom terms at any time.</div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+            <button
+              class="btn btn-secondary"
+              @click=${() => (this._showAddInputModal = false)}
+            >
+              Cancel
+            </button>
+            <button class="btn btn-primary" @click=${this._confirmAddInput}>
+              + Add Variable
+            </button>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -563,7 +866,7 @@ export class FuzzySystemEditor extends LitElement {
         </div>
         ${!isYaml
           ? html`
-              <button class="btn btn-secondary" @click=${this._addInput}>
+              <button class="btn btn-secondary" @click=${this._openAddInputModal}>
                 + Add Input Variable
               </button>
             `
@@ -577,9 +880,9 @@ export class FuzzySystemEditor extends LitElement {
             return html`
               <div class="section-box">
                 <div class="section-header">
-                  <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <span class="badge badge-cyan">${key}</span>
-                    <span class="chip">${inp.entity_id || "Unbound"}</span>
+                    ${this._renderEntityStatusTag(inp.entity_id)}
                     <span class="chip">Range: [${inp.range[0]}, ${inp.range[1]}]</span>
                   </div>
                   ${!isYaml
@@ -593,18 +896,16 @@ export class FuzzySystemEditor extends LitElement {
 
                 <div class="grid-2">
                   <div class="form-group">
-                    <label class="form-label">Home Assistant Entity ID</label>
-                    <input
-                      class="input-text"
-                      type="text"
-                      .value=${inp.entity_id || ""}
-                      ?disabled=${isYaml}
-                      placeholder="e.g. sensor.living_room_temperature"
-                      @input=${(e: any) => {
-                        inp.entity_id = e.target.value;
-                        this.requestUpdate();
-                      }}
-                    />
+                    <label class="form-label">Bound Home Assistant Sensor Entity</label>
+                    ${this._renderEntityPicker(inp.entity_id, isYaml, (val) => {
+                      inp.entity_id = val;
+                      this.requestUpdate();
+                    })}
+                    <div class="helper-text">
+                      ${inp.entity_id
+                        ? html`Feeds live numerical measurements from <code>${inp.entity_id}</code> into <code>${key}</code>.`
+                        : html`<span style="color: #fbbf24;">⚠️ Unbound: select an entity to evaluate live rules in HA.</span>`}
+                    </div>
                   </div>
 
                   <div class="grid-2">
