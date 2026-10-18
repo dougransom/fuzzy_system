@@ -1,5 +1,6 @@
 import { LitElement, html, css } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
+import { safeCustomElement } from "./utils/custom-element";
 import { FuzzySystemConfig, HomeAssistant } from "./types";
 import { sharedStyles } from "./styles/shared-styles";
 
@@ -8,7 +9,7 @@ import "./components/system-catalog";
 import "./components/system-editor";
 import "./components/template-modal";
 
-@customElement("fuzzy-system-panel")
+@safeCustomElement("fuzzy-system-panel")
 export class FuzzySystemPanel extends LitElement {
   static styles = [
     sharedStyles,

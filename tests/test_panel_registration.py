@@ -27,15 +27,14 @@ async def test_panel_and_static_path_registration(
         assert hass.http.async_register_static_paths.called
 
         # Verify custom panel registered in sidebar
-        mock_panel.assert_called_once_with(
-            hass,
-            frontend_url_path="fuzzy-system",
-            webcomponent_name="fuzzy-system-panel",
-            sidebar_title="Fuzzy Systems",
-            sidebar_icon="mdi:chart-bell-curve-cumulative",
-            module_url="/fuzzy_system_frontend/fuzzy-system-panel.js",
-            require_admin=True,
-        )
+        mock_panel.assert_called_once()
+        kwargs = mock_panel.call_args.kwargs
+        assert kwargs["frontend_url_path"] == "fuzzy-system"
+        assert kwargs["webcomponent_name"] == "fuzzy-system-panel"
+        assert kwargs["sidebar_title"] == "Fuzzy Systems"
+        assert kwargs["sidebar_icon"] == "mdi:chart-bell-curve-cumulative"
+        assert kwargs["module_url"].startswith("/fuzzy_system_frontend/fuzzy-system-panel.js?v=")
+        assert kwargs["require_admin"] is True
 
 
 async def test_full_component_setup_loads_services(

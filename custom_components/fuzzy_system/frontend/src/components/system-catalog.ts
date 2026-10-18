@@ -1,10 +1,11 @@
 import { LitElement, html, css } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
+import { safeCustomElement } from "../utils/custom-element";
 import { HomeAssistant, SystemSummary } from "../types";
 import { deleteSystem, fetchSystems } from "../api/websocket";
 import { sharedStyles } from "../styles/shared-styles";
 
-@customElement("fuzzy-system-catalog")
+@safeCustomElement("fuzzy-system-catalog")
 export class FuzzySystemCatalog extends LitElement {
   static styles = [
     sharedStyles,

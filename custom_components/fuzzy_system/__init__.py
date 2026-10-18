@@ -197,13 +197,14 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         try:
             panels = hass.data.get("frontend_panels", {})
             if "fuzzy-system" not in panels:
+                mtime_hash = int(panel_file.stat().st_mtime)
                 await panel_custom.async_register_panel(
                     hass,
                     frontend_url_path="fuzzy-system",
                     webcomponent_name="fuzzy-system-panel",
                     sidebar_title="Fuzzy Systems",
                     sidebar_icon="mdi:chart-bell-curve-cumulative",
-                    module_url="/fuzzy_system_frontend/fuzzy-system-panel.js",
+                    module_url=f"/fuzzy_system_frontend/fuzzy-system-panel.js?v={mtime_hash}",
                     require_admin=True,
                 )
                 _LOGGER.info("Registered Fuzzy System frontend panel at /fuzzy-system")

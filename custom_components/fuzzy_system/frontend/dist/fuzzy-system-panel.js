@@ -524,16 +524,6 @@ He?.({ LitElement: S });
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const J = (t) => (e, i) => {
-  i !== void 0 ? i.addInitializer(() => {
-    customElements.define(t, e);
-  }) : customElements.define(t, e);
-};
-/**
- * @license
- * Copyright 2017 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
 const De = { attribute: !0, type: String, converter: B, reflect: !1, hasChanged: X }, Le = (t = De, e, i) => {
   const { kind: s, metadata: a } = i;
   let r = globalThis.litPropertyMetadata.get(a);
@@ -568,6 +558,9 @@ function _(t) {
  */
 function p(t) {
   return _({ ...t, state: !0, attribute: !1 });
+}
+function J(t) {
+  return (e) => (typeof customElements < "u" && !customElements.get(t) && customElements.define(t, e), e);
 }
 const Q = H`
   :host {
