@@ -755,6 +755,7 @@ class FuzzySystemEngine:
         term_activations: dict[str, dict[str, float]] = {}
         term_memberships: dict[str, dict[str, float]] = {}
         aggregated_sets: dict[str, list[float]] = {}
+        universes: dict[str, list[float]] = {}
 
         for out, res in eval_result.items():
             defuzzified_values[out] = res["defuzzified_value"]
@@ -762,6 +763,7 @@ class FuzzySystemEngine:
             term_activations[out] = res["term_activations"]
             term_memberships[out] = res["term_memberships"]
             aggregated_sets[out] = res.get("aggregated_set", [])
+            universes[out] = res.get("universe", [])
 
         # Generate natural language explainability report
         explanations: list[str] = []
@@ -801,5 +803,6 @@ class FuzzySystemEngine:
             "term_memberships": term_memberships,
             "rule_strengths": detailed_rules,
             "aggregated_sets": aggregated_sets,
+            "universes": universes,
             "explainability": explainability_text,
         }

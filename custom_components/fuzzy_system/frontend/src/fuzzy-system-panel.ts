@@ -8,6 +8,9 @@ import { sharedStyles } from "./styles/shared-styles";
 import "./components/system-catalog";
 import "./components/system-editor";
 import "./components/template-modal";
+import "./components/curve-canvas";
+import "./components/aggregated-graph";
+import "./components/fuzzy-system-card";
 
 @safeCustomElement("fuzzy-system-panel")
 export class FuzzySystemPanel extends LitElement {

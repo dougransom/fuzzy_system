@@ -4,6 +4,7 @@ import { safeCustomElement } from "../utils/custom-element";
 import { HomeAssistant, SystemSummary } from "../types";
 import { deleteSystem, fetchSystems } from "../api/websocket";
 import { sharedStyles } from "../styles/shared-styles";
+import "./aggregated-graph";
 
 @safeCustomElement("fuzzy-system-catalog")
 export class FuzzySystemCatalog extends LitElement {
@@ -207,6 +208,15 @@ export class FuzzySystemCatalog extends LitElement {
   @state() private _loading = false;
   @state() private _error = "";
   @state() private _showTemplateModal = false;
+  @state() private _expandedWaveforms: Record<string, boolean> = {};
+
+  private _toggleWaveform(systemId: string, outputKey: string) {
+    const key = `${systemId}_${outputKey}`;
+    this._expandedWaveforms = {
+      ...this._expandedWaveforms,
+      [key]: !this._expandedWaveforms[key],
+    };
+  }
 
   async connectedCallback() {
     super.connectedCallback();
@@ -384,22 +394,36 @@ export class FuzzySystemCatalog extends LitElement {
               stateVal !== "unknown" &&
               stateVal !== "unavailable" &&
               !isNaN(parseFloat(stateVal));
+            const isExpanded = Boolean(this._expandedWaveforms[`${sys.system_id}_${outKey}`]);
 
             if (outSensor && isValidNumber) {
               const numDisplay = parseFloat(stateVal).toFixed(1);
               return html`
-                <button
-                  class="output-badge live-active"
-                  @click=${(e: Event) => this._openMoreInfo(outSensor.entityId, e)}
-                  title="Entity: ${outSensor.entityId} — Click to view Home Assistant history graph and diagnostic attributes"
-                >
-                  <span class="pulse-dot"></span>
-                  <span class="output-name">${outKey}:</span>
-                  <span class="output-value">${numDisplay}${unit ? ` ${unit}` : ""}</span>
-                  ${dominantTerm
-                    ? html`<span class="dominant-term">(${dominantTerm})</span>`
-                    : ""}
-                </button>
+                <div style="display: inline-flex; align-items: center; gap: 4px;">
+                  <button
+                    class="output-badge live-active"
+                    @click=${(e: Event) => this._openMoreInfo(outSensor.entityId, e)}
+                    title="Entity: ${outSensor.entityId} — Click to view Home Assistant history graph and diagnostic attributes"
+                  >
+                    <span class="pulse-dot"></span>
+                    <span class="output-name">${outKey}:</span>
+                    <span class="output-value">${numDisplay}${unit ? ` ${unit}` : ""}</span>
+                    ${dominantTerm
+                      ? html`<span class="dominant-term">(${dominantTerm})</span>`
+                      : ""}
+                  </button>
+                  <button
+                    class="btn btn-secondary"
+                    style="padding: 2px 7px; font-size: 11px; border-radius: 9999px; height: 26px; line-height: 1;"
+                    title="${isExpanded ? "Hide live waveform graph" : "View live aggregated fuzzy set waveform"}"
+                    @click=${(e: Event) => {
+                      e.stopPropagation();
+                      this._toggleWaveform(sys.system_id, outKey);
+                    }}
+                  >
+                    📈 ${isExpanded ? "Hide" : "Graph"}
+                  </button>
+                </div>
               `;
             }
 
@@ -417,6 +441,35 @@ export class FuzzySystemCatalog extends LitElement {
             `;
           })}
         </div>
+
+        ${outputKeys.map((outKey) => {
+          if (!this._expandedWaveforms[`${sys.system_id}_${outKey}`]) return "";
+          const outSensor = this._findOutputSensor(sys.system_id, outKey);
+          const outCfg = outputs[outKey] || {};
+          const unit =
+            outSensor?.stateObj?.attributes?.unit_of_measurement ||
+            outCfg.unit_of_measurement ||
+            "";
+          const universe = outSensor?.stateObj?.attributes?.universe || [];
+          const aggregatedSet = outSensor?.stateObj?.attributes?.aggregated_set || [];
+          const stateVal = outSensor?.stateObj?.state;
+          const isValidNumber = stateVal !== undefined && !isNaN(parseFloat(stateVal));
+          const dominantTerm = outSensor?.stateObj?.attributes?.dominant_term || "";
+
+          return html`
+            <div style="margin-top: 12px;">
+              <fuzzy-aggregated-graph
+                .universe=${universe}
+                .aggregatedSet=${aggregatedSet}
+                .defuzzifiedValue=${isValidNumber ? parseFloat(stateVal) : undefined}
+                .defuzzifier=${sys.defuzzifier}
+                .dominantTerm=${dominantTerm}
+                .unit=${unit}
+                .outputName=${outKey}
+              ></fuzzy-aggregated-graph>
+            </div>
+          `;
+        })}
       </div>
     `;
   }

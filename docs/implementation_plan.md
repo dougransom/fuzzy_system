@@ -182,23 +182,26 @@ gantt
 ```
 
 ### Detailed Phase Milestones:
-- **Phase 1: Config Entry Lifecycle & WebSocket Infrastructure**
+- **Phase 1: Config Entry Lifecycle & WebSocket Infrastructure** ✅ (Completed)
   - Refactor config flow to support multi-entry CRUD with `config_entries.ConfigEntry`.
   - Implement `websocket.py` with Voluptuous validation for CRUD and simulation (`require_admin=True`).
   - Test dynamic entity registration and deletion without restart.
-- **Phase 2: Frontend Shell & System Catalog**
+- **Phase 2: Frontend Shell & System Catalog** ✅ (Completed)
   - Set up Vite + TypeScript build in `custom_components/fuzzy_system/frontend/`.
-  - Implement panel registration via `__init__.py` with `require_admin=True`.
-  - Build System Overview with system cards, status badges, and deletion modals.
-- **Phase 3: Graphical Variable & Rule Editors**
-  - Build interactive SVG curve canvas with draggable vertices (piecewise) and smooth sliders (continuous).
-  - Implement input and output variable management.
-  - Implement visual rule builder with DNF compound clauses (`AND`, `OR`, `NOT`, hedges).
-- **Phase 4: Simulation Workbench, Templates & Lovelace Card**
-  - Implement interactive sandbox with live Home Assistant entity syncing.
-  - Build real-time aggregated output visualization and explainability report.
-  - Implement template catalog (Fan, Ventilation, Irrigation, Solar).
-  - Build and export companion Lovelace card (`fuzzy-system-card`).
-- **Phase 5: Quality Assurance & Documentation**
-  - Write unit and integration tests for storage, WebSocket commands, and simulation.
-  - Verify committed production bundle and update user documentation.
+  - Implement panel registration via `__init__.py` with `require_admin=True` and mtime cache busting.
+  - Build System Overview with system cards, status badges, deletion modals, live reactive output sensors, and entity picker.
+  - Built guided Visual Rule Builder with antecedent hedges and live syntax preview.
+- **Phase 3: Graphical Variable & Membership Curve Canvas** ✅ (Completed)
+  - Built interactive Lit SVG membership curve canvas component (`<fuzzy-curve-canvas>`) rendering vector curves for `trimf`, `trapmf`, `gaussmf`, `sigmf`, `gbellmf`, and `singleton/constant`.
+  - Embedded SVG curve previews in both Input Antecedents and Output Consequents tabs with synchronized live sensor value indicators.
+  - Implemented real-time term parameters editor with synchronized numerical inputs and curve redrawing.
+- **Phase 4: Simulation Workbench, Live Aggregated Set Visualization & Lovelace Card** ✅ (Completed)
+  - **Live Aggregated Fuzzy Set Graph**: Real-time shaded distribution plot (`<fuzzy-aggregated-graph>`) of the aggregated fuzzy set ($x \in \text{universe}, y = \mu(x)$) with glowing vertical defuzzification slice line (centroid, bisector, etc.) and dominant linguistic set badge.
+  - **Expandable Live Waveform Drawer**: Added expandable live waveform drawer on catalog cards (`📈 Graph`) to monitor active controller output distributions directly on `/fuzzy-system` in real time.
+  - **Simulation Workbench**: Built dedicated `🧪 Simulation & Waveforms` tab with antecedent sliders, Home Assistant live state sync ("⚡ Sync Live Sensor Values"), real-time term activation previews, interactive defuzzification plots, and rule firing breakdown with bottleneck bars.
+  - **Lovelace Companion Card**: Custom dashboard card (`<fuzzy-system-card>`) bundled into the frontend and registered in `window.customCards` for Lovelace dashboards.
+- **Phase 5: Quality Assurance & Documentation** ⏳ (In Progress)
+  - All 45 backend unit/integration tests passing (`uv run pytest tests`).
+  - Zero lint/type errors (`uv run ruff check`).
+  - Frontend compiled clean with Vite under 158 KB (34 KB gzipped).
+  - Human-user browser visual verification completed on catalog, editor, and simulation workbench.

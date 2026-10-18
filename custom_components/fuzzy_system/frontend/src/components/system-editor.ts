@@ -1,9 +1,12 @@
 import { LitElement, html, css } from "lit";
 import { property, state } from "lit/decorators.js";
 import { safeCustomElement } from "../utils/custom-element";
-import { FuzzySystemConfig, HomeAssistant, InputVariableConfig, OutputVariableConfig } from "../types";
-import { saveSystem } from "../api/websocket";
+import { FuzzySystemConfig, HomeAssistant, InputVariableConfig, OutputVariableConfig, SimulationResults } from "../types";
+import { saveSystem, simulateSystem } from "../api/websocket";
 import { sharedStyles } from "../styles/shared-styles";
+import "./curve-canvas";
+import "./aggregated-graph";
+import { evalMembership } from "./curve-canvas";
 
 interface RuleCondition {
   variable: string;
@@ -180,12 +183,19 @@ export class FuzzySystemEditor extends LitElement {
   @property({ type: String }) public entryId?: string;
   @property({ type: String }) public source: "yaml" | "config_entry" = "config_entry";
 
-  @state() private _activeTab: "general" | "inputs" | "outputs" | "rules" | "raw" = "general";
+  @state() private _activeTab: "general" | "inputs" | "outputs" | "rules" | "simulation" | "raw" = "general";
   @state() private _config!: FuzzySystemConfig;
   @state() private _rawJson = "";
   @state() private _saving = false;
   @state() private _error = "";
   @state() private _successMsg = "";
+
+  // Simulation tab state
+  @state() private _simInputs: Record<string, number> = {};
+  @state() private _simResults: SimulationResults | null = null;
+  @state() private _simulating = false;
+  @state() private _simError = "";
+  private _simDebounceTimer?: number;
 
   // Add Input Modal state
   @state() private _showAddInputModal = false;
@@ -240,6 +250,72 @@ export class FuzzySystemEditor extends LitElement {
       };
     }
     this._rawJson = JSON.stringify(this._config, null, 2);
+    this._initSimInputs();
+  }
+
+  private _initSimInputs(forceReset = false) {
+    const simInp: Record<string, number> = {};
+    for (const [k, v] of Object.entries(this._config?.inputs || {})) {
+      const min = Number.isFinite(v.range?.[0]) ? v.range[0] : 0;
+      const max = Number.isFinite(v.range?.[1]) && v.range[1] > min ? v.range[1] : min + 100;
+      const current = this._simInputs[k];
+
+      if (!forceReset && current !== undefined && current >= min && current <= max) {
+        simInp[k] = current;
+      } else if (v.entity_id && this.hass?.states?.[v.entity_id]) {
+        const liveVal = parseFloat(this.hass.states[v.entity_id].state);
+        simInp[k] = !isNaN(liveVal) ? liveVal : (min + max) / 2;
+      } else if (v.default !== undefined) {
+        simInp[k] = v.default;
+      } else {
+        simInp[k] = (min + max) / 2;
+      }
+    }
+    this._simInputs = simInp;
+  }
+
+  private _syncSimWithLiveHass() {
+    const nextInputs: Record<string, number> = { ...this._simInputs };
+    for (const [k, v] of Object.entries(this._config.inputs || {})) {
+      if (v.entity_id && this.hass?.states?.[v.entity_id]) {
+        const val = parseFloat(this.hass.states[v.entity_id].state);
+        if (!isNaN(val)) {
+          nextInputs[k] = val;
+        }
+      }
+    }
+    this._simInputs = nextInputs;
+    this._runSimulation();
+  }
+
+  private _onSimInputChange(key: string, val: number) {
+    this._simInputs = { ...this._simInputs, [key]: val };
+    if (this._simDebounceTimer) clearTimeout(this._simDebounceTimer);
+    this._simDebounceTimer = window.setTimeout(() => {
+      this._runSimulation();
+    }, 50);
+  }
+
+  private async _runSimulation() {
+    if (!this.hass) return;
+    this._simulating = true;
+    this._simError = "";
+    try {
+      const results = await simulateSystem(this.hass, this._config, this._simInputs);
+      this._simResults = results;
+    } catch (err: any) {
+      this._simError = err?.message || String(err);
+    } finally {
+      this._simulating = false;
+      this.requestUpdate();
+    }
+  }
+
+  private _findOutputSensor(outName: string) {
+    if (!this.hass?.states || !this._config.system_id) return null;
+    const sysId = this._config.system_id.toLowerCase();
+    const entId = `sensor.fuzzy_${sysId}_${outName.toLowerCase()}`;
+    return this.hass.states[entId] || null;
   }
 
   private _handleBack() {
@@ -852,6 +928,16 @@ export class FuzzySystemEditor extends LitElement {
             📜 Rules (${(this._config.rules || []).length})
           </button>
           <button
+            class="tab-btn ${this._activeTab === "simulation" ? "active" : ""}"
+            @click=${() => {
+              this._activeTab = "simulation";
+              this._initSimInputs();
+              this._runSimulation();
+            }}
+          >
+            🧪 Simulation & Waveforms
+          </button>
+          <button
             class="tab-btn ${this._activeTab === "raw" ? "active" : ""}"
             @click=${() => {
               this._rawJson = JSON.stringify(this._config, null, 2);
@@ -1006,6 +1092,8 @@ export class FuzzySystemEditor extends LitElement {
         return this._renderOutputsTab(isYaml);
       case "rules":
         return this._renderRulesTab(isYaml);
+      case "simulation":
+        return this._renderSimulationTab();
       case "raw":
         return this._renderRawTab(isYaml);
     }
@@ -1176,6 +1264,10 @@ export class FuzzySystemEditor extends LitElement {
         ? html`<p class="subtitle" style="padding: 20px 0;">No input variables defined yet.</p>`
         : keys.map((key) => {
             const inp: InputVariableConfig = inputs[key];
+            const liveEntity = inp.entity_id && this.hass?.states ? this.hass.states[inp.entity_id] : null;
+            const liveVal = liveEntity && !isNaN(parseFloat(liveEntity.state)) ? parseFloat(liveEntity.state) : undefined;
+            const unit = liveEntity?.attributes?.unit_of_measurement || "";
+
             return html`
               <div class="section-box">
                 <div class="section-header">
@@ -1237,12 +1329,22 @@ export class FuzzySystemEditor extends LitElement {
                   </div>
                 </div>
 
-                <div style="margin-top: 8px;">
-                  <span class="helper-text">Linguistic Terms: </span>
-                  ${Object.keys(inp.terms || {}).map(
-                    (t) => html`<span class="badge" style="margin-right: 4px;">${t} (${inp.terms[t].type})</span>`
-                  )}
+                <div style="margin-top: 14px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span class="form-label" style="margin: 0;">Membership Curves Preview</span>
+                    ${liveVal !== undefined
+                      ? html`<span class="chip" style="color: #34d399;">Live Sensor State: ${liveVal}${unit ? ` ${unit}` : ""}</span>`
+                      : ""}
+                  </div>
+                  <fuzzy-curve-canvas
+                    .range=${inp.range}
+                    .terms=${inp.terms || {}}
+                    .currentValue=${liveVal}
+                    .unit=${unit}
+                  ></fuzzy-curve-canvas>
                 </div>
+
+                ${this._renderTermsEditor(inp.terms, inp.range, isYaml, () => this.requestUpdate())}
               </div>
             `;
           })}
@@ -1272,6 +1374,9 @@ export class FuzzySystemEditor extends LitElement {
         ? html`<p class="subtitle" style="padding: 20px 0;">No output variables defined yet.</p>`
         : keys.map((key) => {
             const out: OutputVariableConfig = outputs[key];
+            const outSensor = this._findOutputSensor(key);
+            const liveOutVal = outSensor && !isNaN(parseFloat(outSensor.state)) ? parseFloat(outSensor.state) : undefined;
+
             return html`
               <div class="section-box">
                 <div class="section-header">
@@ -1334,15 +1439,364 @@ export class FuzzySystemEditor extends LitElement {
                   </div>
                 </div>
 
-                <div style="margin-top: 8px;">
-                  <span class="helper-text">Linguistic Terms: </span>
-                  ${Object.keys(out.terms || {}).map(
-                    (t) => html`<span class="badge" style="margin-right: 4px;">${t} (${out.terms[t].type})</span>`
-                  )}
+                <div style="margin-top: 14px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span class="form-label" style="margin: 0;">Output Membership Curves Preview</span>
+                    ${liveOutVal !== undefined
+                      ? html`<span class="chip" style="color: #34d399;">Live Sensor Output: ${liveOutVal}${out.unit_of_measurement ? ` ${out.unit_of_measurement}` : ""}</span>`
+                      : ""}
+                  </div>
+                  <fuzzy-curve-canvas
+                    .range=${out.range}
+                    .terms=${out.terms || {}}
+                    .currentValue=${liveOutVal}
+                    .unit=${out.unit_of_measurement || ""}
+                  ></fuzzy-curve-canvas>
                 </div>
+
+                ${this._renderTermsEditor(out.terms, out.range, isYaml, () => this.requestUpdate())}
               </div>
             `;
           })}
+    `;
+  }
+
+  private _renderTermsEditor(
+    terms: Record<string, any>,
+    range: [number, number],
+    isYaml: boolean,
+    onUpdate: () => void
+  ) {
+    const termNames = Object.keys(terms || {});
+    return html`
+      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span class="form-label" style="margin: 0; font-size: 13px;">Linguistic Membership Terms</span>
+          ${!isYaml
+            ? html`
+                <button
+                  class="btn btn-secondary"
+                  style="font-size: 12px; padding: 4px 10px;"
+                  @click=${() => {
+                    const newName = `term_${termNames.length + 1}`;
+                    const mid = (range[0] + range[1]) / 2;
+                    const span = range[1] - range[0] || 10;
+                    terms[newName] = {
+                      type: "trimf",
+                      params: [mid - span * 0.25, mid, mid + span * 0.25],
+                    };
+                    onUpdate();
+                  }}
+                >
+                  + Add Term
+                </button>
+              `
+            : ""}
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          ${termNames.map((tName) => {
+            const term = terms[tName];
+            return html`
+              <div
+                style="display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.25); padding: 8px 12px; border-radius: var(--fuzzy-radius-md); border: 1px solid rgba(255, 255, 255, 0.04); flex-wrap: wrap;"
+              >
+                <div style="min-width: 110px;">
+                  <strong style="color: var(--fuzzy-text); font-size: 13px;">${tName}</strong>
+                </div>
+
+                <div style="width: 120px;">
+                  <select
+                    class="select-input"
+                    style="padding: 4px 8px; font-size: 12px;"
+                    .value=${term.type || "trimf"}
+                    ?disabled=${isYaml}
+                    @change=${(e: any) => {
+                      term.type = e.target.value;
+                      onUpdate();
+                    }}
+                  >
+                    <option value="trimf">trimf (a, b, c)</option>
+                    <option value="trapmf">trapmf (a, b, c, d)</option>
+                    <option value="gaussmf">gaussmf (mean, sigma)</option>
+                    <option value="sigmf">sigmf (b, c)</option>
+                    <option value="gbellmf">gbellmf (a, b, c)</option>
+                    <option value="constant">constant (value)</option>
+                    <option value="singleton">singleton (value)</option>
+                  </select>
+                </div>
+
+                <div style="flex: 1; min-width: 180px;">
+                  <input
+                    class="input-text"
+                    style="padding: 4px 8px; font-size: 12px; font-family: monospace;"
+                    type="text"
+                    .value=${Array.isArray(term.params) ? term.params.join(", ") : ""}
+                    placeholder="e.g. 18, 21, 24"
+                    ?disabled=${isYaml}
+                    @input=${(e: any) => {
+                      const parts = e.target.value.split(",").map((s: string) => parseFloat(s.trim()));
+                      if (parts.every((p: number) => !isNaN(p))) {
+                        term.params = parts;
+                        onUpdate();
+                      }
+                    }}
+                  />
+                </div>
+
+                ${!isYaml
+                  ? html`
+                      <button
+                        class="btn btn-danger btn-icon"
+                        style="width: 26px; height: 26px; padding: 0;"
+                        title="Delete Term"
+                        @click=${() => {
+                          delete terms[tName];
+                          onUpdate();
+                        }}
+                      >
+                        ✕
+                      </button>
+                    `
+                  : ""}
+              </div>
+            `;
+          })}
+        </div>
+      </div>
+    `;
+  }
+
+  private _renderSimulationTab() {
+    const inputs = this._config.inputs || {};
+    const outputs = this._config.outputs || {};
+    const inputKeys = Object.keys(inputs);
+    const outputKeys = Object.keys(outputs);
+
+    return html`
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <h3 class="section-title">🧪 Live Simulation & Inference Workbench</h3>
+            <p class="helper-text">
+              Test your fuzzy controller interactively. Adjust antecedent sliders to observe rule activations, aggregated fuzzy set distributions, and crisp defuzzified outputs in real time.
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary" @click=${this._syncSimWithLiveHass} title="Read current sensor entity states from Home Assistant into simulation sliders">
+              ⚡ Sync Live Sensor Values
+            </button>
+            <button class="btn btn-primary" @click=${this._runSimulation} ?disabled=${this._simulating}>
+              ${this._simulating ? "Simulating..." : "🔄 Re-run Simulation"}
+            </button>
+          </div>
+        </div>
+
+        ${this._simError ? html`<div style="color: var(--fuzzy-danger); margin-bottom: 16px;">Simulation Error: ${this._simError}</div>` : ""}
+
+        <div class="grid-2" style="gap: 24px; align-items: start;">
+          <!-- Left: Antecedent Sliders -->
+          <div>
+            <h4 style="font-size: 14px; font-weight: 700; color: #38bdf8; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+              📥 Antecedents (Input Values)
+            </h4>
+
+            ${inputKeys.length === 0
+              ? html`<p class="subtitle">No input variables defined yet.</p>`
+              : inputKeys.map((key) => {
+                  const inp = inputs[key];
+                  const min = inp.range[0];
+                  const max = inp.range[1];
+                  const step = (max - min) / 100 || 1;
+                  const currentVal = this._simInputs[key] ?? min;
+
+                  return html`
+                    <div class="section-box" style="margin-bottom: 14px; padding: 14px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div>
+                          <strong style="color: var(--fuzzy-text); font-size: 14px;">${key}</strong>
+                          ${inp.entity_id ? html`<span class="helper-text" style="margin-left: 6px;">(${inp.entity_id})</span>` : ""}
+                        </div>
+                        <span class="badge badge-cyan" style="font-size: 13px; font-weight: 700;">
+                          ${typeof currentVal === "number" ? currentVal.toFixed(2) : currentVal}
+                        </span>
+                      </div>
+
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <input
+                          type="range"
+                          style="flex: 1; accent-color: #38bdf8; cursor: pointer;"
+                          min=${min}
+                          max=${max}
+                          step=${step}
+                          .value=${String(currentVal)}
+                          @input=${(e: any) => this._onSimInputChange(key, parseFloat(e.target.value))}
+                        />
+                        <input
+                          class="input-text"
+                          type="number"
+                          style="width: 80px; padding: 4px 8px; font-size: 12px;"
+                          min=${min}
+                          max=${max}
+                          step=${step}
+                          .value=${String(currentVal)}
+                          @input=${(e: any) => this._onSimInputChange(key, parseFloat(e.target.value))}
+                        />
+                      </div>
+
+                      <!-- Real-time term membership degrees -->
+                      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
+                        ${Object.keys(inp.terms || {}).map((tName) => {
+                          const term = inp.terms[tName];
+                          const mu = evalMembership(term.type, term.params, currentVal, max - min);
+                          const active = mu > 0.01;
+                          return html`
+                            <span
+                              class="chip"
+                              style="${active ? 'background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;' : 'opacity: 0.5;'}"
+                            >
+                              ${tName}: <strong>${mu.toFixed(2)}</strong>
+                            </span>
+                          `;
+                        })}
+                      </div>
+                    </div>
+                  `;
+                })}
+          </div>
+
+          <!-- Right: Output Waveforms & Defuzzification -->
+          <div>
+            <h4 style="font-size: 14px; font-weight: 700; color: #fbbf24; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+              📤 Consequents & Distribution Waveforms
+            </h4>
+
+            ${outputKeys.length === 0
+              ? html`<p class="subtitle">No output variables defined yet.</p>`
+              : outputKeys.map((outKey) => {
+                  const out = outputs[outKey];
+                  const res = this._simResults ? this._simResults[outKey] : null;
+                  const unit = out.unit_of_measurement || "";
+                  const isMamdani = this._config.inference === "mamdani";
+
+                  return html`
+                    <div class="section-box" style="margin-bottom: 16px; padding: 14px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                        <div>
+                          <strong style="font-size: 15px; color: var(--fuzzy-text);">${outKey}</strong>
+                          <span class="chip" style="margin-left: 8px;">Range: [${out.range[0]}, ${out.range[1]}]</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                          ${res?.dominant_term
+                            ? html`<span class="badge badge-amber">Dominant: ${res.dominant_term}</span>`
+                            : ""}
+                          <span class="badge badge-emerald" style="font-size: 14px; font-weight: 700;">
+                            ${res?.defuzzified_value !== undefined && res?.defuzzified_value !== null
+                              ? `${res.defuzzified_value.toFixed(2)}${unit ? ` ${unit}` : ""}`
+                              : "N/A"}
+                          </span>
+                        </div>
+                      </div>
+
+                      ${isMamdani && res?.universe && res.universe.length > 0
+                        ? html`
+                            <fuzzy-aggregated-graph
+                              .universe=${res.universe}
+                              .aggregatedSet=${res.aggregated_set || []}
+                              .defuzzifiedValue=${res.defuzzified_value}
+                              .defuzzifier=${out.defuzzifier || this._config.defuzzifier || "cog"}
+                              .dominantTerm=${res.dominant_term || ""}
+                              .unit=${unit}
+                              .outputName=${outKey}
+                            ></fuzzy-aggregated-graph>
+                          `
+                        : isMamdani
+                          ? html`
+                              <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 16px; text-align: center; color: var(--fuzzy-text-secondary); font-size: 12px;">
+                                Awaiting simulation results...
+                              </div>
+                            `
+                          : html`
+                              <!-- Sugeno singleton activations preview -->
+                              <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 14px; border: 1px solid rgba(255,255,255,0.06);">
+                                <div style="font-size: 11px; font-weight: 700; color: #fbbf24; text-transform: uppercase; margin-bottom: 8px;">
+                                  ⚡ Sugeno Crisp Singleton Weighting (${this._config.defuzzifier || "weighted_average"})
+                                </div>
+                                <div style="font-size: 13px; color: var(--fuzzy-text);">
+                                  Weighted Output: <strong>${res?.defuzzified_value !== undefined ? res.defuzzified_value.toFixed(2) : "0.00"}${unit ? ` ${unit}` : ""}</strong>
+                                </div>
+                              </div>
+                            `}
+
+                      <!-- Term activations chips -->
+                      ${res?.term_activations
+                        ? html`
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
+                              ${Object.entries(res.term_activations).map(([t, act]) => {
+                                const active = (act as number) > 0.01;
+                                const label = t === "false" || (t as any) === false ? "off" : t;
+                                return html`
+                                  <span
+                                    class="chip"
+                                    style="${active ? 'background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #34d399;' : 'opacity: 0.6; color: #94a3b8;'}"
+                                  >
+                                    ${label}: <strong>${(act as number).toFixed(2)}</strong>
+                                  </span>
+                                `;
+                              })}
+                            </div>
+                          `
+                        : ""}
+                    </div>
+                  `;
+                })}
+          </div>
+        </div>
+
+        <!-- Rule Firing Breakdown -->
+        <div class="section-box" style="margin-top: 20px; padding: 18px;">
+          <h4 style="font-size: 14px; font-weight: 700; color: var(--fuzzy-text); margin-bottom: 12px;">
+            📜 Rule Firings & Strengths
+          </h4>
+
+          ${!this._simResults || Object.keys(this._simResults).length === 0
+            ? html`<p class="subtitle">Run simulation to inspect rule firings.</p>`
+            : html`
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  ${(() => {
+                    const firstOut = outputKeys[0];
+                    const ruleStrengths = this._simResults[firstOut]?.rule_strengths || [];
+                    if (ruleStrengths.length === 0) {
+                      return html`<p class="subtitle">No rules fired or defined.</p>`;
+                    }
+                    return ruleStrengths.map((r) => {
+                      const strength = r.firing_strength || 0;
+                      const active = strength > 0.01;
+                      return html`
+                        <div
+                          style="display: flex; align-items: center; gap: 12px; background: ${active ? 'rgba(56, 189, 248, 0.08)' : 'rgba(15, 23, 42, 0.5)'}; padding: 10px 14px; border-radius: var(--fuzzy-radius-md); border: 1px solid ${active ? 'rgba(56, 189, 248, 0.35)' : 'rgba(255, 255, 255, 0.08)'};"
+                        >
+                          <div style="font-family: monospace; font-size: 12px; flex: 1; color: ${active ? '#f8fafc' : '#cbd5e1'}; font-weight: ${active ? '600' : '400'};">
+                            ${r.rule}
+                          </div>
+                          <div style="width: 140px; display: flex; align-items: center; gap: 8px;">
+                            <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                              <div
+                                style="width: ${Math.round(strength * 100)}%; height: 100%; background: ${active ? 'linear-gradient(90deg, #0284c7, #38bdf8)' : '#475569'}; border-radius: 3px;"
+                              ></div>
+                            </div>
+                            <span style="font-size: 11px; font-weight: 700; font-family: monospace; color: ${active ? '#38bdf8' : '#94a3b8'}; width: 34px; text-align: right;">
+                              ${strength.toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      `;
+                    });
+                  })()}
+                </div>
+              `}
+        </div>
+      </div>
     `;
   }
 

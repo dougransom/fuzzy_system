@@ -91,10 +91,40 @@ export async function simulateSystem(
   systemConfig: FuzzySystemConfig,
   inputs: Record<string, number>
 ): Promise<SimulationResults> {
-  const response = await hass.callWS<{ results: SimulationResults }>({
+  const response = await hass.callWS<any>({
     type: WS_TYPE_SIMULATE,
     system_config: systemConfig,
     inputs,
   });
-  return response.results;
+  const data = response?.results || response;
+  if (!data) return {};
+
+  // If backend returns the { defuzzified_values, dominant_terms, ... } format:
+  if (data.defuzzified_values) {
+    const results: SimulationResults = {};
+    const outKeys = Object.keys(systemConfig.outputs || {});
+    for (const outKey of outKeys) {
+      const agg = data.aggregated_sets?.[outKey] || [];
+      let u = data.universes?.[outKey] || [];
+      if ((!u || u.length === 0) && agg.length > 0) {
+        const r = systemConfig.outputs[outKey]?.range || [0, 100];
+        const span = r[1] - r[0];
+        const step = span / (agg.length - 1 || 1);
+        u = Array.from({ length: agg.length }, (_, i) => r[0] + i * step);
+      }
+
+      results[outKey] = {
+        defuzzified_value: data.defuzzified_values[outKey],
+        dominant_term: data.dominant_terms?.[outKey] || "",
+        term_activations: data.term_activations?.[outKey] || {},
+        term_memberships: data.term_memberships?.[outKey] || {},
+        rule_strengths: data.rule_strengths || [],
+        universe: u,
+        aggregated_set: agg,
+      };
+    }
+    return results;
+  }
+
+  return data;
 }
