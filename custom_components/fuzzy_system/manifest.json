@@ -5,6 +5,12 @@
     "@dougransom"
   ],
   "config_flow": true,
+  "after_dependencies": [
+    "frontend",
+    "http",
+    "panel_custom",
+    "websocket_api"
+  ],
   "documentation": "https://github.com/dougransom/fuzzy_system",
   "integration_type": "helper",
   "iot_class": "calculated",
