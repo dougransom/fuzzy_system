@@ -200,8 +200,10 @@ gantt
   - **Expandable Live Waveform Drawer**: Added expandable live waveform drawer on catalog cards (`📈 Graph`) to monitor active controller output distributions directly on `/fuzzy-system` in real time.
   - **Simulation Workbench**: Built dedicated `🧪 Simulation & Waveforms` tab with antecedent sliders, Home Assistant live state sync ("⚡ Sync Live Sensor Values"), real-time term activation previews, interactive defuzzification plots, and rule firing breakdown with bottleneck bars.
   - **Lovelace Companion Card**: Custom dashboard card (`<fuzzy-system-card>`) bundled into the frontend and registered in `window.customCards` for Lovelace dashboards.
-- **Phase 5: Quality Assurance & Documentation** ⏳ (In Progress)
+- **Phase 5: Quality Assurance, Documentation & Release Prep** ✅ (Completed)
   - All 45 backend unit/integration tests passing (`uv run pytest tests`).
   - Zero lint/type errors (`uv run ruff check`).
-  - Frontend compiled clean with Vite under 158 KB (34 KB gzipped).
-  - Human-user browser visual verification completed on catalog, editor, and simulation workbench.
+  - Visual card editor (`fuzzy-system-card-editor`) built with system auto-discovery and display toggles.
+  - Frontend compiled clean with Vite (167 KB, 36 KB gzipped) and pre-built bundle committed for zero-build HACS installation.
+  - Manifest and pyproject versions synchronized to `0.1.0`.
+  - Comprehensive documentation and Mermaid architecture diagrams published in `README.md`.

@@ -50,10 +50,25 @@ The primary goal of this project is to implement **Fuzzy Control for Home Assist
 - **Runaway & Jitter Safeguards**:
   - **Rate Limiting**: Sliding-window limiter (`max_updates_per_period`, default `20`; `update_period`, default `0.05`s) trips if feedback loops exceed update budgets.
   - **Convergence Epsilon ($\epsilon$) / Deadband**: Output-level deadband (`epsilon`, default `0.01`) suppresses state commits and downstream events when $|y_{new} - y_{prev}| < \epsilon$, enabling smooth convergence and eliminating useless calculations.
+- **Native Visual Web Panel (`/fuzzy-system`)**:
+  - Embedded directly in the Home Assistant sidebar for visual, zero-YAML system authoring.
+  - Interactive SVG curve canvas with real-time vertex dragging and parameter adjustments.
+  - Guided Visual Rule Builder with antecedent hedges and live syntax preview.
+  - `🧪 Simulation & Waveforms` workbench with antecedent sliders, live sensor state synchronization, and rule bottleneck analysis.
+  - Expandable live output set waveform drawer (`📈 Graph`) directly on system cards.
+- **Companion Lovelace Card (`custom:fuzzy-system-card`)**:
+  - Real-time shaded distribution plots and defuzzification slice lines on any dashboard.
+  - Full visual card configuration editor (`fuzzy-system-card-editor`) with automatic system discovery and display toggles (no YAML needed!).
 
 ---
 
 ## Installation
+
+### Installation via HACS (Recommended)
+1. Open **HACS** in Home Assistant.
+2. Click the three dots in the top-right corner and select **Custom repositories**.
+3. Add `https://github.com/dougransom/fuzzy_system` with category **Integration**.
+4. Click **Download**, then restart Home Assistant.
 
 ### Manual Installation
 1. Copy the `fuzzy_system` directory into your Home Assistant configuration directory:
@@ -61,6 +76,65 @@ The primary goal of this project is to implement **Fuzzy Control for Home Assist
    config/custom_components/fuzzy_system/
    ```
 2. Restart Home Assistant.
+
+---
+
+## Visual Management Panel (`/fuzzy-system`)
+
+Once installed, a new **Fuzzy Systems** item appears on your Home Assistant left sidebar (`/fuzzy-system`):
+
+```mermaid
+graph TD
+    Panel["Fuzzy Systems Panel (/fuzzy-system)"]
+    Panel --> Catalog["System Catalog View"]
+    Panel --> Editor["Visual System Editor"]
+    Panel --> Sim["🧪 Simulation & Waveforms Workbench"]
+
+    Catalog --> Cards["Active System Cards"]
+    Cards --> Drawer["📈 Expandable Waveform Drawer"]
+
+    Editor --> Canvas["Interactive SVG Curve Canvas"]
+    Editor --> RuleBuilder["Visual Rule Builder (DNF)"]
+
+    Sim --> Sliders["Antecedent Sliders"]
+    Sim --> Sync["⚡ Sync Live Sensors"]
+    Sim --> Firing["Rule Bottleneck & Activation Breakdown"]
+```
+
+- **Catalog Cards**: View all active controllers, live output states, dominant linguistic terms, and expandable real-time waveforms.
+- **Curve Canvas**: Draw and modify triangular, trapezoidal, gaussian, sigmoidal, and bell membership functions visually with instant feedback.
+- **Rule Builder**: Construct complex linguistic rules (`IF temp IS very hot AND humidity IS NOT dry THEN fan IS high`) visually without syntax errors.
+- **Simulation Workbench**: Test edge cases using sliders or synchronize live values directly from running Home Assistant entities with one click.
+
+---
+
+## Lovelace Companion Dashboard Card
+
+The integration provides a companion custom card with full visual editor support:
+
+```mermaid
+graph LR
+    Dashboard["Lovelace Dashboard"] --> Card["Fuzzy System Controller Card"]
+    Card --> Editor["Visual Card Editor (No YAML)"]
+    Editor --> SysPicker["System Selector (Auto-detected)"]
+    Editor --> Toggles["Graph & Input Toggles"]
+```
+
+### Adding to Dashboards via UI:
+1. Open any dashboard, click **Edit Dashboard** (Pencil icon), and click **"+ Add Card"**.
+2. Select **"Fuzzy System Controller"** from the card picker.
+3. Choose your target fuzzy system from the dropdown and toggle waveforms, inputs, or rule bars.
+4. Click **Save**!
+
+### Adding to Dashboards via YAML:
+```yaml
+type: custom:fuzzy-system-card
+system_id: fan_simulator
+title: Living Room Fan Controller
+show_graph: true
+show_inputs: true
+show_rules: true
+```
 
 ---
 
