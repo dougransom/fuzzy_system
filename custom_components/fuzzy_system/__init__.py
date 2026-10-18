@@ -53,6 +53,7 @@ from .const import (
     VALID_INFERENCE_TYPES,
 )
 from .fuzzy_engine import FuzzySystemEngine
+from .services import async_setup_services
 from .websocket import async_setup_websocket
 
 _LOGGER = logging.getLogger(__name__)
@@ -202,6 +203,9 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     # Register WebSocket commands
     async_setup_websocket(hass)
+
+    # Register MCP and automation actions (simulate, explain)
+    await async_setup_services(hass)
 
     async def _reload_config(call: ServiceCall) -> None:
         """Reload Fuzzy System integration from YAML."""

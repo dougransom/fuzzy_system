@@ -1,3 +1,34 @@
 reload:
   name: Reload
-  description: Reloads the fuzzy system configuration from YAML.
+  description: Reloads all fuzzy system configurations defined in configuration.yaml without restarting Home Assistant.
+
+simulate:
+  name: Simulate Evaluation
+  description: Simulates what a fuzzy system would calculate given specific hypothetical input values. Returns defuzzified output, dominant linguistic sets, rule firing strengths, and an AI-readable summary without affecting physical entities.
+  fields:
+    system_id:
+      name: System Identifier
+      description: The unique identifier of the target fuzzy system (e.g. fan_simulator, tipping).
+      required: true
+      example: fan_simulator
+      selector:
+        text:
+    inputs:
+      name: Inputs
+      description: Key-value dictionary of numerical input values to pass into the fuzzy inference engine.
+      required: true
+      example: '{"temperature": 28.5, "humidity": 75.0}'
+      selector:
+        object:
+
+explain:
+  name: Explain Decision
+  description: Inspects current live sensor values in Home Assistant for a fuzzy system, evaluates which rules fired, and returns a natural-language explanation of why the output is at its current state.
+  fields:
+    system_id:
+      name: System Identifier
+      description: The unique identifier of the target fuzzy system to inspect and explain.
+      required: true
+      example: fan_simulator
+      selector:
+        text:

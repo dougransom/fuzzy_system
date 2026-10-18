@@ -61,6 +61,9 @@ The primary goal of this project is to implement **Fuzzy Control for Home Assist
 - **Companion Lovelace Card (`custom:fuzzy-system-card`)**:
   - Real-time shaded distribution plots and defuzzification slice lines on any dashboard.
   - Full visual card configuration editor (`fuzzy-system-card-editor`) with automatic system discovery and display toggles (no YAML needed!).
+- **Model Context Protocol (MCP) & AI Integration**:
+  - Exposes `fuzzy_system.simulate` and `fuzzy_system.explain` actions returning structured JSON payloads (`SupportsResponse.ONLY`) for Home Assistant's MCP server and LLM agents.
+  - Enables AI assistants to run hypothetical simulations and explain live controller decisions in natural language.
 
 ---
 
@@ -136,6 +139,62 @@ title: Living Room Fan Controller
 show_graph: true
 show_inputs: true
 show_rules: true
+```
+
+---
+
+## Model Context Protocol (MCP) & AI Assistant Support
+
+The integration natively supports Home Assistant's **Model Context Protocol (MCP)** server and LLM APIs, enabling AI agents (such as Claude, Gemini, ChatGPT, or Antigravity) to reason about, simulate, and explain your smart home's fuzzy logic:
+
+```mermaid
+graph LR
+    Agent["AI Agent / LLM (via MCP)"] --> ActionSim["fuzzy_system.simulate"]
+    Agent --> ActionExp["fuzzy_system.explain"]
+    Agent --> Context["homeassistant.GetLiveContext"]
+
+    ActionSim --> Engine["Inference Engine (Hypothetical)"]
+    ActionExp --> Live["Live Entities & Rule Breakdown"]
+    Context --> Sensors["Fuzzy Output Sensors & Attributes"]
+```
+
+### 1. `fuzzy_system.simulate` (What-If Hypothetical Reasoning)
+Allows AI models to predict fuzzy system outputs for hypothetical scenarios without altering physical device states:
+```yaml
+service: fuzzy_system.simulate
+data:
+  system_id: fan_simulator
+  inputs:
+    temperature: 28.5
+    humidity: 75.0
+```
+**MCP Response**:
+```json
+{
+  "system_id": "fan_simulator",
+  "inputs": {"temperature": 28.5, "humidity": 75.0},
+  "outputs": {"fan_speed": 83.42},
+  "dominant_terms": {"fan_speed": "high"},
+  "summary": "Fuzzy system 'fan_simulator' simulated: fan_speed = 83.42 (high). 2 rule(s) fired."
+}
+```
+
+### 2. `fuzzy_system.explain` (Decision Explainability)
+Allows AI models to answer *"Why is the fan running on high?"* by reading real-time live sensors and evaluating active rule firing levels:
+```yaml
+service: fuzzy_system.explain
+data:
+  system_id: fan_simulator
+```
+**MCP Response**:
+```json
+{
+  "system_id": "fan_simulator",
+  "live_inputs": {"temperature": 25.0, "humidity": 80.0},
+  "outputs": {"fan_speed": 91.67},
+  "dominant_terms": {"fan_speed": "high"},
+  "explanation": "Fuzzy system 'fan_simulator' is currently calculating fan_speed is 91.67 (high) given live inputs (temperature: 25.0, humidity: 80.0). The primary driving factor is rule 'IF temperature IS hot OR humidity IS humid THEN fan_speed IS high', firing with strength 1.0."
+}
 ```
 
 ---
