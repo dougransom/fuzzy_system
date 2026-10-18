@@ -240,16 +240,50 @@ class FuzzyVariable:
         self.terms: dict[str, FuzzyTerm] = {}
         self.term_universe_mfs: dict[str, np.ndarray] = {}
         for term_name, term_cfg in terms.items():
+            t_name = str(term_name)
             mf_type = term_cfg.get("type", "trimf")
             params = term_cfg.get("params", [])
             hedge = term_cfg.get("hedge")
-            term_obj = FuzzyTerm(term_name, mf_type, params, hedge)
-            self.terms[term_name] = term_obj
-            self.term_universe_mfs[term_name] = term_obj.calculate_membership(self.universe)
+            term_obj = FuzzyTerm(t_name, mf_type, params, hedge)
+            self.terms[t_name] = term_obj
+            self.term_universe_mfs[t_name] = term_obj.calculate_membership(self.universe)
+
+            # YAML 1.1 boolean parsing alias (unquoted 'off' -> 'False', 'on' -> 'True')
+            t_lower = t_name.lower()
+            if t_lower in ("false", "no") and "off" not in self.terms:
+                self.terms["off"] = term_obj
+                self.term_universe_mfs["off"] = self.term_universe_mfs[t_name]
+            elif t_lower in ("true", "yes") and "on" not in self.terms:
+                self.terms["on"] = term_obj
+                self.term_universe_mfs["on"] = self.term_universe_mfs[t_name]
+
+    def get_term_universe_mf(self, term_name: str) -> np.ndarray | None:
+        """Get term membership array across universe with case-insensitive and boolean fallback."""
+        if term_name in self.term_universe_mfs:
+            return self.term_universe_mfs[term_name]
+        t_lower = term_name.lower()
+        for k, v in self.term_universe_mfs.items():
+            if k.lower() == t_lower:
+                return v
+        if t_lower == "off":
+            for k in ("false", "False", "no", "No"):
+                if k in self.term_universe_mfs:
+                    return self.term_universe_mfs[k]
+        elif t_lower == "on":
+            for k in ("true", "True", "yes", "Yes"):
+                if k in self.term_universe_mfs:
+                    return self.term_universe_mfs[k]
+        return None
 
     def get_term_membership(self, term_name: str, crisp_val: float) -> float:
         """Get membership value of crisp_val in specified term."""
         term = self.terms.get(term_name)
+        if not term:
+            t_lower = term_name.lower()
+            for k, obj in self.terms.items():
+                if k.lower() == t_lower:
+                    term = obj
+                    break
         if not term:
             raise KeyError(f"Term '{term_name}' not defined in variable '{self.name}'")
         return term.evaluate_crisp(crisp_val)
@@ -566,7 +600,7 @@ class FuzzySystemEngine:
                     continue
 
                 term_name = rule.consequent_term
-                term_mf = out_var.term_universe_mfs.get(term_name)
+                term_mf = out_var.get_term_universe_mf(term_name)
                 if term_mf is None:
                     _LOGGER.warning(
                         "Output term '%s' not found in output variable '%s'", term_name, out_name
