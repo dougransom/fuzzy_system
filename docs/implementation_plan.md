@@ -10,6 +10,9 @@ This implementation plan outlines the engineering roadmap to introduce a full vi
 3. **Reactive Sensor Reconciliation**: Output entities (`sensor.fuzzy_<system>_<output>`, `_set`, and status sensors) are dynamically added, updated, or removed when Config Entries are modified in the UI.
 4. **WebSocket-Driven Simulation & Management**: High-performance backend endpoints for dry-run evaluations, explainability diagnostics, and Config Entry orchestration.
 5. **Companion Lovelace Card**: Standalone dashboard card (`fuzzy-system-card`) included in the frontend build for live operational monitoring.
+6. **Recurrent Feedback & Stability Protection**: Native support for recurrence relations where outputs feed back into inputs (direct or indirect). Dual protection prevents runaway cascades and micro-jitter:
+   - Configurable update rate limiting (`max_updates_per_period` [default 20] per `update_period` [default 0.05s]).
+   - Output convergence threshold / deadband (`epsilon` [default 0.01]) that suppresses state commits when changes are smaller than $\epsilon$, allowing recurrent feedback loops to stably converge without triggering endless re-evaluations.
 
 ---
 
@@ -21,15 +24,20 @@ This implementation plan outlines the engineering roadmap to introduce a full vi
   - Register the custom panel (`frontend.async_register_built_in_panel`) with `require_admin=True`.
   - Coordinate dynamic platform setup for both YAML-configured and ConfigEntry-configured systems.
   - Register custom WebSocket commands (enforcing admin permissions).
+  - Update schema validation for `max_updates_per_period`, `update_period`, and per-output `epsilon`.
 - `custom_components/fuzzy_system/const.py`:
   - Add WebSocket command identifiers (`WS_TYPE_LIST_SYSTEMS`, `WS_TYPE_SAVE_SYSTEM`, `WS_TYPE_SIMULATE`, etc.).
   - Add frontend asset constants, URLs, and card custom element names.
+  - Add configuration keys and defaults: `CONF_MAX_UPDATES_PER_PERIOD` (20), `CONF_UPDATE_PERIOD` (0.05s), `CONF_EPSILON` (0.01).
 - `custom_components/fuzzy_system/config_flow.py`:
   - Upgrade config flow to handle multi-entry creation and options flow for fuzzy systems.
   - Provide direct deep-link redirects to the visual editor (`/fuzzy-system?entry_id=...`).
 - `custom_components/fuzzy_system/sensor.py`:
   - Support dynamic entity addition and removal via `async_setup_entry` / entity platform callbacks.
   - Refactor listener registrations so updating a system cleans up old listeners and re-binds cleanly.
+  - Implement system-level sliding-window rate limiter (`max_updates_per_period` within `update_period`).
+  - Implement output deadband convergence check (`abs(new_value - prev_value) < epsilon` suppresses `async_write_ha_state()`).
+  - Update system status sensor to reflect throttling state (`RUNAWAY_THROTTLED`) if rate limit is exceeded.
 - `custom_components/fuzzy_system/fuzzy_engine.py`:
   - Add dictionary serialization and deserialization methods (`to_dict()` and `from_dict()`).
   - Add rule parser introspection methods (exporting AST for the visual builder and compiling from AST).

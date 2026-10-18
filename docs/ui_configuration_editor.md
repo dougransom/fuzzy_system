@@ -74,6 +74,10 @@ graph TD
   - Includes formula tooltips and visual previews of defuzzification behavior.
 - **System Status Sensor Toggle**:
   - Switch to enable/disable `sensor.fuzzy_<system_name>_status` containing health, inputs, and active rule firing metadata.
+- **Recurrence & Rate Limiting Controls**:
+  - `Max Updates / Period`: Maximum allowable evaluation triggers per period before tripping circuit breaker (numeric input, default: `20`).
+  - `Update Period (Seconds)`: Sliding window duration in seconds (numeric input, default: `0.05`).
+  - Status display: Real-time indication of feedback loop stability, event rate, and runaway protection status.
 
 ---
 
@@ -121,6 +125,7 @@ Defines what the fuzzy system produces:
      - Unit of measurement string (`%`, `°C`, `W`, `min`, `lx`).
    - **Universe of Discourse**: Min and Max bounds (e.g., `[0, 100]` for fan percentage).
    - **Defuzzifier Override**: Optional dropdown allowing an output variable to use a different defuzzifier than the system-wide default.
+   - **Convergence Epsilon ($\epsilon$) / Deadband**: Numeric input (default: `0.01`). When the output change between consecutive evaluations $|\Delta y| < \epsilon$, state commit to Home Assistant is suppressed. This prevents downstream event firing and micro-jitter, facilitating stable convergence in recurrent feedback loops.
 
 2. **Output Term Management**:
    - **Mamdani Systems**:

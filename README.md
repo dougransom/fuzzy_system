@@ -46,7 +46,10 @@ The primary goal of this project is to implement **Fuzzy Control for Home Assist
 - **Home Assistant Sensors & Attributes**:
   - Numeric defuzzified value exposed as sensor state.
   - State attributes contain active rule firing strengths (`rule_strengths`), term membership values (`term_memberships`), and universe distribution arrays (`universe` & `aggregated_set`) for Lovelace dashboard plotting.
-- **Reactive Updates**: Output sensors re-evaluate automatically whenever input entity states change.
+- **Reactive Updates & Recurrence Relations**: Output sensors re-evaluate automatically whenever input entity states change. Recurrent feedback loops (where outputs feed back into inputs directly or indirectly) are natively supported.
+- **Runaway & Jitter Safeguards**:
+  - **Rate Limiting**: Sliding-window limiter (`max_updates_per_period`, default `20`; `update_period`, default `0.05`s) trips if feedback loops exceed update budgets.
+  - **Convergence Epsilon ($\epsilon$) / Deadband**: Output-level deadband (`epsilon`, default `0.01`) suppresses state commits and downstream events when $|y_{new} - y_{prev}| < \epsilon$, enabling smooth convergence and eliminating useless calculations.
 
 ---
 
@@ -71,6 +74,8 @@ fuzzy_system:
     <system_name>:
       inference: mamdani # "mamdani" or "sugeno" (default: "mamdani")
       defuzzifier: cog   # "cog", "coa", "boa", "cos", "weighted_average", "mom", "som", "lom" (default: "cog")
+      max_updates_per_period: 20  # Max evaluations allowed per period (circuit breaker, default: 20)
+      update_period: 0.05         # Sliding rate-limiting window in seconds (default: 0.05)
       inputs:
         <input_var_name>:
           entity_id: sensor.my_input_sensor # Home Assistant entity ID
@@ -86,6 +91,7 @@ fuzzy_system:
         <output_var_name>:
           range: [min_val, max_val]
           resolution: 100                    # Number of segments across universe (default: 100)
+          epsilon: 0.01                      # Convergence deadband; changes < epsilon are not committed (default: 0.01)
           name: "Custom Sensor Name"         # Optional friendly name
           icon: mdi:fan                      # Optional icon
           unit_of_measurement: "%"           # Optional unit of measurement
@@ -96,6 +102,33 @@ fuzzy_system:
       rules:
         - "IF <input_var> IS [hedge] <term> [AND/OR ...] THEN <output_var> IS <term_or_value>"
 ```
+
+### Recurrence Relations, Convergence & Runaway Protection
+
+In dynamic automation scenarios, you can define **recurrence relations** where a fuzzy system's output feeds back into its own input (either directly by setting `entity_id: sensor.fuzzy_<system>_<output>` or indirectly through intermediary entities and automations):
+
+```mermaid
+graph LR
+    Input["Inputs (e.g. Temperature)"] --> Engine["Fuzzy Inference Engine"]
+    Engine --> Output["Output Sensor (y)"]
+    Output -.->|"Feedback Loop (Recurrence)"| InputRecurrent["Recurrent Input (e.g. Prev Speed)"]
+    InputRecurrent --> Engine
+```
+
+To enable iterative convergence while strictly preventing runaway calculation loops or excessive state machine events, `fuzzy_system` provides dual protection:
+
+1. **Output Convergence Epsilon ($\epsilon$) / Deadband**:
+   - Each output variable specifies an `epsilon` threshold (default: `0.01`).
+   - If $|y_{\text{new}} - y_{\text{previous}}| < \epsilon$, the change is considered insignificant and is **not committed**:
+     - No state update is written to Home Assistant (`async_write_ha_state()` is suppressed).
+     - No `state_changed` event is emitted.
+     - Consequently, downstream automations and recurrent feedback inputs are not triggered.
+   - This allows recurrent systems to iteratively settle and converge without endless micro-jitter.
+
+2. **Sliding-Window Rate Limiter / Circuit Breaker**:
+   - `max_updates_per_period` (default: `20` updates).
+   - `update_period` (default: `0.05` seconds).
+   - If an unstable feedback cycle attempts more than 20 evaluations within 0.05s, the system trips its runaway circuit breaker, suppressing subsequent evaluations until the rate window clears, and flagging the status sensor with `RUNAWAY_THROTTLED`.
 
 ### Organizing Your Configuration
 

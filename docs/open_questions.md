@@ -43,3 +43,18 @@ This document identifies missing specifications, architectural decisions, and de
 ## 5. Python Dependencies & Test Environment
 11. **`scipy` Manifest & Dependency Declaration**:
     - **Resolved**: Keep `scipy` omitted from both `manifest.json` and `pyproject.toml`. Rely on pip/uv dependency resolution for `scikit-fuzzy` to pull in SciPy, avoiding any explicit version pinning that could conflict with Home Assistant or other packages.
+
+---
+
+## 6. Recurrence Relations, Rate Limiting & Convergence Epsilon
+12. **Handling Recurrent Feedback Loops (Output to Input)**:
+    - **Resolved**: Support recurrent relationships where an output sensor feeds back into an input variable (either directly or via external automations/entities).
+    - **Rate Limiting / Circuit Breaker**:
+      - Default `max_updates_per_period`: `20`
+      - Default `update_period`: `0.05` seconds
+      - System-level sliding-window rate limiter halts runaway cascades when update frequencies exceed this budget.
+    - **Convergence Epsilon ($\epsilon$) / Deadband**:
+      - Configurable per output (default `0.01`).
+      - State updates are suppressed if $|y_{new} - y_{prev}| < \epsilon$.
+      - Suppressing the commit prevents emitting Home Assistant `state_changed` events, enabling stable convergence and eliminating useless calculations and micro-jitter.
+

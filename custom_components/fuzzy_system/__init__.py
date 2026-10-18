@@ -20,10 +20,12 @@ from .const import (
     CONF_DEFAULT,
     CONF_DEFUZZIFIER,
     CONF_ENTITY_ID,
+    CONF_EPSILON,
     CONF_EXPOSE_SYSTEM_SENSOR,
     CONF_ICON,
     CONF_INFERENCE,
     CONF_INPUTS,
+    CONF_MAX_UPDATES_PER_PERIOD,
     CONF_NAME,
     CONF_OUTPUTS,
     CONF_RANGE,
@@ -33,9 +35,13 @@ from .const import (
     CONF_SYSTEMS,
     CONF_TERMS,
     CONF_UNIT_OF_MEASUREMENT,
+    CONF_UPDATE_PERIOD,
     DATA_ENTRIES,
     DATA_YAML_SYSTEMS,
     DEF_COG,
+    DEFAULT_EPSILON,
+    DEFAULT_MAX_UPDATES_PER_PERIOD,
+    DEFAULT_UPDATE_PERIOD,
     DOMAIN,
     INFERENCE_MAMDANI,
     VALID_DEFUZZIFIERS,
@@ -73,6 +79,7 @@ OUTPUT_VAR_SCHEMA = vol.Schema(
         vol.Required(CONF_TERMS): vol.Schema({cv.string: TERM_SCHEMA}),
         vol.Optional(CONF_RESOLUTION, default=100): vol.Coerce(int),
         vol.Optional(CONF_DEFUZZIFIER): vol.In(VALID_DEFUZZIFIERS),
+        vol.Optional(CONF_EPSILON): vol.All(vol.Coerce(float), vol.Range(min=0.0)),
         vol.Optional(CONF_NAME): cv.string,
         vol.Optional(CONF_ICON): cv.icon,
         vol.Optional(CONF_UNIT_OF_MEASUREMENT): cv.string,
@@ -84,6 +91,15 @@ SYSTEM_SCHEMA = vol.Schema(
         vol.Optional(CONF_INFERENCE, default=INFERENCE_MAMDANI): vol.In(VALID_INFERENCE_TYPES),
         vol.Optional(CONF_DEFUZZIFIER, default=DEF_COG): vol.In(VALID_DEFUZZIFIERS),
         vol.Optional(CONF_EXPOSE_SYSTEM_SENSOR, default=True): cv.boolean,
+        vol.Optional(CONF_MAX_UPDATES_PER_PERIOD, default=DEFAULT_MAX_UPDATES_PER_PERIOD): vol.All(
+            vol.Coerce(int), vol.Range(min=1)
+        ),
+        vol.Optional(CONF_UPDATE_PERIOD, default=DEFAULT_UPDATE_PERIOD): vol.All(
+            vol.Coerce(float), vol.Range(min=0.001)
+        ),
+        vol.Optional(CONF_EPSILON, default=DEFAULT_EPSILON): vol.All(
+            vol.Coerce(float), vol.Range(min=0.0)
+        ),
         vol.Required(CONF_INPUTS): vol.Schema({cv.string: INPUT_VAR_SCHEMA}),
         vol.Required(CONF_OUTPUTS): vol.Schema({cv.string: OUTPUT_VAR_SCHEMA}),
         vol.Required(CONF_RULES): vol.All(cv.ensure_list, [cv.string]),

@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import collections
 import functools
 import logging
+import time
+from collections.abc import Callable
 from contextlib import suppress
 from typing import Any
 
@@ -17,15 +20,21 @@ from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from .const import (
     CONF_DEFAULT,
     CONF_ENTITY_ID,
+    CONF_EPSILON,
     CONF_EXPOSE_SYSTEM_SENSOR,
     CONF_ICON,
     CONF_INPUTS,
+    CONF_MAX_UPDATES_PER_PERIOD,
     CONF_NAME,
     CONF_OUTPUTS,
     CONF_SYSTEM_ID,
     CONF_UNIT_OF_MEASUREMENT,
+    CONF_UPDATE_PERIOD,
     DATA_ENTRIES,
     DATA_YAML_SYSTEMS,
+    DEFAULT_EPSILON,
+    DEFAULT_MAX_UPDATES_PER_PERIOD,
+    DEFAULT_UPDATE_PERIOD,
     DOMAIN,
 )
 from .fuzzy_engine import FuzzySystemEngine
@@ -47,6 +56,65 @@ def _parse_entity_numeric_state(state_obj: Any, default: float) -> tuple[float, 
     return default, False
 
 
+class SystemRateLimiter:
+    """Sliding-window rate limiter to protect against runaway recurrent updates."""
+
+    def __init__(
+        self,
+        max_updates: int = DEFAULT_MAX_UPDATES_PER_PERIOD,
+        period: float = DEFAULT_UPDATE_PERIOD,
+    ) -> None:
+        """Initialize the rate limiter."""
+        self.max_updates = max_updates
+        self.period = period
+        self._timestamps: collections.deque[float] = collections.deque()
+        self.throttled: bool = False
+        self.throttled_count: int = 0
+        self._last_tick_time: float | None = None
+        self._on_throttle_callbacks: list[Callable[[], None]] = []
+
+    def register_throttle_callback(self, cb: Callable[[], None]) -> None:
+        """Register a callback to be invoked when rate limiting trips."""
+        self._on_throttle_callbacks.append(cb)
+
+    def can_update(self, now: float | None = None) -> bool:
+        """Check if an update is permitted under the sliding-window budget."""
+        if self.max_updates <= 0 or self.period <= 0:
+            return True
+
+        if now is None:
+            now = time.monotonic()
+
+        # Group multiple sensor updates occurring within the exact same event loop callback tick (< 0.1ms)
+        if self._last_tick_time is not None and abs(now - self._last_tick_time) < 1e-4:
+            return not self.throttled
+
+        cutoff = now - self.period
+        while self._timestamps and self._timestamps[0] <= cutoff:
+            self._timestamps.popleft()
+
+        if len(self._timestamps) >= self.max_updates:
+            newly_throttled = not self.throttled
+            self.throttled = True
+            self.throttled_count += 1
+            if newly_throttled:
+                for cb in self._on_throttle_callbacks:
+                    with suppress(Exception):
+                        cb()
+            return False
+
+        self._timestamps.append(now)
+        self._last_tick_time = now
+        self.throttled = False
+        return True
+
+    def reset(self) -> None:
+        """Reset limiter state."""
+        self._timestamps.clear()
+        self.throttled = False
+        self.throttled_count = 0
+
+
 def _build_system_entities(
     hass: HomeAssistant,
     system_name: str,
@@ -55,6 +123,11 @@ def _build_system_entities(
 ) -> list[SensorEntity]:
     """Instantiate all sensor entities for a given fuzzy system configuration."""
     entities: list[SensorEntity] = []
+
+    max_updates = sys_cfg.get(CONF_MAX_UPDATES_PER_PERIOD, DEFAULT_MAX_UPDATES_PER_PERIOD)
+    update_period = sys_cfg.get(CONF_UPDATE_PERIOD, DEFAULT_UPDATE_PERIOD)
+    system_epsilon = sys_cfg.get(CONF_EPSILON, DEFAULT_EPSILON)
+    rate_limiter = SystemRateLimiter(max_updates=max_updates, period=update_period)
 
     input_entities_map: dict[str, tuple[str, float]] = {}
     inputs_cfg: dict[str, Any] = sys_cfg.get(CONF_INPUTS, {})
@@ -66,6 +139,8 @@ def _build_system_entities(
     outputs_cfg: dict[str, Any] = sys_cfg.get(CONF_OUTPUTS, {})
     for out_name in engine.output_vars:
         out_cfg = outputs_cfg.get(out_name, {})
+        out_epsilon = out_cfg.get(CONF_EPSILON, system_epsilon)
+
         # 1. Defuzzified Numeric Output Sensor
         entities.append(
             FuzzyOutputSensor(
@@ -75,6 +150,8 @@ def _build_system_entities(
                 engine=engine,
                 input_map=input_entities_map,
                 output_config=out_cfg,
+                rate_limiter=rate_limiter,
+                epsilon=out_epsilon,
             )
         )
 
@@ -87,6 +164,8 @@ def _build_system_entities(
                 engine=engine,
                 input_map=input_entities_map,
                 output_config=out_cfg,
+                rate_limiter=rate_limiter,
+                epsilon=out_epsilon,
             )
         )
 
@@ -98,6 +177,7 @@ def _build_system_entities(
                 system_name=system_name,
                 engine=engine,
                 input_map=input_entities_map,
+                rate_limiter=rate_limiter,
             )
         )
 
@@ -166,6 +246,7 @@ class BaseFuzzySensor(SensorEntity):
         output_name: str,
         engine: FuzzySystemEngine,
         input_map: dict[str, tuple[str, float]],
+        rate_limiter: SystemRateLimiter | None = None,
     ) -> None:
         """Initialize base fuzzy sensor entity."""
         self._hass = hass
@@ -173,6 +254,7 @@ class BaseFuzzySensor(SensorEntity):
         self._output_name = output_name
         self._engine = engine
         self._input_map = input_map  # input_var_name -> (entity_id, default_value)
+        self._rate_limiter = rate_limiter
 
         # Pre-build reverse lookup table from non-empty entity_id to variable name
         self._entity_to_var: dict[str, str] = {
@@ -212,12 +294,15 @@ class BaseFuzzySensor(SensorEntity):
             return
 
         with suppress(ValueError, TypeError):
-            self._input_values[var_name] = float(new_state.state)
-            self._reevaluate()
-            self.async_write_ha_state()
+            new_val = float(new_state.state)
+            if self._input_values.get(var_name) == new_val:
+                return
+            self._input_values[var_name] = new_val
+            if self._reevaluate():
+                self.async_write_ha_state()
 
-    def _reevaluate(self) -> None:
-        """Run fuzzy engine evaluation."""
+    def _reevaluate(self) -> bool:
+        """Run fuzzy engine evaluation. Returns True if state changed and should commit."""
         raise NotImplementedError
 
 
@@ -232,9 +317,11 @@ class FuzzyOutputSensor(BaseFuzzySensor):
         engine: FuzzySystemEngine,
         input_map: dict[str, tuple[str, float]],
         output_config: dict[str, Any] | None = None,
+        rate_limiter: SystemRateLimiter | None = None,
+        epsilon: float = DEFAULT_EPSILON,
     ) -> None:
         """Initialize fuzzy output numerical sensor entity."""
-        super().__init__(hass, system_name, output_name, engine, input_map)
+        super().__init__(hass, system_name, output_name, engine, input_map, rate_limiter=rate_limiter)
 
         output_cfg = output_config or {}
         default_name = f"Fuzzy {_format_display_name(system_name)} {_format_display_name(output_name)}"
@@ -244,27 +331,55 @@ class FuzzyOutputSensor(BaseFuzzySensor):
         if CONF_UNIT_OF_MEASUREMENT in output_cfg:
             self._attr_native_unit_of_measurement = output_cfg[CONF_UNIT_OF_MEASUREMENT]
         self._attr_native_value: float | None = None
+        self._epsilon = float(epsilon)
 
-    def _reevaluate(self) -> None:
+    def _reevaluate(self) -> bool:
         """Run fuzzy engine evaluation for defuzzified output sensor."""
         eval_result = self._engine.evaluate(self._input_values)
-        if out_res := eval_result.get(self._output_name):
-            self._attr_native_value = out_res["defuzzified_value"]
-            self._attr_extra_state_attributes = {
-                "system": self._system_name,
-                "inference_type": self._engine.inference_type,
-                "defuzzifier": self._engine.defuzzifier,
-                "inputs": dict(self._input_values),
-                "dominant_term": out_res["dominant_term"],
-                "term_activations": out_res["term_activations"],
-                "term_memberships": out_res["term_memberships"],
-                "rule_strengths": out_res["rule_strengths"],
-                "universe": out_res["universe"],
-                "aggregated_set": out_res["aggregated_set"],
-            }
-        else:
-            self._attr_native_value = None
-            self._attr_extra_state_attributes = {}
+        out_res = eval_result.get(self._output_name)
+        if not out_res:
+            if self._attr_native_value is not None:
+                self._attr_native_value = None
+                self._attr_extra_state_attributes = {}
+                return True
+            return False
+
+        new_val = out_res["defuzzified_value"]
+
+        # Check epsilon deadband: changes < epsilon are not committed to the system
+        if (
+            self._attr_native_value is not None
+            and new_val is not None
+            and abs(new_val - self._attr_native_value) < self._epsilon
+        ):
+            return False
+
+        # Check rate limiter
+        if self._rate_limiter and not self._rate_limiter.can_update():
+            _LOGGER.warning(
+                "Fuzzy system '%s' output '%s' update throttled: exceeded %d updates per %s s",
+                self._system_name,
+                self._output_name,
+                self._rate_limiter.max_updates,
+                self._rate_limiter.period,
+            )
+            return False
+
+        self._attr_native_value = new_val
+        self._attr_extra_state_attributes = {
+            "system": self._system_name,
+            "inference_type": self._engine.inference_type,
+            "defuzzifier": self._engine.defuzzifier,
+            "inputs": dict(self._input_values),
+            "dominant_term": out_res["dominant_term"],
+            "term_activations": out_res["term_activations"],
+            "term_memberships": out_res["term_memberships"],
+            "rule_strengths": out_res["rule_strengths"],
+            "universe": out_res["universe"],
+            "aggregated_set": out_res["aggregated_set"],
+            "epsilon": self._epsilon,
+        }
+        return True
 
 
 class FuzzySetSensor(BaseFuzzySensor):
@@ -278,9 +393,11 @@ class FuzzySetSensor(BaseFuzzySensor):
         engine: FuzzySystemEngine,
         input_map: dict[str, tuple[str, float]],
         output_config: dict[str, Any] | None = None,
+        rate_limiter: SystemRateLimiter | None = None,
+        epsilon: float = DEFAULT_EPSILON,
     ) -> None:
         """Initialize fuzzy set sensor entity."""
-        super().__init__(hass, system_name, output_name, engine, input_map)
+        super().__init__(hass, system_name, output_name, engine, input_map, rate_limiter=rate_limiter)
 
         output_cfg = output_config or {}
         custom_name = output_cfg.get(CONF_NAME)
@@ -292,12 +409,18 @@ class FuzzySetSensor(BaseFuzzySensor):
         self._attr_unique_id = f"fuzzy_{system_name}_{output_name}_set"
         self._attr_icon = "mdi:chart-bell-curve-cumulative"
         self._attr_native_value: str | None = None
+        self._epsilon = float(epsilon)
 
-    def _reevaluate(self) -> None:
+    def _reevaluate(self) -> bool:
         """Run fuzzy engine evaluation for pre-defuzzified fuzzy set sensor."""
         eval_result = self._engine.evaluate(self._input_values)
         if out_res := eval_result.get(self._output_name):
-            self._attr_native_value = out_res["dominant_term"]
+            new_term = out_res["dominant_term"]
+
+            if self._rate_limiter and not self._rate_limiter.can_update():
+                return False
+
+            self._attr_native_value = new_term
             self._attr_extra_state_attributes = {
                 "system": self._system_name,
                 "inference_type": self._engine.inference_type,
@@ -305,9 +428,13 @@ class FuzzySetSensor(BaseFuzzySensor):
                 "term_activations": out_res["term_activations"],
                 "rule_strengths": out_res["rule_strengths"],
             }
+            return True
         else:
-            self._attr_native_value = None
-            self._attr_extra_state_attributes = {}
+            if self._attr_native_value is not None:
+                self._attr_native_value = None
+                self._attr_extra_state_attributes = {}
+                return True
+            return False
 
 
 class FuzzySystemStatusSensor(SensorEntity):
@@ -319,12 +446,14 @@ class FuzzySystemStatusSensor(SensorEntity):
         system_name: str,
         engine: FuzzySystemEngine,
         input_map: dict[str, tuple[str, float]],
+        rate_limiter: SystemRateLimiter | None = None,
     ) -> None:
         """Initialize fuzzy system status sensor with pre-computed lookup tables."""
         self.hass = hass
         self._system_name = system_name
         self._engine = engine
         self._input_map = input_map
+        self._rate_limiter = rate_limiter
 
         # Pre-build lookup and tracking tables on initialization (excluding empty entity_ids)
         self._entity_to_var: dict[str, str] = {
@@ -352,8 +481,29 @@ class FuzzySystemStatusSensor(SensorEntity):
         """Register state change tracking for all system input entities."""
         @callback
         def _async_input_changed(event: Any) -> None:
-            self._update_and_reevaluate()
-            self.async_write_ha_state()
+            if not (new_state := event.data.get("new_state")):
+                return
+            if (var_name := self._entity_to_var.get(event.data.get("entity_id"))) is None:
+                return
+
+            with suppress(ValueError, TypeError):
+                new_val = float(new_state.state)
+                if self._current_inputs.get(var_name) == new_val:
+                    return
+                self._update_and_reevaluate()
+                self.async_write_ha_state()
+
+        if self._rate_limiter:
+            @callback
+            def _async_on_throttled() -> None:
+                self._attr_native_value = "RUNAWAY_THROTTLED"
+                attrs = dict(self._attr_extra_state_attributes)
+                attrs["throttled"] = True
+                attrs["throttled_count"] = self._rate_limiter.throttled_count
+                self._attr_extra_state_attributes = attrs
+                self.async_write_ha_state()
+
+            self._rate_limiter.register_throttle_callback(_async_on_throttled)
 
         if self._tracked_entity_ids:
             self.async_on_remove(
@@ -380,7 +530,11 @@ class FuzzySystemStatusSensor(SensorEntity):
                 all_ok = False
 
         self._current_inputs = eval_inputs
-        self._attr_native_value = "OK" if all_ok else "Input Unavailable"
+        if self._rate_limiter and self._rate_limiter.throttled:
+            self._attr_native_value = "RUNAWAY_THROTTLED"
+        else:
+            self._attr_native_value = "OK" if all_ok else "Input Unavailable"
+
         self._evaluation_results = self._engine.evaluate(eval_inputs)
 
         outputs_summary = {
@@ -403,4 +557,13 @@ class FuzzySystemStatusSensor(SensorEntity):
                 "max_rule_strength": round(max_strength, 4),
             }
         )
+        if self._rate_limiter:
+            attrs.update(
+                {
+                    "throttled": self._rate_limiter.throttled,
+                    "throttled_count": self._rate_limiter.throttled_count,
+                    "max_updates_per_period": self._rate_limiter.max_updates,
+                    "update_period": self._rate_limiter.period,
+                }
+            )
         self._attr_extra_state_attributes = attrs

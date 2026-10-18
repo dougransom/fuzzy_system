@@ -68,6 +68,15 @@ CONF_DESCRIPTION = "description"
 CONF_SOURCE = "source"
 SOURCE_YAML = "yaml"
 SOURCE_CONFIG_ENTRY = "config_entry"
+CONF_MAX_UPDATES_PER_PERIOD = "max_updates_per_period"
+CONF_UPDATE_PERIOD = "update_period"
+CONF_EPSILON = "epsilon"
+
+# Defaults
+DEFAULT_MAX_UPDATES_PER_PERIOD = 20
+DEFAULT_UPDATE_PERIOD = 0.05
+DEFAULT_EPSILON = 0.01
+
 
 # Internal Data Keys
 DATA_YAML_SYSTEMS = "yaml_systems"
