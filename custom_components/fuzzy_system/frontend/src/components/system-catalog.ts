@@ -95,10 +95,19 @@ export class FuzzySystemCatalog extends LitElement {
 
   async connectedCallback() {
     super.connectedCallback();
-    await this.refresh();
+    if (this.hass) {
+      await this.refresh();
+    }
+  }
+
+  willUpdate(changedProps: Map<string | number | symbol, unknown>) {
+    if (changedProps.has("hass") && this.hass && this._systems.length === 0 && !this._loading) {
+      this.refresh();
+    }
   }
 
   public async refresh() {
+    if (!this.hass) return;
     this._loading = true;
     this._error = "";
     try {

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
-from homeassistant.components import frontend
+from homeassistant.components import panel_custom
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import SERVICE_RELOAD, Platform
@@ -195,16 +195,18 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
                 _LOGGER.debug("Could not register static path: %s", err)
 
         try:
-            frontend.add_extra_js_url(hass, "/fuzzy_system_frontend/fuzzy-system-panel.js")
-            frontend.async_register_built_in_panel(
-                hass,
-                component_name="fuzzy-system-panel",
-                sidebar_title="Fuzzy Systems",
-                sidebar_icon="mdi:chart-bell-curve-cumulative",
-                frontend_url_path="fuzzy-system",
-                require_admin=True,
-            )
-            _LOGGER.info("Registered Fuzzy System frontend panel at /fuzzy-system")
+            panels = hass.data.get("frontend_panels", {})
+            if "fuzzy-system" not in panels:
+                await panel_custom.async_register_panel(
+                    hass,
+                    frontend_url_path="fuzzy-system",
+                    webcomponent_name="fuzzy-system-panel",
+                    sidebar_title="Fuzzy Systems",
+                    sidebar_icon="mdi:chart-bell-curve-cumulative",
+                    module_url="/fuzzy_system_frontend/fuzzy-system-panel.js",
+                    require_admin=True,
+                )
+                _LOGGER.info("Registered Fuzzy System frontend panel at /fuzzy-system")
         except Exception as err:
             _LOGGER.debug("Could not register frontend panel: %s", err)
 

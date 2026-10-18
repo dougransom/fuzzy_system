@@ -17,26 +17,23 @@ async def test_panel_and_static_path_registration(
     hass.http = MagicMock()
     hass.http.async_register_static_paths = MagicMock()
 
-    with (
-        patch("homeassistant.components.frontend.async_register_built_in_panel") as mock_panel,
-        patch("homeassistant.components.frontend.add_extra_js_url") as mock_extra_js,
-    ):
+    with patch(
+        "homeassistant.components.panel_custom.async_register_panel"
+    ) as mock_panel:
         result = await async_setup(hass, {})
         assert result is True
 
         # Verify static path registered
         assert hass.http.async_register_static_paths.called
 
-        # Verify extra js URL added
-        mock_extra_js.assert_called_with(hass, "/fuzzy_system_frontend/fuzzy-system-panel.js")
-
         # Verify custom panel registered in sidebar
         mock_panel.assert_called_once_with(
             hass,
-            component_name="fuzzy-system-panel",
+            frontend_url_path="fuzzy-system",
+            webcomponent_name="fuzzy-system-panel",
             sidebar_title="Fuzzy Systems",
             sidebar_icon="mdi:chart-bell-curve-cumulative",
-            frontend_url_path="fuzzy-system",
+            module_url="/fuzzy_system_frontend/fuzzy-system-panel.js",
             require_admin=True,
         )
 

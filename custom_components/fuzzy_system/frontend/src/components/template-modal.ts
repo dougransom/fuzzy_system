@@ -70,10 +70,26 @@ export class FuzzyTemplateModal extends LitElement {
 
   async connectedCallback() {
     super.connectedCallback();
+    if (this.hass) {
+      await this._loadTemplates();
+    }
+  }
+
+  willUpdate(changedProps: Map<string | number | symbol, unknown>) {
+    if (changedProps.has("hass") && this.hass && this._templates.length === 0 && !this._loading) {
+      this._loadTemplates();
+    }
+  }
+
+  private async _loadTemplates() {
+    if (!this.hass) return;
+    this._loading = true;
     try {
       this._templates = await fetchTemplates(this.hass);
     } catch (err: any) {
       this._error = err.message || "Failed to load templates";
+    } finally {
+      this._loading = false;
     }
   }
 

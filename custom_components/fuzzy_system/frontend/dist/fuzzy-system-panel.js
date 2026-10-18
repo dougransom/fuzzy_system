@@ -863,16 +863,21 @@ let $ = class extends S {
     super(...arguments), this._systems = [], this._searchQuery = "", this._loading = !1, this._error = "", this._showTemplateModal = !1;
   }
   async connectedCallback() {
-    super.connectedCallback(), await this.refresh();
+    super.connectedCallback(), this.hass && await this.refresh();
+  }
+  willUpdate(t) {
+    t.has("hass") && this.hass && this._systems.length === 0 && !this._loading && this.refresh();
   }
   async refresh() {
-    this._loading = !0, this._error = "";
-    try {
-      this._systems = await Ve(this.hass);
-    } catch (t) {
-      this._error = t.message || "Failed to load fuzzy systems";
-    } finally {
-      this._loading = !1;
+    if (this.hass) {
+      this._loading = !0, this._error = "";
+      try {
+        this._systems = await Ve(this.hass);
+      } catch (t) {
+        this._error = t.message || "Failed to load fuzzy systems";
+      } finally {
+        this._loading = !1;
+      }
     }
   }
   _filteredSystems() {
@@ -1863,11 +1868,21 @@ let _ = class extends S {
     super(...arguments), this._templates = [], this._selectedTemplate = null, this._systemId = "", this._systemName = "", this._loading = !1, this._error = "";
   }
   async connectedCallback() {
-    super.connectedCallback();
-    try {
-      this._templates = await Ze(this.hass);
-    } catch (t) {
-      this._error = t.message || "Failed to load templates";
+    super.connectedCallback(), this.hass && await this._loadTemplates();
+  }
+  willUpdate(t) {
+    t.has("hass") && this.hass && this._templates.length === 0 && !this._loading && this._loadTemplates();
+  }
+  async _loadTemplates() {
+    if (this.hass) {
+      this._loading = !0;
+      try {
+        this._templates = await Ze(this.hass);
+      } catch (t) {
+        this._error = t.message || "Failed to load templates";
+      } finally {
+        this._loading = !1;
+      }
     }
   }
   _selectTemplate(t) {
