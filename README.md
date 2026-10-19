@@ -5,6 +5,8 @@ The **Fuzzy System** custom component brings Mamdani and Sugeno fuzzy logic cont
 > **Credits & Acknowledgments**: Powered by [scikit-fuzzy (`skfuzzy`)](https://github.com/scikit-fuzzy/scikit-fuzzy) ([PyPI](https://pypi.org/project/scikit-fuzzy/)), a robust fuzzy logic library built on top of SciPy. Special thanks to the `scikit-fuzzy` maintainers and contributors for providing the underlying membership math and defuzzification algorithms!
 
 > 📖 **Visual Tutorial**: See our [**Step-by-Step Visual Tutorial & Walkthrough**](docs/tutorial.md) with interface screenshots for creating systems, dragging SVG curves, building rules visually, and setting up dashboard cards without writing YAML.
+>
+> 🎛️ **Blueprint Guide**: Automate physical devices (fans, dimmers, valves) using our [**Blueprint Guide & Turnkey Automation Templates**](docs/blueprints.md).
 
 ---
 
@@ -721,6 +723,7 @@ uv run pytest tests
 
 - **AI Assistants & LLM Indexing**: See [`llms.txt`](llms.txt) for token-optimized architecture definitions, schemas, and service signatures.
 - **Troubleshooting & FAQ**: Common problem diagnoses and rule debugging patterns are documented in [`docs/troubleshooting.md`](docs/troubleshooting.md).
+- **Automation Blueprints**: Reusable automation blueprints and integration patterns are documented in [`docs/blueprints.md`](docs/blueprints.md).
 - **CodeMeta & Schema.org**: Machine-readable software metadata is provided via [`codemeta.json`](codemeta.json) and [`CITATION.cff`](CITATION.cff).
 
 

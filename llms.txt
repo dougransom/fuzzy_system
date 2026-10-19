@@ -8,6 +8,7 @@ Fuzzy System brings approximate, human-like linguistic reasoning ("if temperatur
 ## Key Links
 - [Complete Architecture & Reference](README.md): Comprehensive documentation of configuration schemas, membership functions, defuzzification methods, and neurosymbolic design.
 - [Tutorial & Walkthrough](docs/tutorial.md): Step-by-step onboarding, UI config flow, YAML setup, Lovelace dashboard configuration, and MCP agent usage.
+- [Blueprint Guide](docs/blueprints.md): How to build, install, and use Home Assistant blueprints with Fuzzy System output sensors.
 - [Troubleshooting & FAQ](docs/troubleshooting.md): Diagnosis and solutions for common problems (sensor stuck at 0, defuzzification NaN, oscillations, MCP errors).
 
 ## Core Concepts for LLMs & AI Assistants
