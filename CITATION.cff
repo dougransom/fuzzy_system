@@ -5,7 +5,7 @@ authors:
     given-names: "Doug"
     email: "doug@ransom.vip"
 title: "Home Assistant Fuzzy System: Mamdani & Sugeno Fuzzy Logic Control with MCP"
-version: 0.1.2
+version: 0.1.3
 date-released: 2026-10-19
 url: "https://github.com/dougransom/fuzzy_system"
 repository-code: "https://github.com/dougransom/fuzzy_system"
