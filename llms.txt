@@ -1,0 +1,76 @@
+# Home Assistant Fuzzy System
+
+> Mamdani & Sugeno Fuzzy Logic Control integration for Home Assistant, featuring Model Context Protocol (MCP) and WebMCP support for autonomous AI agent configuration, live simulation, and Lovelace dashboard creation.
+
+## Overview
+Fuzzy System brings approximate, human-like linguistic reasoning ("if temperature is warm and humidity is high then ventilation is medium") to Home Assistant automation. It provides deterministic, zero-latency local execution with mathematical explainability.
+
+## Key Links
+- [Complete Architecture & Reference](README.md): Comprehensive documentation of configuration schemas, membership functions, defuzzification methods, and neurosymbolic design.
+- [Tutorial & Walkthrough](docs/tutorial.md): Step-by-step onboarding, UI config flow, YAML setup, Lovelace dashboard configuration, and MCP agent usage.
+- [Troubleshooting & FAQ](docs/troubleshooting.md): Diagnosis and solutions for common problems (sensor stuck at 0, defuzzification NaN, oscillations, MCP errors).
+
+## Core Concepts for LLMs & AI Assistants
+
+### 1. Engines
+- **Mamdani**: Linguistic inputs -> Fuzzy inference -> Fuzzy aggregated output curve -> Defuzzification to continuous scalar. Ideal for physical controls (fans, dimmers, valves).
+- **Sugeno (Takagi-Sugeno-Kang)**: Linguistic inputs -> Singletons / linear equations -> Weighted average. Ideal for mathematical mappings, zero defuzzification failure risk, and computationally ultra-light tasks.
+
+### 2. Supported Membership Functions
+- `trimf`: Triangular `[a, b, c]`
+- `trapmf`: Trapezoidal `[a, b, c, d]`
+- `gaussmf`: Gaussian `[mean, sigma]`
+- `sigmf`: Sigmoidal `[b, c]` (steepness $c$, center $b$)
+
+### 3. Defuzzification Methods
+- `cog`: Center of gravity (centroid) - default for Mamdani
+- `boa`: Bisector of area
+- `mom`: Mean of maxima
+- `som`: Smallest of maxima
+- `lom`: Largest of maxima
+- `weighted_average`: Sugeno & singleton crisp values
+
+### 4. Linguistic Hedges
+Modifiers applicable to rule terms:
+- `very`: $\mu(x)^2$ (concentrates membership)
+- `somewhat`: $\sqrt{\mu(x)}$ (dilates membership)
+- `not`: $1 - \mu(x)$ (negation)
+
+### 5. YAML Configuration Schema
+```yaml
+fuzzy_system:
+  - name: Climate Comfort Controller
+    id: climate_comfort
+    engine: mamdani
+    defuzzification: cog
+    inputs:
+      - entity_id: sensor.room_temperature
+        name: temperature
+        universe: [15, 30]
+        terms:
+          cold: { type: trapmf, parameters: [15, 15, 18, 21] }
+          comfortable: { type: trimf, parameters: [19, 22, 25] }
+          hot: { type: trapmf, parameters: [23, 26, 30, 30] }
+    outputs:
+      - name: fan_speed
+        universe: [0, 100]
+        terms:
+          low: { type: trimf, parameters: [0, 20, 40] }
+          medium: { type: trimf, parameters: [30, 50, 70] }
+          high: { type: trimf, parameters: [60, 80, 100] }
+    rules:
+      - "IF temperature IS hot THEN fan_speed IS high"
+      - "IF temperature IS comfortable THEN fan_speed IS medium"
+      - "IF temperature IS cold THEN fan_speed IS low"
+```
+
+### 6. MCP & Home Assistant Services for AI Agents
+Agents communicating via Model Context Protocol or Home Assistant service calls can use:
+- `fuzzy_system.simulate`: Perform dry-run what-if simulations with candidate inputs. Returns output value, term memberships, and firing rule strengths.
+- `fuzzy_system.explain`: Explain why a system produced its current output state.
+- `fuzzy_system.list_systems`: Inspect all configured fuzzy controllers and their universes.
+- `fuzzy_system.get_system`: Retrieve the full YAML specification for a system.
+- `fuzzy_system.generate_card`: Generate custom Lovelace dashboard card YAML.
+- `fuzzy_system.add_to_dashboard`: Inject generated cards or full diagnostic dashboards into Lovelace.
+- `fuzzy_system.list_templates`: List built-in domain templates (comfort, irrigation, humidity, lighting).
+- `fuzzy_system.instantiate_template`: Populate a complete starter configuration tailored to specific entities.

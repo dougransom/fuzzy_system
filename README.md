@@ -714,3 +714,23 @@ uv run ruff check custom_components/fuzzy_system tests
 # Run pytest suite
 uv run pytest tests
 ```
+
+---
+
+## Machine-Readable Metadata & AI Integration
+
+- **AI Assistants & LLM Indexing**: See [`llms.txt`](llms.txt) for token-optimized architecture definitions, schemas, and service signatures.
+- **Troubleshooting & FAQ**: Common problem diagnoses and rule debugging patterns are documented in [`docs/troubleshooting.md`](docs/troubleshooting.md).
+- **CodeMeta & Schema.org**: Machine-readable software metadata is provided via [`codemeta.json`](codemeta.json) and [`CITATION.cff`](CITATION.cff).
+
+<!-- Schema.org Microdata for Web Search Indexers -->
+<div itemscope itemtype="https://schema.org/SoftwareApplication" style="display:none">
+  <span itemprop="name">Home Assistant Fuzzy System</span>
+  <span itemprop="applicationCategory">HomeAutomation, ControlSystems, ArtificialIntelligence</span>
+  <span itemprop="operatingSystem">Home Assistant</span>
+  <span itemprop="description">Mamdani and Sugeno Fuzzy Logic control system, toolkit, and inference engine for Home Assistant with Model Context Protocol (MCP) and WebMCP integration.</span>
+  <span itemprop="keywords">fuzzy logic, fuzzy control, home assistant, hacs, model context protocol, mcp, webmcp, neurosymbolic, soft computing, expert system, mamdani, sugeno, lovelace</span>
+  <link itemprop="softwareHelp" href="https://github.com/dougransom/fuzzy_system/blob/main/docs/troubleshooting.md" />
+  <link itemprop="url" href="https://github.com/dougransom/fuzzy_system" />
+</div>
+

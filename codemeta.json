@@ -1,0 +1,43 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "name": "fuzzy_system",
+  "identifier": "fuzzy_system",
+  "version": "0.1.2",
+  "description": "Mamdani & Sugeno Fuzzy Logic Control and Toolkit for Home Assistant with Model Context Protocol (MCP) and WebMCP integration.",
+  "applicationCategory": "HomeAutomation, ControlSystems, ArtificialIntelligence",
+  "operatingSystem": "Home Assistant, Linux, macOS, Windows",
+  "programmingLanguage": [
+    "Python",
+    "TypeScript",
+    "JavaScript"
+  ],
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Doug Ransom",
+      "email": "doug@ransom.vip"
+    }
+  ],
+  "codeRepository": "https://github.com/dougransom/fuzzy_system",
+  "url": "https://github.com/dougransom/fuzzy_system",
+  "license": "https://spdx.org/licenses/MIT",
+  "keywords": [
+    "fuzzy logic",
+    "fuzzy control",
+    "fuzzy inference",
+    "home assistant",
+    "hacs",
+    "model context protocol",
+    "mcp",
+    "webmcp",
+    "neurosymbolic",
+    "soft computing",
+    "expert system",
+    "mamdani",
+    "sugeno",
+    "approximate reasoning",
+    "automation",
+    "lovelace"
+  ]
+}
