@@ -264,7 +264,7 @@ G.elementStyles = [], G.shadowRootOptions = { mode: "open" }, G[K("elementProper
  */
 const bt = globalThis, kt = (e) => e, dt = bt.trustedTypes, At = dt ? dt.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, Rt = "$lit$", R = `lit$${Math.random().toFixed(9).slice(2)}$`, jt = "?" + R, Xt = `<${jt}>`, D = document, Y = () => D.createComment(""), tt = (e) => e === null || typeof e != "object" && typeof e != "function", yt = Array.isArray, Kt = (e) => yt(e) || typeof e?.[Symbol.iterator] == "function", ht = `[ 	
 \f\r]`, X = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, Ct = /-->/g, Et = />/g, L = RegExp(`>|${ht}(?:([^\\s"'>=/]+)(${ht}*=${ht}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), It = /'/g, Tt = /"/g, Nt = /^(?:script|style|textarea|title)$/i, Pt = (e) => (t, ...s) => ({ _$litType$: e, strings: t, values: s }), o = Pt(1), J = Pt(2), Z = Symbol.for("lit-noChange"), _ = Symbol.for("lit-nothing"), Ot = /* @__PURE__ */ new WeakMap(), U = D.createTreeWalker(D, 129);
+\f\r"'\`<>=]|("|')|))|$)`, "g"), It = /'/g, Tt = /"/g, Nt = /^(?:script|style|textarea|title)$/i, Pt = (e) => (t, ...s) => ({ _$litType$: e, strings: t, values: s }), o = Pt(1), J = Pt(2), Z = Symbol.for("lit-noChange"), x = Symbol.for("lit-nothing"), Ot = /* @__PURE__ */ new WeakMap(), U = D.createTreeWalker(D, 129);
 function Ft(e, t) {
   if (!yt(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
   return At !== void 0 ? At.createHTML(t) : t;
@@ -357,7 +357,7 @@ class at {
     return this._$AM?._$AU ?? this._$Cv;
   }
   constructor(t, s, a, i) {
-    this.type = 2, this._$AH = _, this._$AN = void 0, this._$AA = t, this._$AB = s, this._$AM = a, this.options = i, this._$Cv = i?.isConnected ?? !0;
+    this.type = 2, this._$AH = x, this._$AN = void 0, this._$AA = t, this._$AB = s, this._$AM = a, this.options = i, this._$Cv = i?.isConnected ?? !0;
   }
   get parentNode() {
     let t = this._$AA.parentNode;
@@ -371,7 +371,7 @@ class at {
     return this._$AB;
   }
   _$AI(t, s = this) {
-    t = Q(this, t, s), tt(t) ? t === _ || t == null || t === "" ? (this._$AH !== _ && this._$AR(), this._$AH = _) : t !== this._$AH && t !== Z && this._(t) : t._$litType$ !== void 0 ? this.$(t) : t.nodeType !== void 0 ? this.T(t) : Kt(t) ? this.k(t) : this._(t);
+    t = Q(this, t, s), tt(t) ? t === x || t == null || t === "" ? (this._$AH !== x && this._$AR(), this._$AH = x) : t !== this._$AH && t !== Z && this._(t) : t._$litType$ !== void 0 ? this.$(t) : t.nodeType !== void 0 ? this.T(t) : Kt(t) ? this.k(t) : this._(t);
   }
   O(t) {
     return this._$AA.parentNode.insertBefore(t, this._$AB);
@@ -380,7 +380,7 @@ class at {
     this._$AH !== t && (this._$AR(), this._$AH = this.O(t));
   }
   _(t) {
-    this._$AH !== _ && tt(this._$AH) ? this._$AA.nextSibling.data = t : this.T(D.createTextNode(t)), this._$AH = t;
+    this._$AH !== x && tt(this._$AH) ? this._$AA.nextSibling.data = t : this.T(D.createTextNode(t)), this._$AH = t;
   }
   $(t) {
     const { values: s, _$litType$: a } = t, i = typeof a == "number" ? this._$AC(t) : (a.el === void 0 && (a.el = et.createElement(Ft(a.h, a.h[0]), this.options)), a);
@@ -419,7 +419,7 @@ class ct {
     return this._$AM._$AU;
   }
   constructor(t, s, a, i, r) {
-    this.type = 1, this._$AH = _, this._$AN = void 0, this.element = t, this.name = s, this._$AM = i, this.options = r, a.length > 2 || a[0] !== "" || a[1] !== "" ? (this._$AH = Array(a.length - 1).fill(new String()), this.strings = a) : this._$AH = _;
+    this.type = 1, this._$AH = x, this._$AN = void 0, this.element = t, this.name = s, this._$AM = i, this.options = r, a.length > 2 || a[0] !== "" || a[1] !== "" ? (this._$AH = Array(a.length - 1).fill(new String()), this.strings = a) : this._$AH = x;
   }
   _$AI(t, s = this, a, i) {
     const r = this.strings;
@@ -428,12 +428,12 @@ class ct {
     else {
       const l = t;
       let d, p;
-      for (t = r[0], d = 0; d < r.length - 1; d++) p = Q(this, l[a + d], s, d), p === Z && (p = this._$AH[d]), n ||= !tt(p) || p !== this._$AH[d], p === _ ? t = _ : t !== _ && (t += (p ?? "") + r[d + 1]), this._$AH[d] = p;
+      for (t = r[0], d = 0; d < r.length - 1; d++) p = Q(this, l[a + d], s, d), p === Z && (p = this._$AH[d]), n ||= !tt(p) || p !== this._$AH[d], p === x ? t = x : t !== x && (t += (p ?? "") + r[d + 1]), this._$AH[d] = p;
     }
     n && !i && this.j(t);
   }
   j(t) {
-    t === _ ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, t ?? "");
+    t === x ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, t ?? "");
   }
 }
 class ee extends ct {
@@ -441,7 +441,7 @@ class ee extends ct {
     super(...arguments), this.type = 3;
   }
   j(t) {
-    this.element[this.name] = t === _ ? void 0 : t;
+    this.element[this.name] = t === x ? void 0 : t;
   }
 }
 class se extends ct {
@@ -449,7 +449,7 @@ class se extends ct {
     super(...arguments), this.type = 4;
   }
   j(t) {
-    this.element.toggleAttribute(this.name, !!t && t !== _);
+    this.element.toggleAttribute(this.name, !!t && t !== x);
   }
 }
 class ie extends ct {
@@ -457,8 +457,8 @@ class ie extends ct {
     super(t, s, a, i, r), this.type = 5;
   }
   _$AI(t, s = this) {
-    if ((t = Q(this, t, s, 0) ?? _) === Z) return;
-    const a = this._$AH, i = t === _ && a !== _ || t.capture !== a.capture || t.once !== a.once || t.passive !== a.passive, r = t !== _ && (a === _ || i);
+    if ((t = Q(this, t, s, 0) ?? x) === Z) return;
+    const a = this._$AH, i = t === x && a !== x || t.capture !== a.capture || t.once !== a.once || t.passive !== a.passive, r = t !== x && (a === x || i);
     i && this.element.removeEventListener(this.name, this, a), r && this.element.addEventListener(this.name, this, t), this._$AH = t;
   }
   handleEvent(t) {
@@ -566,16 +566,16 @@ const ut = T`
   :host {
     --fuzzy-primary: var(--primary-color, #0284c7);
     --fuzzy-primary-hover: var(--primary-color-hover, #0369a1);
-    --fuzzy-accent: var(--accent-color, #f59e0b);
-    --fuzzy-success: var(--success-color, #10b981);
-    --fuzzy-warning: var(--warning-color, #f59e0b);
+    --fuzzy-accent: var(--accent-color, #d97706);
+    --fuzzy-success: var(--success-color, #059669);
+    --fuzzy-warning: var(--warning-color, #d97706);
     --fuzzy-danger: var(--error-color, #ef4444);
     --fuzzy-bg: var(--primary-background-color, #0f172a);
     --fuzzy-card-bg: var(--card-background-color, rgba(30, 41, 59, 0.7));
-    --fuzzy-card-border: var(--divider-color, rgba(255, 255, 255, 0.08));
+    --fuzzy-card-border: var(--divider-color, rgba(255, 255, 255, 0.12));
     --fuzzy-text: var(--primary-text-color, #f8fafc);
-    --fuzzy-text-secondary: var(--secondary-text-color, #94a3b8);
-    --fuzzy-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    --fuzzy-text-secondary: var(--secondary-text-color, #64748b);
+    --fuzzy-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
     --fuzzy-radius-lg: 16px;
     --fuzzy-radius-md: 10px;
     --fuzzy-radius-sm: 6px;
@@ -605,7 +605,7 @@ const ut = T`
   .card:hover {
     border-color: rgba(2, 132, 199, 0.4);
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.25);
   }
 
   /* Typography */
@@ -617,9 +617,7 @@ const ut = T`
     font-size: 24px;
     font-weight: 700;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--primary-text-color, #f8fafc);
   }
 
   .subtitle {
@@ -634,51 +632,54 @@ const ut = T`
     align-items: center;
     gap: 6px;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     padding: 4px 10px;
     border-radius: 9999px;
+    line-height: 1.2;
   }
 
   .badge-cyan {
-    background: rgba(6, 182, 212, 0.15);
-    color: #38bdf8;
-    border: 1px solid rgba(6, 182, 212, 0.3);
+    background: #0284c7;
+    color: #ffffff;
+    border: 1px solid #0369a1;
   }
 
   .badge-amber {
-    background: rgba(245, 158, 11, 0.15);
-    color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    background: #d97706;
+    color: #ffffff;
+    border: 1px solid #b45309;
   }
 
   .badge-emerald {
-    background: rgba(16, 185, 129, 0.15);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: #059669;
+    color: #ffffff;
+    border: 1px solid #047857;
   }
 
   .badge-purple {
-    background: rgba(168, 85, 247, 0.15);
-    color: #c084fc;
-    border: 1px solid rgba(168, 85, 247, 0.3);
+    background: #7c3aed;
+    color: #ffffff;
+    border: 1px solid #6d28d9;
   }
 
   .badge-rose {
-    background: rgba(244, 63, 94, 0.15);
-    color: #fb7185;
-    border: 1px solid rgba(244, 63, 94, 0.3);
+    background: #e11d48;
+    color: #ffffff;
+    border: 1px solid #be123c;
   }
 
   .chip {
     display: inline-flex;
     align-items: center;
     font-size: 12px;
+    font-weight: 500;
     padding: 4px 10px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--chip-background-color, var(--secondary-background-color, rgba(125, 125, 125, 0.12)));
+    border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.2));
     border-radius: var(--fuzzy-radius-sm);
-    color: var(--fuzzy-text-secondary);
+    color: var(--primary-text-color, var(--fuzzy-text));
   }
 
   /* Buttons */
@@ -838,7 +839,7 @@ async function ve(e) {
     type: ge
   })).templates || [];
 }
-async function _e(e, t, s, a) {
+async function xe(e, t, s, a) {
   return e.callWS({
     type: fe,
     template_id: t,
@@ -846,7 +847,7 @@ async function _e(e, t, s, a) {
     name: a
   });
 }
-async function xe(e, t, s) {
+async function _e(e, t, s) {
   const a = await e.callWS({
     type: he,
     system_config: t,
@@ -894,8 +895,8 @@ let A = class extends z {
           </div>
         </div>
       `;
-    const e = this.universe[0], t = this.universe[this.universe.length - 1], s = t - e || 1, a = 640, i = 190, r = 36, n = 24, l = 20, d = 28, p = a - r - n, c = i - l - d, u = ($) => r + ($ - e) / s * p, h = ($) => l + (1 - Math.max(0, Math.min(1, $))) * c, f = this.aggregatedSet || [], y = [], x = Math.max(1, Math.floor(this.universe.length / 140));
-    for (let $ = 0; $ < this.universe.length; $ += x) {
+    const e = this.universe[0], t = this.universe[this.universe.length - 1], s = t - e || 1, a = 640, i = 190, r = 36, n = 24, l = 20, d = 28, p = a - r - n, c = i - l - d, u = ($) => r + ($ - e) / s * p, h = ($) => l + (1 - Math.max(0, Math.min(1, $))) * c, f = this.aggregatedSet || [], y = [], _ = Math.max(1, Math.floor(this.universe.length / 140));
+    for (let $ = 0; $ < this.universe.length; $ += _) {
       const S = this.universe[$], k = f[$] ?? 0;
       y.push([u(S), h(k)]);
     }
@@ -1221,16 +1222,14 @@ let C = class extends z {
           <span class="live-outputs-title">Live Runtime Outputs</span>
           ${a.total > 0 && a.bound < a.total ? o`
                 <span
-                  class="chip"
-                  style="color: #fbbf24; background: rgba(245, 158, 11, 0.1); font-size: 11px;"
+                  class="badge badge-amber"
                   title="Some input antecedents do not have live sensor entities bound yet"
                 >
                   ⚠️ ${a.total - a.bound} unbound input${a.total - a.bound > 1 ? "s" : ""}
                 </span>
               ` : o`
                 <span
-                  class="chip"
-                  style="color: #34d399; background: rgba(52, 211, 153, 0.1); font-size: 11px;"
+                  class="badge badge-emerald"
                   title="Inputs bound to live sensors; rules actively evaluating"
                 >
                   🟢 Reactive
@@ -1362,10 +1361,10 @@ let C = class extends z {
                       <span class="badge ${t.inference === "sugeno" ? "badge-amber" : "badge-cyan"}">
                         ${t.inference}
                       </span>
-                      <span class="badge" style="background: rgba(255,255,255,0.06); color: var(--fuzzy-text-secondary);">
+                      <span class="badge" style="background: var(--secondary-background-color, rgba(125,125,125,0.15)); border: 1px solid var(--divider-color, rgba(125,125,125,0.25)); color: var(--primary-text-color);">
                         ${t.defuzzifier}
                       </span>
-                      ${t.max_updates_per_period ? o`<span class="badge" style="background: rgba(16,185,129,0.1); color: #34d399;" title="Rate limiter budget">
+                      ${t.max_updates_per_period ? o`<span class="badge badge-emerald" title="Rate limiter budget">
                             ⏱️ ${t.max_updates_per_period} / ${t.update_period}s
                           </span>` : ""}
                     </div>
@@ -1478,8 +1477,8 @@ C.styles = [
       }
 
       .card-live-outputs {
-        background: rgba(15, 23, 42, 0.45);
-        border: 1px solid var(--fuzzy-card-border);
+        background: var(--secondary-background-color, rgba(125, 125, 125, 0.08));
+        border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.18));
         border-radius: var(--fuzzy-radius-md);
         padding: 12px 14px;
         margin: 12px 0;
@@ -1524,14 +1523,15 @@ C.styles = [
       }
 
       .output-badge.live-active {
-        background: rgba(16, 185, 129, 0.12);
-        border-color: rgba(16, 185, 129, 0.35);
-        color: #34d399;
+        background: rgba(5, 150, 105, 0.12);
+        border-color: rgba(5, 150, 105, 0.35);
+        color: var(--fuzzy-success, #059669);
+        font-weight: 700;
       }
 
       .output-badge.live-active:hover {
-        background: rgba(16, 185, 129, 0.22);
-        border-color: rgba(16, 185, 129, 0.6);
+        background: rgba(5, 150, 105, 0.22);
+        border-color: rgba(5, 150, 105, 0.6);
         transform: translateY(-1px);
         box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
       }
@@ -1687,7 +1687,7 @@ let B = class extends z {
     super(...arguments), this.range = [0, 100], this.terms = {};
   }
   render() {
-    const e = Number.isFinite(this.range[0]) ? this.range[0] : 0, t = Number.isFinite(this.range[1]) && this.range[1] > e ? this.range[1] : e + 100, s = t - e || 1, a = 600, i = 180, r = 36, n = 24, l = 16, d = 28, p = a - r - n, c = i - l - d, u = (x) => r + (x - e) / s * p, h = (x) => l + (1 - Math.max(0, Math.min(1, x))) * c, f = Object.keys(this.terms || {}), y = 120;
+    const e = Number.isFinite(this.range[0]) ? this.range[0] : 0, t = Number.isFinite(this.range[1]) && this.range[1] > e ? this.range[1] : e + 100, s = t - e || 1, a = 600, i = 180, r = 36, n = 24, l = 16, d = 28, p = a - r - n, c = i - l - d, u = (_) => r + (_ - e) / s * p, h = (_) => l + (1 - Math.max(0, Math.min(1, _))) * c, f = Object.keys(this.terms || {}), y = 120;
     return o`
       <div class="canvas-container">
         <svg viewBox="0 0 ${a} ${i}" preserveAspectRatio="xMidYMid meet">
@@ -1714,8 +1714,8 @@ let B = class extends z {
           </text>
 
           <!-- Curves for each membership term -->
-          ${f.map((x, q) => {
-      const I = this.terms[x];
+          ${f.map((_, q) => {
+      const I = this.terms[_];
       if (!I || !I.params) return J``;
       const V = nt[q % nt.length], H = [];
       for (let S = 0; S <= y; S++) {
@@ -1736,20 +1736,20 @@ let B = class extends z {
 
           <!-- Current Value Marker (if provided) -->
           ${this.currentValue !== void 0 && !isNaN(this.currentValue) ? (() => {
-      const x = u(Math.max(e, Math.min(t, this.currentValue)));
+      const _ = u(Math.max(e, Math.min(t, this.currentValue)));
       return J`
                   <g>
                     <line
                       class="current-val-line"
-                      x1=${x}
+                      x1=${_}
                       y1=${l}
-                      x2=${x}
+                      x2=${_}
                       y2=${l + c}
                     />
-                    <circle cx=${x} cy=${l + c} r="4" fill="#f43f5e" />
+                    <circle cx=${_} cy=${l + c} r="4" fill="#f43f5e" />
                     <text
                       class="axis-text"
-                      x=${x}
+                      x=${_}
                       y=${l - 4}
                       text-anchor="middle"
                       fill="#f43f5e"
@@ -1764,12 +1764,12 @@ let B = class extends z {
 
         <!-- Color Legend -->
         <div class="legend-row">
-          ${f.map((x, q) => {
-      const I = this.terms[x], V = nt[q % nt.length];
+          ${f.map((_, q) => {
+      const I = this.terms[_], V = nt[q % nt.length];
       return o`
               <div class="legend-item" style="color: ${V.stroke};">
                 <span class="legend-swatch" style="background: ${V.stroke};"></span>
-                <span>${x}</span>
+                <span>${_}</span>
                 <span style="opacity: 0.6; font-size: 10px;">(${I.type})</span>
               </div>
             `;
@@ -1940,7 +1940,7 @@ let m = class extends z {
     if (this.hass) {
       this._simulating = !0, this._simError = "";
       try {
-        const e = await xe(this.hass, this._config, this._simInputs);
+        const e = await _e(this.hass, this._config, this._simInputs);
         this._simResults = e;
       } catch (e) {
         this._simError = e?.message || String(e);
@@ -2949,7 +2949,7 @@ let m = class extends z {
         <div class="grid-2" style="gap: 24px; align-items: start;">
           <!-- Left: Antecedent Sliders -->
           <div>
-            <h4 style="font-size: 14px; font-weight: 700; color: #38bdf8; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+            <h4 style="font-size: 14px; font-weight: 700; color: var(--fuzzy-primary, #0284c7); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
               📥 Antecedents (Input Values)
             </h4>
 
@@ -2970,7 +2970,7 @@ let m = class extends z {
                       <div style="display: flex; align-items: center; gap: 12px;">
                         <input
                           type="range"
-                          style="flex: 1; accent-color: #38bdf8; cursor: pointer;"
+                          style="flex: 1; accent-color: var(--fuzzy-primary, #0284c7); cursor: pointer;"
                           min=${n}
                           max=${l}
                           step=${d}
@@ -2996,7 +2996,7 @@ let m = class extends z {
         return o`
                             <span
                               class="chip"
-                              style="${f ? "background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" : "opacity: 0.5;"}"
+                              style="${f ? "background: rgba(2, 132, 199, 0.15); border: 1px solid rgba(2, 132, 199, 0.4); color: #0284c7; font-weight: 600;" : "opacity: 0.6; color: var(--secondary-text-color);"}"
                             >
                               ${c}: <strong>${h.toFixed(2)}</strong>
                             </span>
@@ -3010,7 +3010,7 @@ let m = class extends z {
 
           <!-- Right: Output Waveforms & Defuzzification -->
           <div>
-            <h4 style="font-size: 14px; font-weight: 700; color: #fbbf24; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+            <h4 style="font-size: 14px; font-weight: 700; color: var(--fuzzy-warning, #d97706); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
               📤 Consequents & Distribution Waveforms
             </h4>
 
@@ -3065,7 +3065,7 @@ let m = class extends z {
         return o`
                                   <span
                                     class="chip"
-                                    style="${u ? "background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #34d399;" : "opacity: 0.6; color: #94a3b8;"}"
+                                    style="${u ? "background: rgba(5, 150, 105, 0.15); border: 1px solid rgba(5, 150, 105, 0.4); color: #059669; font-weight: 600;" : "opacity: 0.6; color: var(--secondary-text-color);"}"
                                   >
                                     ${p === "false" || p === !1 ? "off" : p}: <strong>${c.toFixed(2)}</strong>
                                   </span>
@@ -3188,33 +3188,27 @@ let m = class extends z {
       return i ? o`
               <div class="rule-card">
                 <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
-                  <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                    <span class="badge badge-purple" style="width: 24px; justify-content: center;">${a + 1}</span>
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span class="badge badge-purple" style="min-width: 28px; justify-content: center;">R${a + 1}</span>
                     <span class="badge badge-cyan">IF</span>
                     ${i.conditions.map(
         (r, n) => o`
                         ${n > 0 ? o`<span class="badge badge-purple">${r.connector}</span>` : ""}
-                        <span class="chip" style="font-weight: 600; color: #38bdf8; background: rgba(56, 189, 248, 0.1);">
-                          ${r.variable}
-                        </span>
-                        <span class="chip" style="color: #94a3b8;">
-                          ${r.hedge ? `is ${r.hedge}` : "is"}
-                        </span>
-                        <span class="chip" style="font-weight: 600; color: #34d399; background: rgba(52, 211, 153, 0.1);">
-                          ${r.term}
-                        </span>
+                        <span class="rule-var">${r.variable}</span>
+                        <span class="rule-op">${r.hedge ? `is ${r.hedge}` : "is"}</span>
+                        <span class="rule-term">${r.term}</span>
                       `
       )}
                     <span class="badge badge-amber">THEN</span>
-                    <span class="chip" style="font-weight: 600; color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
+                    <span class="rule-var-consequent">
                       ${i.consequent.variable}
                     </span>
-                    <span class="chip" style="color: #94a3b8;">is</span>
-                    <span class="chip" style="font-weight: 600; color: #34d399; background: rgba(52, 211, 153, 0.1);">
+                    <span class="rule-op">is</span>
+                    <span class="rule-term">
                       ${i.consequent.isConstant ? i.consequent.constantValue : i.consequent.term}
                     </span>
                   </div>
-                  <div style="font-family: monospace; font-size: 11px; color: var(--fuzzy-text-secondary); padding-left: 32px;">
+                  <div class="rule-raw">
                     ${s}
                   </div>
                 </div>
@@ -3325,7 +3319,7 @@ let m = class extends z {
           <div
             style="background: rgba(2, 132, 199, 0.1); border: 1px solid rgba(2, 132, 199, 0.25); border-radius: var(--fuzzy-radius-md); padding: 12px 16px; margin-bottom: 20px; font-size: 13px; line-height: 1.5;"
           >
-            <div style="font-weight: 600; color: #38bdf8; margin-bottom: 2px;">
+            <div style="font-weight: 700; color: var(--fuzzy-primary, #0284c7); margin-bottom: 2px;">
               💡 Guided Linguistic Rule Builder
             </div>
             <div style="color: var(--fuzzy-text-secondary);">
@@ -3341,7 +3335,7 @@ let m = class extends z {
             style="background: rgba(14, 165, 233, 0.05); border: 1px solid rgba(14, 165, 233, 0.25); padding: 18px; margin-bottom: 18px; border-radius: var(--fuzzy-radius-md);"
           >
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-              <span style="font-weight: 700; color: #38bdf8; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;">
+              <span style="font-weight: 700; color: var(--fuzzy-primary, #0284c7); font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;">
                 🔹 IF (Antecedent Conditions)
               </span>
               <button
@@ -3429,7 +3423,7 @@ let m = class extends z {
             class="section-box"
             style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.25); padding: 18px; margin-bottom: 20px; border-radius: var(--fuzzy-radius-md);"
           >
-            <div style="font-weight: 700; color: #fbbf24; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px;">
+            <div style="font-weight: 700; color: var(--fuzzy-warning, #d97706); font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px;">
               🔸 THEN (Consequent Action)
             </div>
 
@@ -3462,7 +3456,7 @@ let m = class extends z {
                   ` : o`
                     <select
                       class="input-select"
-                      style="flex: 1; min-width: 120px; font-weight: 600; color: #34d399;"
+                      style="flex: 1; min-width: 120px; font-weight: 600; color: var(--fuzzy-success, #059669);"
                       .value=${this._builderConsequent.term}
                       @change=${(s) => {
       this._builderConsequent.term = s.target.value, this.requestUpdate();
@@ -3491,7 +3485,7 @@ let m = class extends z {
 
           <!-- Live Preview -->
           <div
-            style="background: #020617; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: var(--fuzzy-radius-md); padding: 14px 18px; margin-bottom: 24px;"
+            style="background: var(--secondary-background-color, rgba(15, 23, 42, 0.6)); border: 1px solid var(--divider-color, rgba(2, 132, 199, 0.4)); border-radius: var(--fuzzy-radius-md); padding: 14px 18px; margin-bottom: 24px;"
           >
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
               <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fuzzy-text-secondary); font-weight: 600;">
@@ -3499,7 +3493,7 @@ let m = class extends z {
               </span>
               <span class="badge badge-emerald" style="font-size: 10px;">✓ Canonical Syntax</span>
             </div>
-            <div style="font-family: monospace; font-size: 14px; color: #e2e8f0; word-break: break-all;">
+            <div style="font-family: monospace; font-size: 14px; color: var(--primary-text-color, #e2e8f0); word-break: break-all;">
               ${this._compileRuleString(this._builderConditions, this._builderConsequent)}
             </div>
           </div>
@@ -3625,10 +3619,10 @@ m.styles = [
       }
 
       .rule-card {
-        background: rgba(15, 23, 42, 0.45);
+        background: var(--card-background-color, rgba(30, 41, 59, 0.7));
         border: 1px solid var(--fuzzy-card-border);
         border-radius: var(--fuzzy-radius-md);
-        padding: 14px 18px;
+        padding: 16px 20px;
         margin-bottom: 12px;
         display: flex;
         justify-content: space-between;
@@ -3639,8 +3633,65 @@ m.styles = [
       }
 
       .rule-card:hover {
-        border-color: rgba(56, 189, 248, 0.3);
-        background: rgba(15, 23, 42, 0.65);
+        border-color: var(--fuzzy-primary, #0284c7);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      .rule-var {
+        display: inline-flex;
+        align-items: center;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: rgba(2, 132, 199, 0.12);
+        color: #0284c7;
+        border: 1px solid rgba(2, 132, 199, 0.35);
+      }
+
+      .rule-var-consequent {
+        display: inline-flex;
+        align-items: center;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: rgba(217, 119, 6, 0.12);
+        color: #d97706;
+        border: 1px solid rgba(217, 119, 6, 0.35);
+      }
+
+      .rule-op {
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--secondary-text-color, #64748b);
+        padding: 0 2px;
+      }
+
+      .rule-term {
+        display: inline-flex;
+        align-items: center;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: rgba(5, 150, 105, 0.12);
+        color: #059669;
+        border: 1px solid rgba(5, 150, 105, 0.35);
+      }
+
+      .rule-raw {
+        font-family: var(--ha-font-family-monospace, ui-monospace, SFMono-Regular, Menlo, monospace);
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--primary-text-color, #f8fafc);
+        background: var(--secondary-background-color, rgba(125, 125, 125, 0.08));
+        border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.18));
+        border-radius: 6px;
+        padding: 6px 12px;
+        display: inline-block;
+        width: fit-content;
+        margin-top: 2px;
       }
 
       .builder-row {
@@ -3652,9 +3703,10 @@ m.styles = [
       }
 
       .yaml-banner {
-        background: rgba(168, 85, 247, 0.12);
-        border: 1px solid rgba(168, 85, 247, 0.3);
-        color: #d8b4fe;
+        background: rgba(124, 58, 237, 0.12);
+        border: 1px solid rgba(124, 58, 237, 0.35);
+        color: #7c3aed;
+        font-weight: 600;
         padding: 12px 18px;
         border-radius: var(--fuzzy-radius-md);
         margin-bottom: 20px;
@@ -3810,7 +3862,7 @@ let E = class extends z {
     }
     this._loading = !0, this._error = "";
     try {
-      const t = await _e(
+      const t = await xe(
         this.hass,
         this._selectedTemplate.id,
         e,
@@ -3985,7 +4037,7 @@ F([
 E = F([
   j("fuzzy-template-modal")
 ], E);
-var Oe = Object.defineProperty, Me = Object.getOwnPropertyDescriptor, _t = (e, t, s, a) => {
+var Oe = Object.defineProperty, Me = Object.getOwnPropertyDescriptor, xt = (e, t, s, a) => {
   for (var i = a > 1 ? void 0 : a ? Me(t, s) : t, r = e.length - 1, n; r >= 0; r--)
     (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
   return a && i && Oe(t, s, i), i;
@@ -4274,16 +4326,16 @@ st.styles = T`
       color: #38bdf8;
     }
   `;
-_t([
+xt([
   v({ attribute: !1 })
 ], st.prototype, "hass", 2);
-_t([
+xt([
   g()
 ], st.prototype, "_config", 2);
-st = _t([
+st = xt([
   j("fuzzy-system-card-editor")
 ], st);
-var Re = Object.defineProperty, je = Object.getOwnPropertyDescriptor, xt = (e, t, s, a) => {
+var Re = Object.defineProperty, je = Object.getOwnPropertyDescriptor, _t = (e, t, s, a) => {
   for (var i = a > 1 ? void 0 : a ? je(t, s) : t, r = e.length - 1, n; r >= 0; r--)
     (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
   return a && i && Re(t, s, i), i;
@@ -4556,13 +4608,13 @@ it.styles = T`
       transition: width 0.3s ease;
     }
   `;
-xt([
+_t([
   v({ attribute: !1 })
 ], it.prototype, "hass", 2);
-xt([
+_t([
   g()
 ], it.prototype, "_config", 2);
-it = xt([
+it = _t([
   j("fuzzy-system-card")
 ], it);
 var Ne = Object.defineProperty, Pe = Object.getOwnPropertyDescriptor, O = (e, t, s, a) => {

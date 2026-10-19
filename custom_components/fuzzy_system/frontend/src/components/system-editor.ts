@@ -115,10 +115,10 @@ export class FuzzySystemEditor extends LitElement {
       }
 
       .rule-card {
-        background: rgba(15, 23, 42, 0.45);
+        background: var(--card-background-color, rgba(30, 41, 59, 0.7));
         border: 1px solid var(--fuzzy-card-border);
         border-radius: var(--fuzzy-radius-md);
-        padding: 14px 18px;
+        padding: 16px 20px;
         margin-bottom: 12px;
         display: flex;
         justify-content: space-between;
@@ -129,8 +129,65 @@ export class FuzzySystemEditor extends LitElement {
       }
 
       .rule-card:hover {
-        border-color: rgba(56, 189, 248, 0.3);
-        background: rgba(15, 23, 42, 0.65);
+        border-color: var(--fuzzy-primary, #0284c7);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      .rule-var {
+        display: inline-flex;
+        align-items: center;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: rgba(2, 132, 199, 0.12);
+        color: #0284c7;
+        border: 1px solid rgba(2, 132, 199, 0.35);
+      }
+
+      .rule-var-consequent {
+        display: inline-flex;
+        align-items: center;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: rgba(217, 119, 6, 0.12);
+        color: #d97706;
+        border: 1px solid rgba(217, 119, 6, 0.35);
+      }
+
+      .rule-op {
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--secondary-text-color, #64748b);
+        padding: 0 2px;
+      }
+
+      .rule-term {
+        display: inline-flex;
+        align-items: center;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: rgba(5, 150, 105, 0.12);
+        color: #059669;
+        border: 1px solid rgba(5, 150, 105, 0.35);
+      }
+
+      .rule-raw {
+        font-family: var(--ha-font-family-monospace, ui-monospace, SFMono-Regular, Menlo, monospace);
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--primary-text-color, #f8fafc);
+        background: var(--secondary-background-color, rgba(125, 125, 125, 0.08));
+        border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.18));
+        border-radius: 6px;
+        padding: 6px 12px;
+        display: inline-block;
+        width: fit-content;
+        margin-top: 2px;
       }
 
       .builder-row {
@@ -142,9 +199,10 @@ export class FuzzySystemEditor extends LitElement {
       }
 
       .yaml-banner {
-        background: rgba(168, 85, 247, 0.12);
-        border: 1px solid rgba(168, 85, 247, 0.3);
-        color: #d8b4fe;
+        background: rgba(124, 58, 237, 0.12);
+        border: 1px solid rgba(124, 58, 237, 0.35);
+        color: #7c3aed;
+        font-weight: 600;
         padding: 12px 18px;
         border-radius: var(--fuzzy-radius-md);
         margin-bottom: 20px;
@@ -1597,7 +1655,7 @@ export class FuzzySystemEditor extends LitElement {
         <div class="grid-2" style="gap: 24px; align-items: start;">
           <!-- Left: Antecedent Sliders -->
           <div>
-            <h4 style="font-size: 14px; font-weight: 700; color: #38bdf8; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+            <h4 style="font-size: 14px; font-weight: 700; color: var(--fuzzy-primary, #0284c7); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
               📥 Antecedents (Input Values)
             </h4>
 
@@ -1625,7 +1683,7 @@ export class FuzzySystemEditor extends LitElement {
                       <div style="display: flex; align-items: center; gap: 12px;">
                         <input
                           type="range"
-                          style="flex: 1; accent-color: #38bdf8; cursor: pointer;"
+                          style="flex: 1; accent-color: var(--fuzzy-primary, #0284c7); cursor: pointer;"
                           min=${min}
                           max=${max}
                           step=${step}
@@ -1653,7 +1711,7 @@ export class FuzzySystemEditor extends LitElement {
                           return html`
                             <span
                               class="chip"
-                              style="${active ? 'background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;' : 'opacity: 0.5;'}"
+                              style="${active ? 'background: rgba(2, 132, 199, 0.15); border: 1px solid rgba(2, 132, 199, 0.4); color: #0284c7; font-weight: 600;' : 'opacity: 0.6; color: var(--secondary-text-color);'}"
                             >
                               ${tName}: <strong>${mu.toFixed(2)}</strong>
                             </span>
@@ -1667,7 +1725,7 @@ export class FuzzySystemEditor extends LitElement {
 
           <!-- Right: Output Waveforms & Defuzzification -->
           <div>
-            <h4 style="font-size: 14px; font-weight: 700; color: #fbbf24; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+            <h4 style="font-size: 14px; font-weight: 700; color: var(--fuzzy-warning, #d97706); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
               📤 Consequents & Distribution Waveforms
             </h4>
 
@@ -1738,7 +1796,7 @@ export class FuzzySystemEditor extends LitElement {
                                 return html`
                                   <span
                                     class="chip"
-                                    style="${active ? 'background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #34d399;' : 'opacity: 0.6; color: #94a3b8;'}"
+                                    style="${active ? 'background: rgba(5, 150, 105, 0.15); border: 1px solid rgba(5, 150, 105, 0.4); color: #059669; font-weight: 600;' : 'opacity: 0.6; color: var(--secondary-text-color);'}"
                                   >
                                     ${label}: <strong>${(act as number).toFixed(2)}</strong>
                                   </span>
@@ -1911,35 +1969,29 @@ export class FuzzySystemEditor extends LitElement {
             return html`
               <div class="rule-card">
                 <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
-                  <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                    <span class="badge badge-purple" style="width: 24px; justify-content: center;">${idx + 1}</span>
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span class="badge badge-purple" style="min-width: 28px; justify-content: center;">R${idx + 1}</span>
                     <span class="badge badge-cyan">IF</span>
                     ${parsed.conditions.map(
                       (c, cIdx) => html`
                         ${cIdx > 0 ? html`<span class="badge badge-purple">${c.connector}</span>` : ""}
-                        <span class="chip" style="font-weight: 600; color: #38bdf8; background: rgba(56, 189, 248, 0.1);">
-                          ${c.variable}
-                        </span>
-                        <span class="chip" style="color: #94a3b8;">
-                          ${c.hedge ? `is ${c.hedge}` : "is"}
-                        </span>
-                        <span class="chip" style="font-weight: 600; color: #34d399; background: rgba(52, 211, 153, 0.1);">
-                          ${c.term}
-                        </span>
+                        <span class="rule-var">${c.variable}</span>
+                        <span class="rule-op">${c.hedge ? `is ${c.hedge}` : "is"}</span>
+                        <span class="rule-term">${c.term}</span>
                       `
                     )}
                     <span class="badge badge-amber">THEN</span>
-                    <span class="chip" style="font-weight: 600; color: #fbbf24; background: rgba(245, 158, 11, 0.1);">
+                    <span class="rule-var-consequent">
                       ${parsed.consequent.variable}
                     </span>
-                    <span class="chip" style="color: #94a3b8;">is</span>
-                    <span class="chip" style="font-weight: 600; color: #34d399; background: rgba(52, 211, 153, 0.1);">
+                    <span class="rule-op">is</span>
+                    <span class="rule-term">
                       ${parsed.consequent.isConstant
                         ? parsed.consequent.constantValue
                         : parsed.consequent.term}
                     </span>
                   </div>
-                  <div style="font-family: monospace; font-size: 11px; color: var(--fuzzy-text-secondary); padding-left: 32px;">
+                  <div class="rule-raw">
                     ${rule}
                   </div>
                 </div>
@@ -2035,7 +2087,7 @@ export class FuzzySystemEditor extends LitElement {
           <div
             style="background: rgba(2, 132, 199, 0.1); border: 1px solid rgba(2, 132, 199, 0.25); border-radius: var(--fuzzy-radius-md); padding: 12px 16px; margin-bottom: 20px; font-size: 13px; line-height: 1.5;"
           >
-            <div style="font-weight: 600; color: #38bdf8; margin-bottom: 2px;">
+            <div style="font-weight: 700; color: var(--fuzzy-primary, #0284c7); margin-bottom: 2px;">
               💡 Guided Linguistic Rule Builder
             </div>
             <div style="color: var(--fuzzy-text-secondary);">
@@ -2053,7 +2105,7 @@ export class FuzzySystemEditor extends LitElement {
             style="background: rgba(14, 165, 233, 0.05); border: 1px solid rgba(14, 165, 233, 0.25); padding: 18px; margin-bottom: 18px; border-radius: var(--fuzzy-radius-md);"
           >
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-              <span style="font-weight: 700; color: #38bdf8; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;">
+              <span style="font-weight: 700; color: var(--fuzzy-primary, #0284c7); font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;">
                 🔹 IF (Antecedent Conditions)
               </span>
               <button
@@ -2148,7 +2200,7 @@ export class FuzzySystemEditor extends LitElement {
             class="section-box"
             style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.25); padding: 18px; margin-bottom: 20px; border-radius: var(--fuzzy-radius-md);"
           >
-            <div style="font-weight: 700; color: #fbbf24; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px;">
+            <div style="font-weight: 700; color: var(--fuzzy-warning, #d97706); font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px;">
               🔸 THEN (Consequent Action)
             </div>
 
@@ -2184,7 +2236,7 @@ export class FuzzySystemEditor extends LitElement {
                 : html`
                     <select
                       class="input-select"
-                      style="flex: 1; min-width: 120px; font-weight: 600; color: #34d399;"
+                      style="flex: 1; min-width: 120px; font-weight: 600; color: var(--fuzzy-success, #059669);"
                       .value=${this._builderConsequent.term}
                       @change=${(e: any) => {
                         this._builderConsequent.term = e.target.value;
@@ -2217,7 +2269,7 @@ export class FuzzySystemEditor extends LitElement {
 
           <!-- Live Preview -->
           <div
-            style="background: #020617; border: 1px solid rgba(56, 189, 248, 0.4); border-radius: var(--fuzzy-radius-md); padding: 14px 18px; margin-bottom: 24px;"
+            style="background: var(--secondary-background-color, rgba(15, 23, 42, 0.6)); border: 1px solid var(--divider-color, rgba(2, 132, 199, 0.4)); border-radius: var(--fuzzy-radius-md); padding: 14px 18px; margin-bottom: 24px;"
           >
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
               <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fuzzy-text-secondary); font-weight: 600;">
@@ -2225,7 +2277,7 @@ export class FuzzySystemEditor extends LitElement {
               </span>
               <span class="badge badge-emerald" style="font-size: 10px;">✓ Canonical Syntax</span>
             </div>
-            <div style="font-family: monospace; font-size: 14px; color: #e2e8f0; word-break: break-all;">
+            <div style="font-family: monospace; font-size: 14px; color: var(--primary-text-color, #e2e8f0); word-break: break-all;">
               ${this._compileRuleString(this._builderConditions, this._builderConsequent)}
             </div>
           </div>

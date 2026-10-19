@@ -4,16 +4,16 @@ export const sharedStyles = css`
   :host {
     --fuzzy-primary: var(--primary-color, #0284c7);
     --fuzzy-primary-hover: var(--primary-color-hover, #0369a1);
-    --fuzzy-accent: var(--accent-color, #f59e0b);
-    --fuzzy-success: var(--success-color, #10b981);
-    --fuzzy-warning: var(--warning-color, #f59e0b);
+    --fuzzy-accent: var(--accent-color, #d97706);
+    --fuzzy-success: var(--success-color, #059669);
+    --fuzzy-warning: var(--warning-color, #d97706);
     --fuzzy-danger: var(--error-color, #ef4444);
     --fuzzy-bg: var(--primary-background-color, #0f172a);
     --fuzzy-card-bg: var(--card-background-color, rgba(30, 41, 59, 0.7));
-    --fuzzy-card-border: var(--divider-color, rgba(255, 255, 255, 0.08));
+    --fuzzy-card-border: var(--divider-color, rgba(255, 255, 255, 0.12));
     --fuzzy-text: var(--primary-text-color, #f8fafc);
-    --fuzzy-text-secondary: var(--secondary-text-color, #94a3b8);
-    --fuzzy-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    --fuzzy-text-secondary: var(--secondary-text-color, #64748b);
+    --fuzzy-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
     --fuzzy-radius-lg: 16px;
     --fuzzy-radius-md: 10px;
     --fuzzy-radius-sm: 6px;
@@ -43,7 +43,7 @@ export const sharedStyles = css`
   .card:hover {
     border-color: rgba(2, 132, 199, 0.4);
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.25);
   }
 
   /* Typography */
@@ -55,9 +55,7 @@ export const sharedStyles = css`
     font-size: 24px;
     font-weight: 700;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--primary-text-color, #f8fafc);
   }
 
   .subtitle {
@@ -72,51 +70,54 @@ export const sharedStyles = css`
     align-items: center;
     gap: 6px;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     padding: 4px 10px;
     border-radius: 9999px;
+    line-height: 1.2;
   }
 
   .badge-cyan {
-    background: rgba(6, 182, 212, 0.15);
-    color: #38bdf8;
-    border: 1px solid rgba(6, 182, 212, 0.3);
+    background: #0284c7;
+    color: #ffffff;
+    border: 1px solid #0369a1;
   }
 
   .badge-amber {
-    background: rgba(245, 158, 11, 0.15);
-    color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    background: #d97706;
+    color: #ffffff;
+    border: 1px solid #b45309;
   }
 
   .badge-emerald {
-    background: rgba(16, 185, 129, 0.15);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: #059669;
+    color: #ffffff;
+    border: 1px solid #047857;
   }
 
   .badge-purple {
-    background: rgba(168, 85, 247, 0.15);
-    color: #c084fc;
-    border: 1px solid rgba(168, 85, 247, 0.3);
+    background: #7c3aed;
+    color: #ffffff;
+    border: 1px solid #6d28d9;
   }
 
   .badge-rose {
-    background: rgba(244, 63, 94, 0.15);
-    color: #fb7185;
-    border: 1px solid rgba(244, 63, 94, 0.3);
+    background: #e11d48;
+    color: #ffffff;
+    border: 1px solid #be123c;
   }
 
   .chip {
     display: inline-flex;
     align-items: center;
     font-size: 12px;
+    font-weight: 500;
     padding: 4px 10px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--chip-background-color, var(--secondary-background-color, rgba(125, 125, 125, 0.12)));
+    border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.2));
     border-radius: var(--fuzzy-radius-sm);
-    color: var(--fuzzy-text-secondary);
+    color: var(--primary-text-color, var(--fuzzy-text));
   }
 
   /* Buttons */

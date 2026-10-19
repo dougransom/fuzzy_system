@@ -73,8 +73,8 @@ export class FuzzySystemCatalog extends LitElement {
       }
 
       .card-live-outputs {
-        background: rgba(15, 23, 42, 0.45);
-        border: 1px solid var(--fuzzy-card-border);
+        background: var(--secondary-background-color, rgba(125, 125, 125, 0.08));
+        border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.18));
         border-radius: var(--fuzzy-radius-md);
         padding: 12px 14px;
         margin: 12px 0;
@@ -119,14 +119,15 @@ export class FuzzySystemCatalog extends LitElement {
       }
 
       .output-badge.live-active {
-        background: rgba(16, 185, 129, 0.12);
-        border-color: rgba(16, 185, 129, 0.35);
-        color: #34d399;
+        background: rgba(5, 150, 105, 0.12);
+        border-color: rgba(5, 150, 105, 0.35);
+        color: var(--fuzzy-success, #059669);
+        font-weight: 700;
       }
 
       .output-badge.live-active:hover {
-        background: rgba(16, 185, 129, 0.22);
-        border-color: rgba(16, 185, 129, 0.6);
+        background: rgba(5, 150, 105, 0.22);
+        border-color: rgba(5, 150, 105, 0.6);
         transform: translateY(-1px);
         box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
       }
@@ -361,8 +362,7 @@ export class FuzzySystemCatalog extends LitElement {
           ${inputStatus.total > 0 && inputStatus.bound < inputStatus.total
             ? html`
                 <span
-                  class="chip"
-                  style="color: #fbbf24; background: rgba(245, 158, 11, 0.1); font-size: 11px;"
+                  class="badge badge-amber"
                   title="Some input antecedents do not have live sensor entities bound yet"
                 >
                   ⚠️ ${inputStatus.total - inputStatus.bound} unbound input${inputStatus.total - inputStatus.bound > 1 ? "s" : ""}
@@ -370,8 +370,7 @@ export class FuzzySystemCatalog extends LitElement {
               `
             : html`
                 <span
-                  class="chip"
-                  style="color: #34d399; background: rgba(52, 211, 153, 0.1); font-size: 11px;"
+                  class="badge badge-emerald"
                   title="Inputs bound to live sensors; rules actively evaluating"
                 >
                   🟢 Reactive
@@ -536,11 +535,11 @@ export class FuzzySystemCatalog extends LitElement {
                       <span class="badge ${sys.inference === "sugeno" ? "badge-amber" : "badge-cyan"}">
                         ${sys.inference}
                       </span>
-                      <span class="badge" style="background: rgba(255,255,255,0.06); color: var(--fuzzy-text-secondary);">
+                      <span class="badge" style="background: var(--secondary-background-color, rgba(125,125,125,0.15)); border: 1px solid var(--divider-color, rgba(125,125,125,0.25)); color: var(--primary-text-color);">
                         ${sys.defuzzifier}
                       </span>
                       ${sys.max_updates_per_period
-                        ? html`<span class="badge" style="background: rgba(16,185,129,0.1); color: #34d399;" title="Rate limiter budget">
+                        ? html`<span class="badge badge-emerald" title="Rate limiter budget">
                             ⏱️ ${sys.max_updates_per_period} / ${sys.update_period}s
                           </span>`
                         : ""}
