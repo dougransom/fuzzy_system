@@ -3,18 +3,18 @@
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const ot = globalThis, gt = ot.ShadowRoot && (ot.ShadyCSS === void 0 || ot.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, ft = Symbol(), $t = /* @__PURE__ */ new WeakMap();
-let Mt = class {
-  constructor(t, s, a) {
-    if (this._$cssResult$ = !0, a !== ft) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
-    this.cssText = t, this.t = s;
+const lt = globalThis, ft = lt.ShadowRoot && (lt.ShadyCSS === void 0 || lt.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, mt = Symbol(), wt = /* @__PURE__ */ new WeakMap();
+let Nt = class {
+  constructor(t, i, a) {
+    if (this._$cssResult$ = !0, a !== mt) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+    this.cssText = t, this.t = i;
   }
   get styleSheet() {
     let t = this.o;
-    const s = this.t;
-    if (gt && t === void 0) {
-      const a = s !== void 0 && s.length === 1;
-      a && (t = $t.get(s)), t === void 0 && ((this.o = t = new CSSStyleSheet()).replaceSync(this.cssText), a && $t.set(s, t));
+    const i = this.t;
+    if (ft && t === void 0) {
+      const a = i !== void 0 && i.length === 1;
+      a && (t = wt.get(i)), t === void 0 && ((this.o = t = new CSSStyleSheet()).replaceSync(this.cssText), a && wt.set(i, t));
     }
     return t;
   }
@@ -22,33 +22,33 @@ let Mt = class {
     return this.cssText;
   }
 };
-const Ut = (e) => new Mt(typeof e == "string" ? e : e + "", void 0, ft), T = (e, ...t) => {
-  const s = e.length === 1 ? e[0] : t.reduce((a, i, r) => a + ((n) => {
+const Zt = (e) => new Nt(typeof e == "string" ? e : e + "", void 0, mt), O = (e, ...t) => {
+  const i = e.length === 1 ? e[0] : t.reduce((a, s, r) => a + ((n) => {
     if (n._$cssResult$ === !0) return n.cssText;
     if (typeof n == "number") return n;
     throw Error("Value passed to 'css' function must be a 'css' function result: " + n + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
-  })(i) + e[r + 1], e[0]);
-  return new Mt(s, e, ft);
-}, Dt = (e, t) => {
-  if (gt) e.adoptedStyleSheets = t.map((s) => s instanceof CSSStyleSheet ? s : s.styleSheet);
-  else for (const s of t) {
-    const a = document.createElement("style"), i = ot.litNonce;
-    i !== void 0 && a.setAttribute("nonce", i), a.textContent = s.cssText, e.appendChild(a);
+  })(s) + e[r + 1], e[0]);
+  return new Nt(i, e, mt);
+}, Qt = (e, t) => {
+  if (ft) e.adoptedStyleSheets = t.map((i) => i instanceof CSSStyleSheet ? i : i.styleSheet);
+  else for (const i of t) {
+    const a = document.createElement("style"), s = lt.litNonce;
+    s !== void 0 && a.setAttribute("nonce", s), a.textContent = i.cssText, e.appendChild(a);
   }
-}, zt = gt ? (e) => e : (e) => e instanceof CSSStyleSheet ? ((t) => {
-  let s = "";
-  for (const a of t.cssRules) s += a.cssText;
-  return Ut(s);
+}, zt = ft ? (e) => e : (e) => e instanceof CSSStyleSheet ? ((t) => {
+  let i = "";
+  for (const a of t.cssRules) i += a.cssText;
+  return Zt(i);
 })(e) : e;
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: Bt, defineProperty: qt, getOwnPropertyDescriptor: Ht, getOwnPropertyNames: Wt, getOwnPropertySymbols: Gt, getPrototypeOf: Jt } = Object, pt = globalThis, wt = pt.trustedTypes, Zt = wt ? wt.emptyScript : "", Qt = pt.reactiveElementPolyfillSupport, K = (e, t) => e, lt = { toAttribute(e, t) {
+const { is: Xt, defineProperty: Kt, getOwnPropertyDescriptor: te, getOwnPropertyNames: ee, getOwnPropertySymbols: se, getPrototypeOf: ie } = Object, ct = globalThis, St = ct.trustedTypes, ae = St ? St.emptyScript : "", re = ct.reactiveElementPolyfillSupport, K = (e, t) => e, dt = { toAttribute(e, t) {
   switch (t) {
     case Boolean:
-      e = e ? Zt : null;
+      e = e ? ae : null;
       break;
     case Object:
     case Array:
@@ -56,85 +56,85 @@ const { is: Bt, defineProperty: qt, getOwnPropertyDescriptor: Ht, getOwnProperty
   }
   return e;
 }, fromAttribute(e, t) {
-  let s = e;
+  let i = e;
   switch (t) {
     case Boolean:
-      s = e !== null;
+      i = e !== null;
       break;
     case Number:
-      s = e === null ? null : Number(e);
+      i = e === null ? null : Number(e);
       break;
     case Object:
     case Array:
       try {
-        s = JSON.parse(e);
+        i = JSON.parse(e);
       } catch {
-        s = null;
+        i = null;
       }
   }
-  return s;
-} }, mt = (e, t) => !Bt(e, t), St = { attribute: !0, type: String, converter: lt, reflect: !1, useDefault: !1, hasChanged: mt };
-Symbol.metadata ??= Symbol("metadata"), pt.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
-let G = class extends HTMLElement {
+  return i;
+} }, bt = (e, t) => !Xt(e, t), kt = { attribute: !0, type: String, converter: dt, reflect: !1, useDefault: !1, hasChanged: bt };
+Symbol.metadata ??= Symbol("metadata"), ct.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
+let J = class extends HTMLElement {
   static addInitializer(t) {
     this._$Ei(), (this.l ??= []).push(t);
   }
   static get observedAttributes() {
     return this.finalize(), this._$Eh && [...this._$Eh.keys()];
   }
-  static createProperty(t, s = St) {
-    if (s.state && (s.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(t) && ((s = Object.create(s)).wrapped = !0), this.elementProperties.set(t, s), !s.noAccessor) {
-      const a = Symbol(), i = this.getPropertyDescriptor(t, a, s);
-      i !== void 0 && qt(this.prototype, t, i);
+  static createProperty(t, i = kt) {
+    if (i.state && (i.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(t) && ((i = Object.create(i)).wrapped = !0), this.elementProperties.set(t, i), !i.noAccessor) {
+      const a = Symbol(), s = this.getPropertyDescriptor(t, a, i);
+      s !== void 0 && Kt(this.prototype, t, s);
     }
   }
-  static getPropertyDescriptor(t, s, a) {
-    const { get: i, set: r } = Ht(this.prototype, t) ?? { get() {
-      return this[s];
+  static getPropertyDescriptor(t, i, a) {
+    const { get: s, set: r } = te(this.prototype, t) ?? { get() {
+      return this[i];
     }, set(n) {
-      this[s] = n;
+      this[i] = n;
     } };
-    return { get: i, set(n) {
-      const l = i?.call(this);
-      r?.call(this, n), this.requestUpdate(t, l, a);
+    return { get: s, set(n) {
+      const o = s?.call(this);
+      r?.call(this, n), this.requestUpdate(t, o, a);
     }, configurable: !0, enumerable: !0 };
   }
   static getPropertyOptions(t) {
-    return this.elementProperties.get(t) ?? St;
+    return this.elementProperties.get(t) ?? kt;
   }
   static _$Ei() {
     if (this.hasOwnProperty(K("elementProperties"))) return;
-    const t = Jt(this);
+    const t = ie(this);
     t.finalize(), t.l !== void 0 && (this.l = [...t.l]), this.elementProperties = new Map(t.elementProperties);
   }
   static finalize() {
     if (this.hasOwnProperty(K("finalized"))) return;
     if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(K("properties"))) {
-      const s = this.properties, a = [...Wt(s), ...Gt(s)];
-      for (const i of a) this.createProperty(i, s[i]);
+      const i = this.properties, a = [...ee(i), ...se(i)];
+      for (const s of a) this.createProperty(s, i[s]);
     }
     const t = this[Symbol.metadata];
     if (t !== null) {
-      const s = litPropertyMetadata.get(t);
-      if (s !== void 0) for (const [a, i] of s) this.elementProperties.set(a, i);
+      const i = litPropertyMetadata.get(t);
+      if (i !== void 0) for (const [a, s] of i) this.elementProperties.set(a, s);
     }
     this._$Eh = /* @__PURE__ */ new Map();
-    for (const [s, a] of this.elementProperties) {
-      const i = this._$Eu(s, a);
-      i !== void 0 && this._$Eh.set(i, s);
+    for (const [i, a] of this.elementProperties) {
+      const s = this._$Eu(i, a);
+      s !== void 0 && this._$Eh.set(s, i);
     }
     this.elementStyles = this.finalizeStyles(this.styles);
   }
   static finalizeStyles(t) {
-    const s = [];
+    const i = [];
     if (Array.isArray(t)) {
       const a = new Set(t.flat(1 / 0).reverse());
-      for (const i of a) s.unshift(zt(i));
-    } else t !== void 0 && s.push(zt(t));
-    return s;
+      for (const s of a) i.unshift(zt(s));
+    } else t !== void 0 && i.push(zt(t));
+    return i;
   }
-  static _$Eu(t, s) {
-    const a = s.attribute;
+  static _$Eu(t, i) {
+    const a = i.attribute;
     return a === !1 ? void 0 : typeof a == "string" ? a : typeof t == "string" ? t.toLowerCase() : void 0;
   }
   constructor() {
@@ -150,13 +150,13 @@ let G = class extends HTMLElement {
     this._$EO?.delete(t);
   }
   _$E_() {
-    const t = /* @__PURE__ */ new Map(), s = this.constructor.elementProperties;
-    for (const a of s.keys()) this.hasOwnProperty(a) && (t.set(a, this[a]), delete this[a]);
+    const t = /* @__PURE__ */ new Map(), i = this.constructor.elementProperties;
+    for (const a of i.keys()) this.hasOwnProperty(a) && (t.set(a, this[a]), delete this[a]);
     t.size > 0 && (this._$Ep = t);
   }
   createRenderRoot() {
     const t = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
-    return Dt(t, this.constructor.elementStyles), t;
+    return Qt(t, this.constructor.elementStyles), t;
   }
   connectedCallback() {
     this.renderRoot ??= this.createRenderRoot(), this.enableUpdating(!0), this._$EO?.forEach((t) => t.hostConnected?.());
@@ -166,42 +166,42 @@ let G = class extends HTMLElement {
   disconnectedCallback() {
     this._$EO?.forEach((t) => t.hostDisconnected?.());
   }
-  attributeChangedCallback(t, s, a) {
+  attributeChangedCallback(t, i, a) {
     this._$AK(t, a);
   }
-  _$ET(t, s) {
-    const a = this.constructor.elementProperties.get(t), i = this.constructor._$Eu(t, a);
-    if (i !== void 0 && a.reflect === !0) {
-      const r = (a.converter?.toAttribute !== void 0 ? a.converter : lt).toAttribute(s, a.type);
-      this._$Em = t, r == null ? this.removeAttribute(i) : this.setAttribute(i, r), this._$Em = null;
+  _$ET(t, i) {
+    const a = this.constructor.elementProperties.get(t), s = this.constructor._$Eu(t, a);
+    if (s !== void 0 && a.reflect === !0) {
+      const r = (a.converter?.toAttribute !== void 0 ? a.converter : dt).toAttribute(i, a.type);
+      this._$Em = t, r == null ? this.removeAttribute(s) : this.setAttribute(s, r), this._$Em = null;
     }
   }
-  _$AK(t, s) {
-    const a = this.constructor, i = a._$Eh.get(t);
-    if (i !== void 0 && this._$Em !== i) {
-      const r = a.getPropertyOptions(i), n = typeof r.converter == "function" ? { fromAttribute: r.converter } : r.converter?.fromAttribute !== void 0 ? r.converter : lt;
-      this._$Em = i;
-      const l = n.fromAttribute(s, r.type);
-      this[i] = l ?? this._$Ej?.get(i) ?? l, this._$Em = null;
+  _$AK(t, i) {
+    const a = this.constructor, s = a._$Eh.get(t);
+    if (s !== void 0 && this._$Em !== s) {
+      const r = a.getPropertyOptions(s), n = typeof r.converter == "function" ? { fromAttribute: r.converter } : r.converter?.fromAttribute !== void 0 ? r.converter : dt;
+      this._$Em = s;
+      const o = n.fromAttribute(i, r.type);
+      this[s] = o ?? this._$Ej?.get(s) ?? o, this._$Em = null;
     }
   }
-  requestUpdate(t, s, a, i = !1, r) {
+  requestUpdate(t, i, a, s = !1, r) {
     if (t !== void 0) {
       const n = this.constructor;
-      if (i === !1 && (r = this[t]), a ??= n.getPropertyOptions(t), !((a.hasChanged ?? mt)(r, s) || a.useDefault && a.reflect && r === this._$Ej?.get(t) && !this.hasAttribute(n._$Eu(t, a)))) return;
-      this.C(t, s, a);
+      if (s === !1 && (r = this[t]), a ??= n.getPropertyOptions(t), !((a.hasChanged ?? bt)(r, i) || a.useDefault && a.reflect && r === this._$Ej?.get(t) && !this.hasAttribute(n._$Eu(t, a)))) return;
+      this.C(t, i, a);
     }
     this.isUpdatePending === !1 && (this._$ES = this._$EP());
   }
-  C(t, s, { useDefault: a, reflect: i, wrapped: r }, n) {
-    a && !(this._$Ej ??= /* @__PURE__ */ new Map()).has(t) && (this._$Ej.set(t, n ?? s ?? this[t]), r !== !0 || n !== void 0) || (this._$AL.has(t) || (this.hasUpdated || a || (s = void 0), this._$AL.set(t, s)), i === !0 && this._$Em !== t && (this._$Eq ??= /* @__PURE__ */ new Set()).add(t));
+  C(t, i, { useDefault: a, reflect: s, wrapped: r }, n) {
+    a && !(this._$Ej ??= /* @__PURE__ */ new Map()).has(t) && (this._$Ej.set(t, n ?? i ?? this[t]), r !== !0 || n !== void 0) || (this._$AL.has(t) || (this.hasUpdated || a || (i = void 0), this._$AL.set(t, i)), s === !0 && this._$Em !== t && (this._$Eq ??= /* @__PURE__ */ new Set()).add(t));
   }
   async _$EP() {
     this.isUpdatePending = !0;
     try {
       await this._$ES;
-    } catch (s) {
-      Promise.reject(s);
+    } catch (i) {
+      Promise.reject(i);
     }
     const t = this.scheduleUpdate();
     return t != null && await t, !this.isUpdatePending;
@@ -213,28 +213,28 @@ let G = class extends HTMLElement {
     if (!this.isUpdatePending) return;
     if (!this.hasUpdated) {
       if (this.renderRoot ??= this.createRenderRoot(), this._$Ep) {
-        for (const [i, r] of this._$Ep) this[i] = r;
+        for (const [s, r] of this._$Ep) this[s] = r;
         this._$Ep = void 0;
       }
       const a = this.constructor.elementProperties;
-      if (a.size > 0) for (const [i, r] of a) {
-        const { wrapped: n } = r, l = this[i];
-        n !== !0 || this._$AL.has(i) || l === void 0 || this.C(i, void 0, r, l);
+      if (a.size > 0) for (const [s, r] of a) {
+        const { wrapped: n } = r, o = this[s];
+        n !== !0 || this._$AL.has(s) || o === void 0 || this.C(s, void 0, r, o);
       }
     }
     let t = !1;
-    const s = this._$AL;
+    const i = this._$AL;
     try {
-      t = this.shouldUpdate(s), t ? (this.willUpdate(s), this._$EO?.forEach((a) => a.hostUpdate?.()), this.update(s)) : this._$EM();
+      t = this.shouldUpdate(i), t ? (this.willUpdate(i), this._$EO?.forEach((a) => a.hostUpdate?.()), this.update(i)) : this._$EM();
     } catch (a) {
       throw t = !1, this._$EM(), a;
     }
-    t && this._$AE(s);
+    t && this._$AE(i);
   }
   willUpdate(t) {
   }
   _$AE(t) {
-    this._$EO?.forEach((s) => s.hostUpdated?.()), this.hasUpdated || (this.hasUpdated = !0, this.firstUpdated(t)), this.updated(t);
+    this._$EO?.forEach((i) => i.hostUpdated?.()), this.hasUpdated || (this.hasUpdated = !0, this.firstUpdated(t)), this.updated(t);
   }
   _$EM() {
     this._$AL = /* @__PURE__ */ new Map(), this.isUpdatePending = !1;
@@ -249,84 +249,84 @@ let G = class extends HTMLElement {
     return !0;
   }
   update(t) {
-    this._$Eq &&= this._$Eq.forEach((s) => this._$ET(s, this[s])), this._$EM();
+    this._$Eq &&= this._$Eq.forEach((i) => this._$ET(i, this[i])), this._$EM();
   }
   updated(t) {
   }
   firstUpdated(t) {
   }
 };
-G.elementStyles = [], G.shadowRootOptions = { mode: "open" }, G[K("elementProperties")] = /* @__PURE__ */ new Map(), G[K("finalized")] = /* @__PURE__ */ new Map(), Qt?.({ ReactiveElement: G }), (pt.reactiveElementVersions ??= []).push("2.1.2");
+J.elementStyles = [], J.shadowRootOptions = { mode: "open" }, J[K("elementProperties")] = /* @__PURE__ */ new Map(), J[K("finalized")] = /* @__PURE__ */ new Map(), re?.({ ReactiveElement: J }), (ct.reactiveElementVersions ??= []).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const bt = globalThis, kt = (e) => e, dt = bt.trustedTypes, At = dt ? dt.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, Rt = "$lit$", R = `lit$${Math.random().toFixed(9).slice(2)}$`, jt = "?" + R, Xt = `<${jt}>`, D = document, Y = () => D.createComment(""), tt = (e) => e === null || typeof e != "object" && typeof e != "function", yt = Array.isArray, Kt = (e) => yt(e) || typeof e?.[Symbol.iterator] == "function", ht = `[ 	
-\f\r]`, X = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, Ct = /-->/g, Et = />/g, L = RegExp(`>|${ht}(?:([^\\s"'>=/]+)(${ht}*=${ht}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), It = /'/g, Tt = /"/g, Nt = /^(?:script|style|textarea|title)$/i, Pt = (e) => (t, ...s) => ({ _$litType$: e, strings: t, values: s }), o = Pt(1), J = Pt(2), Z = Symbol.for("lit-noChange"), x = Symbol.for("lit-nothing"), Ot = /* @__PURE__ */ new WeakMap(), U = D.createTreeWalker(D, 129);
-function Ft(e, t) {
-  if (!yt(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
-  return At !== void 0 ? At.createHTML(t) : t;
+const yt = globalThis, At = (e) => e, pt = yt.trustedTypes, Ct = pt ? pt.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, Pt = "$lit$", N = `lit$${Math.random().toFixed(9).slice(2)}$`, Lt = "?" + N, ne = `<${Lt}>`, U = document, tt = () => U.createComment(""), et = (e) => e === null || typeof e != "object" && typeof e != "function", vt = Array.isArray, oe = (e) => vt(e) || typeof e?.[Symbol.iterator] == "function", gt = `[ 	
+\f\r]`, X = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, Et = /-->/g, It = />/g, H = RegExp(`>|${gt}(?:([^\\s"'>=/]+)(${gt}*=${gt}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g"), Tt = /'/g, Mt = /"/g, Ft = /^(?:script|style|textarea|title)$/i, Dt = (e) => (t, ...i) => ({ _$litType$: e, strings: t, values: i }), l = Dt(1), Y = Dt(2), Z = Symbol.for("lit-noChange"), x = Symbol.for("lit-nothing"), Ot = /* @__PURE__ */ new WeakMap(), V = U.createTreeWalker(U, 129);
+function Ht(e, t) {
+  if (!vt(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
+  return Ct !== void 0 ? Ct.createHTML(t) : t;
 }
-const Yt = (e, t) => {
-  const s = e.length - 1, a = [];
-  let i, r = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", n = X;
-  for (let l = 0; l < s; l++) {
-    const d = e[l];
-    let p, c, u = -1, h = 0;
-    for (; h < d.length && (n.lastIndex = h, c = n.exec(d), c !== null); ) h = n.lastIndex, n === X ? c[1] === "!--" ? n = Ct : c[1] !== void 0 ? n = Et : c[2] !== void 0 ? (Nt.test(c[2]) && (i = RegExp("</" + c[2], "g")), n = L) : c[3] !== void 0 && (n = L) : n === L ? c[0] === ">" ? (n = i ?? X, u = -1) : c[1] === void 0 ? u = -2 : (u = n.lastIndex - c[2].length, p = c[1], n = c[3] === void 0 ? L : c[3] === '"' ? Tt : It) : n === Tt || n === It ? n = L : n === Ct || n === Et ? n = X : (n = L, i = void 0);
-    const f = n === L && e[l + 1].startsWith("/>") ? " " : "";
-    r += n === X ? d + Xt : u >= 0 ? (a.push(p), d.slice(0, u) + Rt + d.slice(u) + R + f) : d + R + (u === -2 ? l : f);
+const le = (e, t) => {
+  const i = e.length - 1, a = [];
+  let s, r = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", n = X;
+  for (let o = 0; o < i; o++) {
+    const d = e[o];
+    let p, c, h = -1, g = 0;
+    for (; g < d.length && (n.lastIndex = g, c = n.exec(d), c !== null); ) g = n.lastIndex, n === X ? c[1] === "!--" ? n = Et : c[1] !== void 0 ? n = It : c[2] !== void 0 ? (Ft.test(c[2]) && (s = RegExp("</" + c[2], "g")), n = H) : c[3] !== void 0 && (n = H) : n === H ? c[0] === ">" ? (n = s ?? X, h = -1) : c[1] === void 0 ? h = -2 : (h = n.lastIndex - c[2].length, p = c[1], n = c[3] === void 0 ? H : c[3] === '"' ? Mt : Tt) : n === Mt || n === Tt ? n = H : n === Et || n === It ? n = X : (n = H, s = void 0);
+    const f = n === H && e[o + 1].startsWith("/>") ? " " : "";
+    r += n === X ? d + ne : h >= 0 ? (a.push(p), d.slice(0, h) + Pt + d.slice(h) + N + f) : d + N + (h === -2 ? o : f);
   }
-  return [Ft(e, r + (e[s] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), a];
+  return [Ht(e, r + (e[i] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), a];
 };
-class et {
-  constructor({ strings: t, _$litType$: s }, a) {
-    let i;
+class st {
+  constructor({ strings: t, _$litType$: i }, a) {
+    let s;
     this.parts = [];
     let r = 0, n = 0;
-    const l = t.length - 1, d = this.parts, [p, c] = Yt(t, s);
-    if (this.el = et.createElement(p, a), U.currentNode = this.el.content, s === 2 || s === 3) {
-      const u = this.el.content.firstChild;
-      u.replaceWith(...u.childNodes);
+    const o = t.length - 1, d = this.parts, [p, c] = le(t, i);
+    if (this.el = st.createElement(p, a), V.currentNode = this.el.content, i === 2 || i === 3) {
+      const h = this.el.content.firstChild;
+      h.replaceWith(...h.childNodes);
     }
-    for (; (i = U.nextNode()) !== null && d.length < l; ) {
-      if (i.nodeType === 1) {
-        if (i.hasAttributes()) for (const u of i.getAttributeNames()) if (u.endsWith(Rt)) {
-          const h = c[n++], f = i.getAttribute(u).split(R), y = /([.?@])?(.*)/.exec(h);
-          d.push({ type: 1, index: r, name: y[2], strings: f, ctor: y[1] === "." ? ee : y[1] === "?" ? se : y[1] === "@" ? ie : ct }), i.removeAttribute(u);
-        } else u.startsWith(R) && (d.push({ type: 6, index: r }), i.removeAttribute(u));
-        if (Nt.test(i.tagName)) {
-          const u = i.textContent.split(R), h = u.length - 1;
-          if (h > 0) {
-            i.textContent = dt ? dt.emptyScript : "";
-            for (let f = 0; f < h; f++) i.append(u[f], Y()), U.nextNode(), d.push({ type: 2, index: ++r });
-            i.append(u[h], Y());
+    for (; (s = V.nextNode()) !== null && d.length < o; ) {
+      if (s.nodeType === 1) {
+        if (s.hasAttributes()) for (const h of s.getAttributeNames()) if (h.endsWith(Pt)) {
+          const g = c[n++], f = s.getAttribute(h).split(N), y = /([.?@])?(.*)/.exec(g);
+          d.push({ type: 1, index: r, name: y[2], strings: f, ctor: y[1] === "." ? pe : y[1] === "?" ? ce : y[1] === "@" ? ue : ut }), s.removeAttribute(h);
+        } else h.startsWith(N) && (d.push({ type: 6, index: r }), s.removeAttribute(h));
+        if (Ft.test(s.tagName)) {
+          const h = s.textContent.split(N), g = h.length - 1;
+          if (g > 0) {
+            s.textContent = pt ? pt.emptyScript : "";
+            for (let f = 0; f < g; f++) s.append(h[f], tt()), V.nextNode(), d.push({ type: 2, index: ++r });
+            s.append(h[g], tt());
           }
         }
-      } else if (i.nodeType === 8) if (i.data === jt) d.push({ type: 2, index: r });
+      } else if (s.nodeType === 8) if (s.data === Lt) d.push({ type: 2, index: r });
       else {
-        let u = -1;
-        for (; (u = i.data.indexOf(R, u + 1)) !== -1; ) d.push({ type: 7, index: r }), u += R.length - 1;
+        let h = -1;
+        for (; (h = s.data.indexOf(N, h + 1)) !== -1; ) d.push({ type: 7, index: r }), h += N.length - 1;
       }
       r++;
     }
   }
-  static createElement(t, s) {
-    const a = D.createElement("template");
+  static createElement(t, i) {
+    const a = U.createElement("template");
     return a.innerHTML = t, a;
   }
 }
-function Q(e, t, s = e, a) {
+function Q(e, t, i = e, a) {
   if (t === Z) return t;
-  let i = a !== void 0 ? s._$Co?.[a] : s._$Cl;
-  const r = tt(t) ? void 0 : t._$litDirective$;
-  return i?.constructor !== r && (i?._$AO?.(!1), r === void 0 ? i = void 0 : (i = new r(e), i._$AT(e, s, a)), a !== void 0 ? (s._$Co ??= [])[a] = i : s._$Cl = i), i !== void 0 && (t = Q(e, i._$AS(e, t.values), i, a)), t;
+  let s = a !== void 0 ? i._$Co?.[a] : i._$Cl;
+  const r = et(t) ? void 0 : t._$litDirective$;
+  return s?.constructor !== r && (s?._$AO?.(!1), r === void 0 ? s = void 0 : (s = new r(e), s._$AT(e, i, a)), a !== void 0 ? (i._$Co ??= [])[a] = s : i._$Cl = s), s !== void 0 && (t = Q(e, s._$AS(e, t.values), s, a)), t;
 }
-class te {
-  constructor(t, s) {
-    this._$AV = [], this._$AN = void 0, this._$AD = t, this._$AM = s;
+class de {
+  constructor(t, i) {
+    this._$AV = [], this._$AN = void 0, this._$AD = t, this._$AM = i;
   }
   get parentNode() {
     return this._$AM.parentNode;
@@ -335,34 +335,34 @@ class te {
     return this._$AM._$AU;
   }
   u(t) {
-    const { el: { content: s }, parts: a } = this._$AD, i = (t?.creationScope ?? D).importNode(s, !0);
-    U.currentNode = i;
-    let r = U.nextNode(), n = 0, l = 0, d = a[0];
+    const { el: { content: i }, parts: a } = this._$AD, s = (t?.creationScope ?? U).importNode(i, !0);
+    V.currentNode = s;
+    let r = V.nextNode(), n = 0, o = 0, d = a[0];
     for (; d !== void 0; ) {
       if (n === d.index) {
         let p;
-        d.type === 2 ? p = new at(r, r.nextSibling, this, t) : d.type === 1 ? p = new d.ctor(r, d.name, d.strings, this, t) : d.type === 6 && (p = new ae(r, this, t)), this._$AV.push(p), d = a[++l];
+        d.type === 2 ? p = new rt(r, r.nextSibling, this, t) : d.type === 1 ? p = new d.ctor(r, d.name, d.strings, this, t) : d.type === 6 && (p = new he(r, this, t)), this._$AV.push(p), d = a[++o];
       }
-      n !== d?.index && (r = U.nextNode(), n++);
+      n !== d?.index && (r = V.nextNode(), n++);
     }
-    return U.currentNode = D, i;
+    return V.currentNode = U, s;
   }
   p(t) {
-    let s = 0;
-    for (const a of this._$AV) a !== void 0 && (a.strings !== void 0 ? (a._$AI(t, a, s), s += a.strings.length - 2) : a._$AI(t[s])), s++;
+    let i = 0;
+    for (const a of this._$AV) a !== void 0 && (a.strings !== void 0 ? (a._$AI(t, a, i), i += a.strings.length - 2) : a._$AI(t[i])), i++;
   }
 }
-class at {
+class rt {
   get _$AU() {
     return this._$AM?._$AU ?? this._$Cv;
   }
-  constructor(t, s, a, i) {
-    this.type = 2, this._$AH = x, this._$AN = void 0, this._$AA = t, this._$AB = s, this._$AM = a, this.options = i, this._$Cv = i?.isConnected ?? !0;
+  constructor(t, i, a, s) {
+    this.type = 2, this._$AH = x, this._$AN = void 0, this._$AA = t, this._$AB = i, this._$AM = a, this.options = s, this._$Cv = s?.isConnected ?? !0;
   }
   get parentNode() {
     let t = this._$AA.parentNode;
-    const s = this._$AM;
-    return s !== void 0 && t?.nodeType === 11 && (t = s.parentNode), t;
+    const i = this._$AM;
+    return i !== void 0 && t?.nodeType === 11 && (t = i.parentNode), t;
   }
   get startNode() {
     return this._$AA;
@@ -370,8 +370,8 @@ class at {
   get endNode() {
     return this._$AB;
   }
-  _$AI(t, s = this) {
-    t = Q(this, t, s), tt(t) ? t === x || t == null || t === "" ? (this._$AH !== x && this._$AR(), this._$AH = x) : t !== this._$AH && t !== Z && this._(t) : t._$litType$ !== void 0 ? this.$(t) : t.nodeType !== void 0 ? this.T(t) : Kt(t) ? this.k(t) : this._(t);
+  _$AI(t, i = this) {
+    t = Q(this, t, i), et(t) ? t === x || t == null || t === "" ? (this._$AH !== x && this._$AR(), this._$AH = x) : t !== this._$AH && t !== Z && this._(t) : t._$litType$ !== void 0 ? this.$(t) : t.nodeType !== void 0 ? this.T(t) : oe(t) ? this.k(t) : this._(t);
   }
   O(t) {
     return this._$AA.parentNode.insertBefore(t, this._$AB);
@@ -380,63 +380,63 @@ class at {
     this._$AH !== t && (this._$AR(), this._$AH = this.O(t));
   }
   _(t) {
-    this._$AH !== x && tt(this._$AH) ? this._$AA.nextSibling.data = t : this.T(D.createTextNode(t)), this._$AH = t;
+    this._$AH !== x && et(this._$AH) ? this._$AA.nextSibling.data = t : this.T(U.createTextNode(t)), this._$AH = t;
   }
   $(t) {
-    const { values: s, _$litType$: a } = t, i = typeof a == "number" ? this._$AC(t) : (a.el === void 0 && (a.el = et.createElement(Ft(a.h, a.h[0]), this.options)), a);
-    if (this._$AH?._$AD === i) this._$AH.p(s);
+    const { values: i, _$litType$: a } = t, s = typeof a == "number" ? this._$AC(t) : (a.el === void 0 && (a.el = st.createElement(Ht(a.h, a.h[0]), this.options)), a);
+    if (this._$AH?._$AD === s) this._$AH.p(i);
     else {
-      const r = new te(i, this), n = r.u(this.options);
-      r.p(s), this.T(n), this._$AH = r;
+      const r = new de(s, this), n = r.u(this.options);
+      r.p(i), this.T(n), this._$AH = r;
     }
   }
   _$AC(t) {
-    let s = Ot.get(t.strings);
-    return s === void 0 && Ot.set(t.strings, s = new et(t)), s;
+    let i = Ot.get(t.strings);
+    return i === void 0 && Ot.set(t.strings, i = new st(t)), i;
   }
   k(t) {
-    yt(this._$AH) || (this._$AH = [], this._$AR());
-    const s = this._$AH;
-    let a, i = 0;
-    for (const r of t) i === s.length ? s.push(a = new at(this.O(Y()), this.O(Y()), this, this.options)) : a = s[i], a._$AI(r), i++;
-    i < s.length && (this._$AR(a && a._$AB.nextSibling, i), s.length = i);
+    vt(this._$AH) || (this._$AH = [], this._$AR());
+    const i = this._$AH;
+    let a, s = 0;
+    for (const r of t) s === i.length ? i.push(a = new rt(this.O(tt()), this.O(tt()), this, this.options)) : a = i[s], a._$AI(r), s++;
+    s < i.length && (this._$AR(a && a._$AB.nextSibling, s), i.length = s);
   }
-  _$AR(t = this._$AA.nextSibling, s) {
-    for (this._$AP?.(!1, !0, s); t !== this._$AB; ) {
-      const a = kt(t).nextSibling;
-      kt(t).remove(), t = a;
+  _$AR(t = this._$AA.nextSibling, i) {
+    for (this._$AP?.(!1, !0, i); t !== this._$AB; ) {
+      const a = At(t).nextSibling;
+      At(t).remove(), t = a;
     }
   }
   setConnected(t) {
     this._$AM === void 0 && (this._$Cv = t, this._$AP?.(t));
   }
 }
-class ct {
+class ut {
   get tagName() {
     return this.element.tagName;
   }
   get _$AU() {
     return this._$AM._$AU;
   }
-  constructor(t, s, a, i, r) {
-    this.type = 1, this._$AH = x, this._$AN = void 0, this.element = t, this.name = s, this._$AM = i, this.options = r, a.length > 2 || a[0] !== "" || a[1] !== "" ? (this._$AH = Array(a.length - 1).fill(new String()), this.strings = a) : this._$AH = x;
+  constructor(t, i, a, s, r) {
+    this.type = 1, this._$AH = x, this._$AN = void 0, this.element = t, this.name = i, this._$AM = s, this.options = r, a.length > 2 || a[0] !== "" || a[1] !== "" ? (this._$AH = Array(a.length - 1).fill(new String()), this.strings = a) : this._$AH = x;
   }
-  _$AI(t, s = this, a, i) {
+  _$AI(t, i = this, a, s) {
     const r = this.strings;
     let n = !1;
-    if (r === void 0) t = Q(this, t, s, 0), n = !tt(t) || t !== this._$AH && t !== Z, n && (this._$AH = t);
+    if (r === void 0) t = Q(this, t, i, 0), n = !et(t) || t !== this._$AH && t !== Z, n && (this._$AH = t);
     else {
-      const l = t;
+      const o = t;
       let d, p;
-      for (t = r[0], d = 0; d < r.length - 1; d++) p = Q(this, l[a + d], s, d), p === Z && (p = this._$AH[d]), n ||= !tt(p) || p !== this._$AH[d], p === x ? t = x : t !== x && (t += (p ?? "") + r[d + 1]), this._$AH[d] = p;
+      for (t = r[0], d = 0; d < r.length - 1; d++) p = Q(this, o[a + d], i, d), p === Z && (p = this._$AH[d]), n ||= !et(p) || p !== this._$AH[d], p === x ? t = x : t !== x && (t += (p ?? "") + r[d + 1]), this._$AH[d] = p;
     }
-    n && !i && this.j(t);
+    n && !s && this.j(t);
   }
   j(t) {
     t === x ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, t ?? "");
   }
 }
-class ee extends ct {
+class pe extends ut {
   constructor() {
     super(...arguments), this.type = 3;
   }
@@ -444,7 +444,7 @@ class ee extends ct {
     this.element[this.name] = t === x ? void 0 : t;
   }
 }
-class se extends ct {
+class ce extends ut {
   constructor() {
     super(...arguments), this.type = 4;
   }
@@ -452,22 +452,22 @@ class se extends ct {
     this.element.toggleAttribute(this.name, !!t && t !== x);
   }
 }
-class ie extends ct {
-  constructor(t, s, a, i, r) {
-    super(t, s, a, i, r), this.type = 5;
+class ue extends ut {
+  constructor(t, i, a, s, r) {
+    super(t, i, a, s, r), this.type = 5;
   }
-  _$AI(t, s = this) {
-    if ((t = Q(this, t, s, 0) ?? x) === Z) return;
-    const a = this._$AH, i = t === x && a !== x || t.capture !== a.capture || t.once !== a.once || t.passive !== a.passive, r = t !== x && (a === x || i);
-    i && this.element.removeEventListener(this.name, this, a), r && this.element.addEventListener(this.name, this, t), this._$AH = t;
+  _$AI(t, i = this) {
+    if ((t = Q(this, t, i, 0) ?? x) === Z) return;
+    const a = this._$AH, s = t === x && a !== x || t.capture !== a.capture || t.once !== a.once || t.passive !== a.passive, r = t !== x && (a === x || s);
+    s && this.element.removeEventListener(this.name, this, a), r && this.element.addEventListener(this.name, this, t), this._$AH = t;
   }
   handleEvent(t) {
     typeof this._$AH == "function" ? this._$AH.call(this.options?.host ?? this.element, t) : this._$AH.handleEvent(t);
   }
 }
-class ae {
-  constructor(t, s, a) {
-    this.element = t, this.type = 6, this._$AN = void 0, this._$AM = s, this.options = a;
+class he {
+  constructor(t, i, a) {
+    this.element = t, this.type = 6, this._$AN = void 0, this._$AM = i, this.options = a;
   }
   get _$AU() {
     return this._$AM._$AU;
@@ -476,24 +476,24 @@ class ae {
     Q(this, t);
   }
 }
-const re = bt.litHtmlPolyfillSupport;
-re?.(et, at), (bt.litHtmlVersions ??= []).push("3.3.3");
-const ne = (e, t, s) => {
-  const a = s?.renderBefore ?? t;
-  let i = a._$litPart$;
-  if (i === void 0) {
-    const r = s?.renderBefore ?? null;
-    a._$litPart$ = i = new at(t.insertBefore(Y(), r), r, void 0, s ?? {});
+const ge = yt.litHtmlPolyfillSupport;
+ge?.(st, rt), (yt.litHtmlVersions ??= []).push("3.3.3");
+const fe = (e, t, i) => {
+  const a = i?.renderBefore ?? t;
+  let s = a._$litPart$;
+  if (s === void 0) {
+    const r = i?.renderBefore ?? null;
+    a._$litPart$ = s = new rt(t.insertBefore(tt(), r), r, void 0, i ?? {});
   }
-  return i._$AI(e), i;
+  return s._$AI(e), s;
 };
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const vt = globalThis;
-class z extends G {
+const _t = globalThis;
+class k extends J {
   constructor() {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
   }
@@ -502,8 +502,8 @@ class z extends G {
     return this.renderOptions.renderBefore ??= t.firstChild, t;
   }
   update(t) {
-    const s = this.render();
-    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(t), this._$Do = ne(s, this.renderRoot, this.renderOptions);
+    const i = this.render();
+    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(t), this._$Do = fe(i, this.renderRoot, this.renderOptions);
   }
   connectedCallback() {
     super.connectedCallback(), this._$Do?.setConnected(!0);
@@ -515,54 +515,54 @@ class z extends G {
     return Z;
   }
 }
-z._$litElement$ = !0, z.finalized = !0, vt.litElementHydrateSupport?.({ LitElement: z });
-const oe = vt.litElementPolyfillSupport;
-oe?.({ LitElement: z });
-(vt.litElementVersions ??= []).push("4.2.2");
+k._$litElement$ = !0, k.finalized = !0, _t.litElementHydrateSupport?.({ LitElement: k });
+const me = _t.litElementPolyfillSupport;
+me?.({ LitElement: k });
+(_t.litElementVersions ??= []).push("4.2.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const le = { attribute: !0, type: String, converter: lt, reflect: !1, hasChanged: mt }, de = (e = le, t, s) => {
-  const { kind: a, metadata: i } = s;
-  let r = globalThis.litPropertyMetadata.get(i);
-  if (r === void 0 && globalThis.litPropertyMetadata.set(i, r = /* @__PURE__ */ new Map()), a === "setter" && ((e = Object.create(e)).wrapped = !0), r.set(s.name, e), a === "accessor") {
-    const { name: n } = s;
-    return { set(l) {
+const be = { attribute: !0, type: String, converter: dt, reflect: !1, hasChanged: bt }, ye = (e = be, t, i) => {
+  const { kind: a, metadata: s } = i;
+  let r = globalThis.litPropertyMetadata.get(s);
+  if (r === void 0 && globalThis.litPropertyMetadata.set(s, r = /* @__PURE__ */ new Map()), a === "setter" && ((e = Object.create(e)).wrapped = !0), r.set(i.name, e), a === "accessor") {
+    const { name: n } = i;
+    return { set(o) {
       const d = t.get.call(this);
-      t.set.call(this, l), this.requestUpdate(n, d, e, !0, l);
-    }, init(l) {
-      return l !== void 0 && this.C(n, void 0, e, l), l;
+      t.set.call(this, o), this.requestUpdate(n, d, e, !0, o);
+    }, init(o) {
+      return o !== void 0 && this.C(n, void 0, e, o), o;
     } };
   }
   if (a === "setter") {
-    const { name: n } = s;
-    return function(l) {
+    const { name: n } = i;
+    return function(o) {
       const d = this[n];
-      t.call(this, l), this.requestUpdate(n, d, e, !0, l);
+      t.call(this, o), this.requestUpdate(n, d, e, !0, o);
     };
   }
   throw Error("Unsupported decorator location: " + a);
 };
 function v(e) {
-  return (t, s) => typeof s == "object" ? de(e, t, s) : ((a, i, r) => {
-    const n = i.hasOwnProperty(r);
-    return i.constructor.createProperty(r, a), n ? Object.getOwnPropertyDescriptor(i, r) : void 0;
-  })(e, t, s);
+  return (t, i) => typeof i == "object" ? ye(e, t, i) : ((a, s, r) => {
+    const n = s.hasOwnProperty(r);
+    return s.constructor.createProperty(r, a), n ? Object.getOwnPropertyDescriptor(s, r) : void 0;
+  })(e, t, i);
 }
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-function g(e) {
+function u(e) {
   return v({ ...e, state: !0, attribute: !1 });
 }
-function j(e) {
+function P(e) {
   return (t) => (typeof customElements < "u" && !customElements.get(e) && customElements.define(e, t), t);
 }
-const ut = T`
+const ht = O`
   :host {
     --fuzzy-primary: var(--primary-color, #0284c7);
     --fuzzy-primary-hover: var(--primary-color-hover, #0369a1);
@@ -820,16 +820,23 @@ const ut = T`
     box-sizing: border-box;
     color: var(--primary-text-color, var(--fuzzy-text));
   }
-`, pe = "fuzzy_system/systems/list", ce = "fuzzy_system/systems/save", ue = "fuzzy_system/systems/delete", he = "fuzzy_system/simulate", ge = "fuzzy_system/templates/list", fe = "fuzzy_system/templates/instantiate";
-async function me(e) {
+`, ve = "fuzzy_system/systems/list", _e = "fuzzy_system/systems/get", xe = "fuzzy_system/systems/save", $e = "fuzzy_system/systems/delete", we = "fuzzy_system/simulate", ze = "fuzzy_system/templates/list", Se = "fuzzy_system/templates/instantiate";
+async function Vt(e) {
   const t = await e.callWS({
-    type: pe
+    type: ve
   });
   return Array.isArray(t) ? t : t.systems || [];
 }
-async function be(e, t, s) {
+async function Rt(e, t) {
+  const i = await e.callWS({
+    type: _e,
+    ...t
+  });
+  return i.system || i.config;
+}
+async function ke(e, t, i) {
   return e.callWS({
-    type: ce,
+    type: xe,
     system_id: t.system_id,
     name: t.name,
     description: t.description,
@@ -842,88 +849,314 @@ async function be(e, t, s) {
     inputs: t.inputs,
     outputs: t.outputs,
     rules: t.rules,
-    entry_id: s
+    entry_id: i
   });
 }
-async function ye(e, t) {
+async function Ae(e, t) {
   return e.callWS({
-    type: ue,
+    type: $e,
     entry_id: t
   });
 }
-async function ve(e) {
+async function Ut(e) {
   return (await e.callWS({
-    type: ge
+    type: ze
   })).templates || [];
 }
-async function xe(e, t, s, a) {
+async function qt(e, t, i, a) {
   return e.callWS({
-    type: fe,
+    type: Se,
     template_id: t,
-    system_id: s,
+    system_id: i,
     name: a
   });
 }
-async function _e(e, t, s) {
+async function Bt(e, t, i) {
   const a = await e.callWS({
-    type: he,
+    type: we,
     system_config: t,
-    inputs: s
-  }), i = a?.results || a;
-  if (!i) return {};
-  if (i.defuzzified_values) {
+    inputs: i
+  }), s = a?.results || a;
+  if (!s) return {};
+  if (s.defuzzified_values) {
     const r = {}, n = Object.keys(t.outputs || {});
-    for (const l of n) {
-      const d = i.aggregated_sets?.[l] || [];
-      let p = i.universes?.[l] || [];
+    for (const o of n) {
+      const d = s.aggregated_sets?.[o] || [];
+      let p = s.universes?.[o] || [];
       if ((!p || p.length === 0) && d.length > 0) {
-        const c = t.outputs[l]?.range || [0, 100], h = (c[1] - c[0]) / (d.length - 1 || 1);
-        p = Array.from({ length: d.length }, (f, y) => c[0] + y * h);
+        const c = t.outputs[o]?.range || [0, 100], g = (c[1] - c[0]) / (d.length - 1 || 1);
+        p = Array.from({ length: d.length }, (f, y) => c[0] + y * g);
       }
-      r[l] = {
-        defuzzified_value: i.defuzzified_values[l],
-        dominant_term: i.dominant_terms?.[l] || "",
-        term_activations: i.term_activations?.[l] || {},
-        term_memberships: i.term_memberships?.[l] || {},
-        rule_strengths: i.rule_strengths || [],
+      r[o] = {
+        defuzzified_value: s.defuzzified_values[o],
+        dominant_term: s.dominant_terms?.[o] || "",
+        term_activations: s.term_activations?.[o] || {},
+        term_memberships: s.term_memberships?.[o] || {},
+        rule_strengths: s.rule_strengths || [],
         universe: p,
         aggregated_set: d
       };
     }
     return r;
   }
-  return i;
+  return s;
 }
-var $e = Object.defineProperty, ze = Object.getOwnPropertyDescriptor, N = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? ze(t, s) : t, r = e.length - 1, n; r >= 0; r--)
-    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
-  return a && i && $e(t, s, i), i;
+const Ce = "fuzzy_system/dashboard/generate_card", Ee = "fuzzy_system/dashboard/add_card";
+async function Wt(e, t) {
+  return e.callWS({
+    type: Ce,
+    ...t
+  });
+}
+async function Gt(e, t) {
+  return e.callWS({
+    type: Ee,
+    ...t
+  });
+}
+let jt = !1, z = null;
+function Ie(e) {
+  if (z = e, jt) return;
+  jt = !0;
+  const t = [
+    {
+      name: "list_fuzzy_systems",
+      description: "List all configured fuzzy systems (both YAML and UI entries) with variable names and rule counts.",
+      readOnlyHint: !0,
+      handler: async () => {
+        const s = z?.getHass();
+        if (!s) throw new Error("Home Assistant connection not ready");
+        return Vt(s);
+      }
+    },
+    {
+      name: "get_fuzzy_system",
+      description: "Retrieve full configuration of a specific fuzzy system.",
+      parameters: {
+        type: "object",
+        properties: {
+          system_id: { type: "string", description: "Target fuzzy system identifier" }
+        },
+        required: ["system_id"]
+      },
+      readOnlyHint: !0,
+      handler: async (s) => {
+        const r = z?.getHass();
+        if (!r) throw new Error("Home Assistant connection not ready");
+        return Rt(r, { system_id: s.system_id });
+      }
+    },
+    {
+      name: "simulate_fuzzy_system",
+      description: "Perform dry-run fuzzy inference simulation with specified numerical input values.",
+      parameters: {
+        type: "object",
+        properties: {
+          system_id: { type: "string", description: "Target fuzzy system identifier" },
+          inputs: { type: "object", description: "Key-value input map", additionalProperties: { type: "number" } }
+        },
+        required: ["system_id", "inputs"]
+      },
+      readOnlyHint: !0,
+      handler: async (s) => {
+        const r = z?.getHass();
+        if (!r) throw new Error("Home Assistant connection not ready");
+        const n = await Rt(r, { system_id: s.system_id });
+        return Bt(r, n, s.inputs);
+      }
+    },
+    {
+      name: "generate_card_config",
+      description: "Generate custom:fuzzy-system-card Lovelace dashboard card configuration and YAML.",
+      parameters: {
+        type: "object",
+        properties: {
+          system_id: { type: "string", description: "Target fuzzy system identifier" },
+          title: { type: "string", description: "Optional card title" },
+          show_graph: { type: "boolean", default: !0 },
+          show_inputs: { type: "boolean", default: !0 },
+          show_rules: { type: "boolean", default: !0 }
+        },
+        required: ["system_id"]
+      },
+      readOnlyHint: !0,
+      handler: async (s) => {
+        const r = z?.getHass();
+        if (!r) throw new Error("Home Assistant connection not ready");
+        return Wt(r, s);
+      }
+    },
+    {
+      name: "add_card_to_dashboard",
+      description: "Automatically inserts a custom:fuzzy-system-card into a Lovelace dashboard view.",
+      parameters: {
+        type: "object",
+        properties: {
+          system_id: { type: "string", description: "Target fuzzy system identifier" },
+          dashboard_path: { type: "string", description: "Dashboard URL path (leave blank for primary overview)" },
+          view_title: { type: "string", description: "Title of target view to add to" },
+          card_title: { type: "string", description: "Optional custom title for the card" },
+          show_graph: { type: "boolean", default: !0 },
+          show_inputs: { type: "boolean", default: !0 },
+          show_rules: { type: "boolean", default: !0 }
+        },
+        required: ["system_id"]
+      },
+      consequentialHint: !0,
+      handler: async (s) => {
+        const r = z?.getHass();
+        if (!r) throw new Error("Home Assistant connection not ready");
+        return Gt(r, s);
+      }
+    },
+    {
+      name: "list_starter_templates",
+      description: "Discover all pre-built starter templates in the fuzzy system library.",
+      readOnlyHint: !0,
+      handler: async () => {
+        const s = z?.getHass();
+        if (!s) throw new Error("Home Assistant connection not ready");
+        return Ut(s);
+      }
+    },
+    {
+      name: "instantiate_starter_template",
+      description: "Instantiate a starter template into a new configuration draft.",
+      parameters: {
+        type: "object",
+        properties: {
+          template_id: { type: "string", description: "Template identifier" },
+          system_id: { type: "string", description: "New system identifier" },
+          name: { type: "string", description: "Optional friendly name" }
+        },
+        required: ["template_id", "system_id"]
+      },
+      consequentialHint: !0,
+      handler: async (s) => {
+        const r = z?.getHass();
+        if (!r) throw new Error("Home Assistant connection not ready");
+        const n = await qt(r, s.template_id, s.system_id, s.name);
+        return z?.openSystemInEditor && n.system && z.openSystemInEditor(n.system), n;
+      }
+    },
+    {
+      name: "get_active_editor_system",
+      description: "Returns the fuzzy system configuration currently open and active in the workbench editor.",
+      readOnlyHint: !0,
+      handler: () => {
+        const s = z?.getActiveConfig?.();
+        return s || { error: "No system currently open in the editor (workbench is in catalog view)." };
+      }
+    },
+    {
+      name: "tune_editor_term",
+      description: "Tunes membership function parameters for an antecedent or consequent in the active workbench editor.",
+      parameters: {
+        type: "object",
+        properties: {
+          variable_type: { type: "string", enum: ["input", "output"] },
+          variable_name: { type: "string" },
+          term_name: { type: "string" },
+          mf_type: { type: "string" },
+          params: { type: "array", items: { type: "number" } }
+        },
+        required: ["variable_type", "variable_name", "term_name", "mf_type", "params"]
+      },
+      handler: (s) => {
+        if (!z?.updateActiveConfig)
+          return { error: "Active editor is not available." };
+        let r = !1;
+        return z.updateActiveConfig((n) => {
+          const o = JSON.parse(JSON.stringify(n)), d = s.variable_type === "input" ? o.inputs : o.outputs;
+          return d?.[s.variable_name]?.terms?.[s.term_name] && (d[s.variable_name].terms[s.term_name] = {
+            type: s.mf_type,
+            params: s.params
+          }, r = !0), o;
+        }), { success: r, message: r ? "Term parameters updated." : "Variable or term not found." };
+      }
+    },
+    {
+      name: "add_editor_rule",
+      description: "Appends a new linguistic rule to the currently open fuzzy system in the workbench editor.",
+      parameters: {
+        type: "object",
+        properties: {
+          rule: { type: "string", description: "Linguistic rule string (e.g. IF temp IS cold THEN fan IS low)" }
+        },
+        required: ["rule"]
+      },
+      handler: (s) => z?.updateActiveConfig ? (z.updateActiveConfig((r) => {
+        const n = JSON.parse(JSON.stringify(r));
+        return n.rules = [...n.rules || [], s.rule], n;
+      }), { success: !0, message: `Added rule: '${s.rule}'` }) : { error: "Active editor is not available." }
+    }
+  ], i = typeof navigator < "u" && navigator.modelContext || typeof document < "u" && document.modelContext || typeof window < "u" && window.modelContext;
+  if (i && typeof i.provideContext == "function")
+    try {
+      i.provideContext({
+        tools: t.map((s) => ({
+          name: s.name,
+          description: s.description,
+          parameters: s.parameters,
+          readOnlyHint: s.readOnlyHint,
+          consequentialHint: s.consequentialHint,
+          handler: s.handler
+        }))
+      }), console.log("[FuzzySystem] Registered", t.length, "tools with WebMCP");
+    } catch (s) {
+      console.warn("[FuzzySystem] Failed to register with WebMCP context:", s);
+    }
+  const a = {
+    tools: t.map((s) => ({ name: s.name, description: s.description }))
+  };
+  for (const s of t)
+    a[s.name] = s.handler;
+  window.fuzzySystemMCP = a, window.addEventListener("message", async (s) => {
+    if (s.data?.type === "fuzzy_system:mcp_call") {
+      const { id: r, tool: n, args: o } = s.data, d = t.find((p) => p.name === n);
+      if (!d) {
+        window.postMessage({ type: "fuzzy_system:mcp_result", id: r, error: `Tool '${n}' not found` }, "*");
+        return;
+      }
+      try {
+        const p = await d.handler(o || {});
+        window.postMessage({ type: "fuzzy_system:mcp_result", id: r, result: p }, "*");
+      } catch (p) {
+        window.postMessage({ type: "fuzzy_system:mcp_result", id: r, error: p?.message || String(p) }, "*");
+      }
+    }
+  });
+}
+var Te = Object.defineProperty, Me = Object.getOwnPropertyDescriptor, L = (e, t, i, a) => {
+  for (var s = a > 1 ? void 0 : a ? Me(t, i) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (s = (a ? n(t, i, s) : n(s)) || s);
+  return a && s && Te(t, i, s), s;
 };
-let A = class extends z {
+let I = class extends k {
   constructor() {
     super(...arguments), this.universe = [], this.aggregatedSet = [], this.defuzzifier = "cog", this.dominantTerm = "", this.unit = "", this.outputName = "";
   }
   render() {
     if (!this.universe || this.universe.length === 0)
-      return o`
+      return l`
         <div class="graph-card">
           <div style="text-align: center; color: var(--fuzzy-text-secondary); padding: 20px 0; font-size: 12px;">
             Awaiting inference evaluation data...
           </div>
         </div>
       `;
-    const e = this.universe[0], t = this.universe[this.universe.length - 1], s = t - e || 1, a = 640, i = 190, r = 36, n = 24, l = 20, d = 28, p = a - r - n, c = i - l - d, u = ($) => r + ($ - e) / s * p, h = ($) => l + (1 - Math.max(0, Math.min(1, $))) * c, f = this.aggregatedSet || [], y = [], _ = Math.max(1, Math.floor(this.universe.length / 140));
-    for (let $ = 0; $ < this.universe.length; $ += _) {
-      const S = this.universe[$], k = f[$] ?? 0;
-      y.push([u(S), h(k)]);
+    const e = this.universe[0], t = this.universe[this.universe.length - 1], i = t - e || 1, a = 640, s = 190, r = 36, n = 24, o = 20, d = 28, p = a - r - n, c = s - o - d, h = (S) => r + (S - e) / i * p, g = (S) => o + (1 - Math.max(0, Math.min(1, S))) * c, f = this.aggregatedSet || [], y = [], w = Math.max(1, Math.floor(this.universe.length / 140));
+    for (let S = 0; S < this.universe.length; S += w) {
+      const C = this.universe[S], E = f[S] ?? 0;
+      y.push([h(C), g(E)]);
     }
-    const q = this.universe.length - 1;
-    y.push([u(this.universe[q]), h(f[q] ?? 0)]);
-    const I = y.reduce(
-      ($, [S, k], W) => W === 0 ? `M ${S} ${k}` : `${$} L ${S} ${k}`,
+    const B = this.universe.length - 1;
+    y.push([h(this.universe[B]), g(f[B] ?? 0)]);
+    const M = y.reduce(
+      (S, [C, E], G) => G === 0 ? `M ${C} ${E}` : `${S} L ${C} ${E}`,
       ""
-    ), V = `${I} L ${r + p} ${l + c} L ${r} ${l + c} Z`, H = this.defuzzifiedValue !== void 0 && !isNaN(this.defuzzifiedValue), M = H ? u(Math.max(e, Math.min(t, this.defuzzifiedValue))) : 0;
-    return o`
+    ), D = `${M} L ${r + p} ${o + c} L ${r} ${o + c} Z`, W = this.defuzzifiedValue !== void 0 && !isNaN(this.defuzzifiedValue), j = W ? h(Math.max(e, Math.min(t, this.defuzzifiedValue))) : 0;
+    return l`
       <div class="graph-card">
         <div class="graph-header">
           <div class="graph-title">
@@ -931,8 +1164,8 @@ let A = class extends z {
             <span>${this.outputName || "Aggregated Output Distribution"}</span>
           </div>
           <div class="header-badges">
-            ${this.dominantTerm ? o`<span class="badge-dominant">Dominant: ${this.dominantTerm}</span>` : ""}
-            ${H ? o`
+            ${this.dominantTerm ? l`<span class="badge-dominant">Dominant: ${this.dominantTerm}</span>` : ""}
+            ${W ? l`
                   <span class="badge-crisp">
                     ${this.defuzzifier.toUpperCase()}: ${this.defuzzifiedValue.toFixed(2)} ${this.unit}
                   </span>
@@ -940,7 +1173,7 @@ let A = class extends z {
           </div>
         </div>
 
-        <svg viewBox="0 0 ${a} ${i}" preserveAspectRatio="xMidYMid meet">
+        <svg viewBox="0 0 ${a} ${s}" preserveAspectRatio="xMidYMid meet">
           <defs>
             <linearGradient id="aggGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.55" />
@@ -950,53 +1183,53 @@ let A = class extends z {
           </defs>
 
           <!-- Horizontal Grid lines at mu = 0.5, 1.0 -->
-          <line class="grid-line" x1=${r} y1=${h(0.5)} x2=${r + p} y2=${h(0.5)} />
-          <line class="grid-line" x1=${r} y1=${h(1)} x2=${r + p} y2=${h(1)} />
+          <line class="grid-line" x1=${r} y1=${g(0.5)} x2=${r + p} y2=${g(0.5)} />
+          <line class="grid-line" x1=${r} y1=${g(1)} x2=${r + p} y2=${g(1)} />
 
           <!-- Axes -->
-          <line class="axis-line" x1=${r} y1=${l} x2=${r} y2=${l + c} />
-          <line class="axis-line" x1=${r} y1=${l + c} x2=${r + p} y2=${l + c} />
+          <line class="axis-line" x1=${r} y1=${o} x2=${r} y2=${o + c} />
+          <line class="axis-line" x1=${r} y1=${o + c} x2=${r + p} y2=${o + c} />
 
           <!-- Y-axis labels -->
-          <text class="axis-text" x=${r - 6} y=${h(1) + 3} text-anchor="end">1.0</text>
-          <text class="axis-text" x=${r - 6} y=${h(0.5) + 3} text-anchor="end">0.5</text>
-          <text class="axis-text" x=${r - 6} y=${h(0) + 3} text-anchor="end">0.0</text>
+          <text class="axis-text" x=${r - 6} y=${g(1) + 3} text-anchor="end">1.0</text>
+          <text class="axis-text" x=${r - 6} y=${g(0.5) + 3} text-anchor="end">0.5</text>
+          <text class="axis-text" x=${r - 6} y=${g(0) + 3} text-anchor="end">0.0</text>
 
           <!-- X-axis labels -->
-          <text class="axis-text" x=${r} y=${i - 10} text-anchor="start">${e.toFixed(0)}</text>
-          <text class="axis-text" x=${r + p / 2} y=${i - 10} text-anchor="middle">
-            ${(e + s / 2).toFixed(1)}
+          <text class="axis-text" x=${r} y=${s - 10} text-anchor="start">${e.toFixed(0)}</text>
+          <text class="axis-text" x=${r + p / 2} y=${s - 10} text-anchor="middle">
+            ${(e + i / 2).toFixed(1)}
           </text>
-          <text class="axis-text" x=${r + p} y=${i - 10} text-anchor="end">
+          <text class="axis-text" x=${r + p} y=${s - 10} text-anchor="end">
             ${t.toFixed(0)} ${this.unit}
           </text>
 
           <!-- Aggregated Fuzzy Set Area & Stroke -->
-          <path d=${V} fill="url(#aggGradient)" />
-          <path d=${I} fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" />
+          <path d=${D} fill="url(#aggGradient)" />
+          <path d=${M} fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" />
 
           <!-- Defuzzified Crisp Slice Line -->
-          ${H ? J`
+          ${W ? Y`
                 <g>
                   <line
                     class="defuzz-line"
-                    x1=${M}
-                    y1=${l}
-                    x2=${M}
-                    y2=${l + c}
+                    x1=${j}
+                    y1=${o}
+                    x2=${j}
+                    y2=${o + c}
                   />
-                  <circle class="pulse-marker" cx=${M} cy=${l + c} r="4.5" />
+                  <circle class="pulse-marker" cx=${j} cy=${o + c} r="4.5" />
                   <rect
-                    x=${Math.min(r + p - 90, Math.max(r, M - 45))}
-                    y=${l - 18}
+                    x=${Math.min(r + p - 90, Math.max(r, j - 45))}
+                    y=${o - 18}
                     width="90"
                     height="18"
                     rx="4"
                     fill="#0284c7"
                   />
                   <text
-                    x=${Math.min(r + p - 45, Math.max(r + 45, M))}
-                    y=${l - 5}
+                    x=${Math.min(r + p - 45, Math.max(r + 45, j))}
+                    y=${o - 5}
                     text-anchor="middle"
                     fill="#ffffff"
                     font-size="10"
@@ -1006,13 +1239,13 @@ let A = class extends z {
                     ${this.defuzzifiedValue.toFixed(1)} ${this.unit}
                   </text>
                 </g>
-              ` : J``}
+              ` : Y``}
         </svg>
       </div>
     `;
   }
 };
-A.styles = T`
+I.styles = O`
     :host {
       display: block;
       width: 100%;
@@ -1106,44 +1339,84 @@ A.styles = T`
       filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.9));
     }
   `;
-N([
+L([
   v({ type: Array })
-], A.prototype, "universe", 2);
-N([
+], I.prototype, "universe", 2);
+L([
   v({ type: Array })
-], A.prototype, "aggregatedSet", 2);
-N([
+], I.prototype, "aggregatedSet", 2);
+L([
   v({ type: Number })
-], A.prototype, "defuzzifiedValue", 2);
-N([
+], I.prototype, "defuzzifiedValue", 2);
+L([
   v({ type: String })
-], A.prototype, "defuzzifier", 2);
-N([
+], I.prototype, "defuzzifier", 2);
+L([
   v({ type: String })
-], A.prototype, "dominantTerm", 2);
-N([
+], I.prototype, "dominantTerm", 2);
+L([
   v({ type: String })
-], A.prototype, "unit", 2);
-N([
+], I.prototype, "unit", 2);
+L([
   v({ type: String })
-], A.prototype, "outputName", 2);
-A = N([
-  j("fuzzy-aggregated-graph")
-], A);
-var we = Object.defineProperty, Se = Object.getOwnPropertyDescriptor, P = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? Se(t, s) : t, r = e.length - 1, n; r >= 0; r--)
-    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
-  return a && i && we(t, s, i), i;
+], I.prototype, "outputName", 2);
+I = L([
+  P("fuzzy-aggregated-graph")
+], I);
+var Oe = Object.defineProperty, Re = Object.getOwnPropertyDescriptor, $ = (e, t, i, a) => {
+  for (var s = a > 1 ? void 0 : a ? Re(t, i) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (s = (a ? n(t, i, s) : n(s)) || s);
+  return a && s && Oe(t, i, s), s;
 };
-let C = class extends z {
+let _ = class extends k {
   constructor() {
-    super(...arguments), this._systems = [], this._searchQuery = "", this._loading = !1, this._error = "", this._showTemplateModal = !1, this._expandedWaveforms = {};
+    super(...arguments), this._systems = [], this._searchQuery = "", this._loading = !1, this._error = "", this._showTemplateModal = !1, this._expandedWaveforms = {}, this._dashboardViewTitle = "Fuzzy Systems", this._dashboardCardTitle = "", this._dashboardShowGraph = !0, this._dashboardShowInputs = !0, this._dashboardShowRules = !0, this._dashboardStatusMsg = "", this._dashboardIsError = !1, this._dashboardLoading = !1;
+  }
+  _openDashboardModal(e) {
+    this._dashboardModalSystem = e, this._dashboardCardTitle = e.name || e.system_id, this._dashboardStatusMsg = "", this._dashboardIsError = !1, this._dashboardLoading = !1;
+  }
+  async _handleAddToDashboard() {
+    if (!(!this.hass || !this._dashboardModalSystem)) {
+      this._dashboardLoading = !0, this._dashboardStatusMsg = "";
+      try {
+        const e = await Gt(this.hass, {
+          system_id: this._dashboardModalSystem.system_id,
+          view_title: this._dashboardViewTitle || null,
+          card_title: this._dashboardCardTitle || void 0,
+          show_graph: this._dashboardShowGraph,
+          show_inputs: this._dashboardShowInputs,
+          show_rules: this._dashboardShowRules
+        });
+        e.success ? (this._dashboardStatusMsg = `Added to Lovelace view "${e.view || "default"}"!`, this._dashboardIsError = !1, setTimeout(() => {
+          this._dashboardModalSystem = void 0;
+        }, 1500)) : (this._dashboardStatusMsg = e.error || "Dashboard is in YAML mode. Use 'Copy YAML' below.", this._dashboardIsError = !0);
+      } catch (e) {
+        this._dashboardStatusMsg = e.message || "Failed to add card to dashboard.", this._dashboardIsError = !0;
+      } finally {
+        this._dashboardLoading = !1;
+      }
+    }
+  }
+  async _handleCopyCardYaml() {
+    if (!(!this.hass || !this._dashboardModalSystem))
+      try {
+        const e = await Wt(this.hass, {
+          system_id: this._dashboardModalSystem.system_id,
+          title: this._dashboardCardTitle || void 0,
+          show_graph: this._dashboardShowGraph,
+          show_inputs: this._dashboardShowInputs,
+          show_rules: this._dashboardShowRules
+        });
+        await navigator.clipboard.writeText(e.yaml), this._dashboardStatusMsg = "Card YAML copied to clipboard!", this._dashboardIsError = !1;
+      } catch (e) {
+        this._dashboardStatusMsg = "Could not copy YAML: " + (e.message || String(e)), this._dashboardIsError = !0;
+      }
   }
   _toggleWaveform(e, t) {
-    const s = `${e}_${t}`;
+    const i = `${e}_${t}`;
     this._expandedWaveforms = {
       ...this._expandedWaveforms,
-      [s]: !this._expandedWaveforms[s]
+      [i]: !this._expandedWaveforms[i]
     };
   }
   async connectedCallback() {
@@ -1156,7 +1429,7 @@ let C = class extends z {
     if (this.hass) {
       this._loading = !0, this._error = "";
       try {
-        this._systems = await me(this.hass);
+        this._systems = await Vt(this.hass);
       } catch (e) {
         this._error = e.message || "Failed to load fuzzy systems";
       } finally {
@@ -1191,19 +1464,19 @@ let C = class extends z {
   async _handleDelete(e) {
     if (e.entry_id && confirm(`Are you sure you want to delete '${e.name}'?`))
       try {
-        await ye(this.hass, e.entry_id), await this.refresh();
+        await Ae(this.hass, e.entry_id), await this.refresh();
       } catch (t) {
         alert(t.message || "Failed to delete system");
       }
   }
   _findOutputSensor(e, t) {
     if (!this.hass?.states) return null;
-    const s = e.toLowerCase(), a = t.toLowerCase(), i = [
-      `sensor.fuzzy_${s}_${a}`,
-      `sensor.${s}_${a}`,
+    const i = e.toLowerCase(), a = t.toLowerCase(), s = [
+      `sensor.fuzzy_${i}_${a}`,
+      `sensor.${i}_${a}`,
       `sensor.fuzzy_${a}`
     ];
-    for (const r of i)
+    for (const r of s)
       if (this.hass.states[r])
         return { entityId: r, stateObj: this.hass.states[r] };
     for (const [r, n] of Object.entries(this.hass.states)) {
@@ -1214,11 +1487,11 @@ let C = class extends z {
     return null;
   }
   _getInputsStatus(e) {
-    const t = e.config?.inputs || {}, s = Object.keys(t).length;
+    const t = e.config?.inputs || {}, i = Object.keys(t).length;
     let a = 0;
-    for (const i of Object.values(t))
-      i.entity_id && i.entity_id.trim() && a++;
-    return { total: s, bound: a };
+    for (const s of Object.values(t))
+      s.entity_id && s.entity_id.trim() && a++;
+    return { total: i, bound: a };
   }
   _openMoreInfo(e, t) {
     t.stopPropagation(), this.dispatchEvent(
@@ -1230,21 +1503,21 @@ let C = class extends z {
     );
   }
   _renderLiveOutputs(e) {
-    const t = e.config?.outputs || {}, s = Object.keys(t);
-    if (s.length === 0) return o``;
+    const t = e.config?.outputs || {}, i = Object.keys(t);
+    if (i.length === 0) return l``;
     const a = this._getInputsStatus(e);
-    return o`
+    return l`
       <div class="card-live-outputs">
         <div class="live-outputs-header">
           <span class="live-outputs-title">Live Runtime Outputs</span>
-          ${a.total > 0 && a.bound < a.total ? o`
+          ${a.total > 0 && a.bound < a.total ? l`
                 <span
                   class="badge badge-amber"
                   title="Some input antecedents do not have live sensor entities bound yet"
                 >
                   ⚠️ ${a.total - a.bound} unbound input${a.total - a.bound > 1 ? "s" : ""}
                 </span>
-              ` : o`
+              ` : l`
                 <span
                   class="badge badge-emerald"
                   title="Inputs bound to live sensors; rules actively evaluating"
@@ -1255,11 +1528,11 @@ let C = class extends z {
         </div>
 
         <div class="live-outputs-list">
-          ${s.map((i) => {
-      const r = this._findOutputSensor(e.system_id, i), n = t[i] || {}, l = r?.stateObj?.attributes?.unit_of_measurement || n.unit_of_measurement || "", d = r?.stateObj?.attributes?.dominant_term, p = r?.stateObj?.state, c = p !== void 0 && p !== "unknown" && p !== "unavailable" && !isNaN(parseFloat(p)), u = !!this._expandedWaveforms[`${e.system_id}_${i}`];
+          ${i.map((s) => {
+      const r = this._findOutputSensor(e.system_id, s), n = t[s] || {}, o = r?.stateObj?.attributes?.unit_of_measurement || n.unit_of_measurement || "", d = r?.stateObj?.attributes?.dominant_term, p = r?.stateObj?.state, c = p !== void 0 && p !== "unknown" && p !== "unavailable" && !isNaN(parseFloat(p)), h = !!this._expandedWaveforms[`${e.system_id}_${s}`];
       if (r && c) {
-        const h = parseFloat(p).toFixed(1);
-        return o`
+        const g = parseFloat(p).toFixed(1);
+        return l`
                 <div style="display: inline-flex; align-items: center; gap: 4px;">
                   <button
                     class="output-badge live-active"
@@ -1267,30 +1540,30 @@ let C = class extends z {
                     title="Entity: ${r.entityId} — Click to view Home Assistant history graph and diagnostic attributes"
                   >
                     <span class="pulse-dot"></span>
-                    <span class="output-name">${i}:</span>
-                    <span class="output-value">${h}${l ? ` ${l}` : ""}</span>
-                    ${d ? o`<span class="dominant-term">(${d})</span>` : ""}
+                    <span class="output-name">${s}:</span>
+                    <span class="output-value">${g}${o ? ` ${o}` : ""}</span>
+                    ${d ? l`<span class="dominant-term">(${d})</span>` : ""}
                   </button>
                   <button
                     class="btn btn-secondary"
                     style="padding: 2px 7px; font-size: 11px; border-radius: 9999px; height: 26px; line-height: 1;"
-                    title="${u ? "Hide live waveform graph" : "View live aggregated fuzzy set waveform"}"
+                    title="${h ? "Hide live waveform graph" : "View live aggregated fuzzy set waveform"}"
                     @click=${(f) => {
-          f.stopPropagation(), this._toggleWaveform(e.system_id, i);
+          f.stopPropagation(), this._toggleWaveform(e.system_id, s);
         }}
                   >
-                    📈 ${u ? "Hide" : "Graph"}
+                    📈 ${h ? "Hide" : "Graph"}
                   </button>
                 </div>
               `;
       }
-      return o`
+      return l`
               <div
                 class="output-badge live-idle"
                 title="${r ? `Entity: ${r.entityId} (State: ${p})` : "Sensor entity not yet registered in Home Assistant"}"
               >
                 <span class="idle-dot"></span>
-                <span class="output-name">${i}:</span>
+                <span class="output-name">${s}:</span>
                 <span class="output-value" style="color: var(--fuzzy-text-secondary);">
                   ${p === "unavailable" ? "Unavailable" : "Awaiting inputs"}
                 </span>
@@ -1299,19 +1572,19 @@ let C = class extends z {
     })}
         </div>
 
-        ${s.map((i) => {
-      if (!this._expandedWaveforms[`${e.system_id}_${i}`]) return "";
-      const r = this._findOutputSensor(e.system_id, i), n = t[i] || {}, l = r?.stateObj?.attributes?.unit_of_measurement || n.unit_of_measurement || "", d = r?.stateObj?.attributes?.universe || [], p = r?.stateObj?.attributes?.aggregated_set || [], c = r?.stateObj?.state, u = c !== void 0 && !isNaN(parseFloat(c)), h = r?.stateObj?.attributes?.dominant_term || "";
-      return o`
+        ${i.map((s) => {
+      if (!this._expandedWaveforms[`${e.system_id}_${s}`]) return "";
+      const r = this._findOutputSensor(e.system_id, s), n = t[s] || {}, o = r?.stateObj?.attributes?.unit_of_measurement || n.unit_of_measurement || "", d = r?.stateObj?.attributes?.universe || [], p = r?.stateObj?.attributes?.aggregated_set || [], c = r?.stateObj?.state, h = c !== void 0 && !isNaN(parseFloat(c)), g = r?.stateObj?.attributes?.dominant_term || "";
+      return l`
             <div style="margin-top: 12px;">
               <fuzzy-aggregated-graph
                 .universe=${d}
                 .aggregatedSet=${p}
-                .defuzzifiedValue=${u ? parseFloat(c) : void 0}
+                .defuzzifiedValue=${h ? parseFloat(c) : void 0}
                 .defuzzifier=${e.defuzzifier}
-                .dominantTerm=${h}
-                .unit=${l}
-                .outputName=${i}
+                .dominantTerm=${g}
+                .unit=${o}
+                .outputName=${s}
               ></fuzzy-aggregated-graph>
             </div>
           `;
@@ -1321,7 +1594,7 @@ let C = class extends z {
   }
   render() {
     const e = this._filteredSystems();
-    return o`
+    return l`
       <div class="header-row">
         <div>
           <h1 class="title-lg">Fuzzy Logic Controllers</h1>
@@ -1345,9 +1618,9 @@ let C = class extends z {
         </div>
       </div>
 
-      ${this._error ? o`<div style="color: var(--fuzzy-danger); margin-bottom: 16px;">${this._error}</div>` : ""}
+      ${this._error ? l`<div style="color: var(--fuzzy-danger); margin-bottom: 16px;">${this._error}</div>` : ""}
 
-      ${e.length === 0 && !this._loading ? o`
+      ${e.length === 0 && !this._loading ? l`
             <div class="empty-state">
               <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">No Fuzzy Systems Found</h3>
               <p class="subtitle" style="margin-bottom: 20px;">
@@ -1357,10 +1630,10 @@ let C = class extends z {
                 Browse Starter Templates
               </button>
             </div>
-          ` : o`
+          ` : l`
             <div class="systems-grid">
               ${e.map(
-      (t) => o`
+      (t) => l`
                   <div class="card">
                     <div class="card-header">
                       <div>
@@ -1372,7 +1645,7 @@ let C = class extends z {
                       </span>
                     </div>
 
-                    ${t.description ? o`<p class="subtitle" style="margin-bottom: 12px;">${t.description}</p>` : ""}
+                    ${t.description ? l`<p class="subtitle" style="margin-bottom: 12px;">${t.description}</p>` : ""}
 
                     <div class="card-badges">
                       <span class="badge ${t.inference === "sugeno" ? "badge-amber" : "badge-cyan"}">
@@ -1381,7 +1654,7 @@ let C = class extends z {
                       <span class="badge" style="background: var(--secondary-background-color, rgba(125,125,125,0.15)); border: 1px solid var(--divider-color, rgba(125,125,125,0.25)); color: var(--primary-text-color);">
                         ${t.defuzzifier}
                       </span>
-                      ${t.max_updates_per_period ? o`<span class="badge badge-emerald" title="Rate limiter budget">
+                      ${t.max_updates_per_period ? l`<span class="badge badge-emerald" title="Rate limiter budget">
                             ⏱️ ${t.max_updates_per_period} / ${t.update_period}s
                           </span>` : ""}
                     </div>
@@ -1392,14 +1665,22 @@ let C = class extends z {
                       <span class="chip">${t.input_count} inputs</span>
                       <span class="chip">${t.output_count} outputs</span>
                       <span class="chip">${t.rule_count} rules</span>
-                      ${t.epsilon !== void 0 ? o`<span class="chip">ε = ${t.epsilon}</span>` : ""}
+                      ${t.epsilon !== void 0 ? l`<span class="chip">ε = ${t.epsilon}</span>` : ""}
                     </div>
 
                     <div class="card-actions">
                       <button class="btn btn-secondary" @click=${() => this._handleEdit(t)}>
                         ${t.source === "yaml" ? "Inspect" : "Edit"}
                       </button>
-                      ${t.source === "config_entry" ? o`
+                      <button
+                        class="btn btn-secondary"
+                        style="color: var(--fuzzy-accent);"
+                        title="Add custom:fuzzy-system-card for this controller to a Lovelace dashboard"
+                        @click=${() => this._openDashboardModal(t)}
+                      >
+                        📊 Add Card
+                      </button>
+                      ${t.source === "config_entry" ? l`
                             <button class="btn btn-danger" @click=${() => this._handleDelete(t)}>
                               Delete
                             </button>
@@ -1411,7 +1692,117 @@ let C = class extends z {
             </div>
           `}
 
-      ${this._showTemplateModal ? o`
+      ${this._dashboardModalSystem ? l`
+            <div
+              class="modal-overlay"
+              @click=${(t) => t.target === t.currentTarget && (this._dashboardModalSystem = void 0)}
+            >
+              <div class="modal-content" style="max-width: 520px; padding: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--fuzzy-card-border); padding-bottom: 14px;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 24px;">📊</span>
+                    <div>
+                      <h2 class="title-lg" style="font-size: 18px; margin: 0;">Add to Lovelace Dashboard</h2>
+                      <div class="subtitle" style="font-size: 12px; margin: 0;">
+                        System: <code>${this._dashboardModalSystem.system_id}</code>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    class="btn btn-icon"
+                    style="font-size: 16px;"
+                    title="Close"
+                    @click=${() => this._dashboardModalSystem = void 0}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 14px;">
+                  <label class="form-label">Card Header Title</label>
+                  <input
+                    class="input-text"
+                    type="text"
+                    .value=${this._dashboardCardTitle}
+                    @input=${(t) => this._dashboardCardTitle = t.target.value}
+                    placeholder="e.g. Living Room Fan Control"
+                  />
+                </div>
+
+                <div class="form-group" style="margin-bottom: 14px;">
+                  <label class="form-label">Target View Title</label>
+                  <input
+                    class="input-text"
+                    type="text"
+                    .value=${this._dashboardViewTitle}
+                    @input=${(t) => this._dashboardViewTitle = t.target.value}
+                    placeholder="e.g. Fuzzy Systems or Overview"
+                  />
+                  <span class="form-hint" style="font-size: 11px; color: var(--fuzzy-text-secondary); margin-top: 4px; display: block;">
+                    Will append to this view, creating it if it doesn't already exist.
+                  </span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; margin: 18px 0;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+                    <input
+                      type="checkbox"
+                      .checked=${this._dashboardShowGraph}
+                      @change=${(t) => this._dashboardShowGraph = t.target.checked}
+                    />
+                    <span>Show live aggregated output waveform graph</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+                    <input
+                      type="checkbox"
+                      .checked=${this._dashboardShowInputs}
+                      @change=${(t) => this._dashboardShowInputs = t.target.checked}
+                    />
+                    <span>Show live antecedent input sensors</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+                    <input
+                      type="checkbox"
+                      .checked=${this._dashboardShowRules}
+                      @change=${(t) => this._dashboardShowRules = t.target.checked}
+                    />
+                    <span>Show active rule firing strengths</span>
+                  </label>
+                </div>
+
+                ${this._dashboardStatusMsg ? l`
+                      <div
+                        style="padding: 10px 14px; border-radius: var(--fuzzy-radius-md); font-size: 13px; margin-bottom: 14px; background: ${this._dashboardIsError ? "rgba(239, 68, 68, 0.15)" : "rgba(16, 185, 129, 0.15)"}; color: ${this._dashboardIsError ? "var(--fuzzy-danger)" : "#34d399"}; border: 1px solid ${this._dashboardIsError ? "rgba(239, 68, 68, 0.3)" : "rgba(16, 185, 129, 0.3)"};"
+                      >
+                        ${this._dashboardStatusMsg}
+                      </div>
+                    ` : ""}
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px; border-top: 1px solid var(--fuzzy-card-border); padding-top: 16px;">
+                  <button class="btn btn-secondary" @click=${this._handleCopyCardYaml}>
+                    📋 Copy Card YAML
+                  </button>
+                  <div style="display: flex; gap: 8px;">
+                    <button
+                      class="btn btn-secondary"
+                      @click=${() => this._dashboardModalSystem = void 0}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      class="btn btn-primary"
+                      ?disabled=${this._dashboardLoading}
+                      @click=${this._handleAddToDashboard}
+                    >
+                      ${this._dashboardLoading ? "Adding..." : "Add to Dashboard"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ` : ""}
+
+      ${this._showTemplateModal ? l`
             <fuzzy-template-modal
               .hass=${this.hass}
               @close=${() => this._showTemplateModal = !1}
@@ -1429,9 +1820,9 @@ let C = class extends z {
     `;
   }
 };
-C.styles = [
-  ut,
-  T`
+_.styles = [
+  ht,
+  O`
       .header-row {
         display: flex;
         justify-content: space-between;
@@ -1623,67 +2014,94 @@ C.styles = [
       }
     `
 ];
-P([
+$([
   v({ attribute: !1 })
-], C.prototype, "hass", 2);
-P([
-  g()
-], C.prototype, "_systems", 2);
-P([
-  g()
-], C.prototype, "_searchQuery", 2);
-P([
-  g()
-], C.prototype, "_loading", 2);
-P([
-  g()
-], C.prototype, "_error", 2);
-P([
-  g()
-], C.prototype, "_showTemplateModal", 2);
-P([
-  g()
-], C.prototype, "_expandedWaveforms", 2);
-C = P([
-  j("fuzzy-system-catalog")
-], C);
-var ke = Object.defineProperty, Ae = Object.getOwnPropertyDescriptor, rt = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? Ae(t, s) : t, r = e.length - 1, n; r >= 0; r--)
-    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
-  return a && i && ke(t, s, i), i;
+], _.prototype, "hass", 2);
+$([
+  u()
+], _.prototype, "_systems", 2);
+$([
+  u()
+], _.prototype, "_searchQuery", 2);
+$([
+  u()
+], _.prototype, "_loading", 2);
+$([
+  u()
+], _.prototype, "_error", 2);
+$([
+  u()
+], _.prototype, "_showTemplateModal", 2);
+$([
+  u()
+], _.prototype, "_expandedWaveforms", 2);
+$([
+  u()
+], _.prototype, "_dashboardModalSystem", 2);
+$([
+  u()
+], _.prototype, "_dashboardViewTitle", 2);
+$([
+  u()
+], _.prototype, "_dashboardCardTitle", 2);
+$([
+  u()
+], _.prototype, "_dashboardShowGraph", 2);
+$([
+  u()
+], _.prototype, "_dashboardShowInputs", 2);
+$([
+  u()
+], _.prototype, "_dashboardShowRules", 2);
+$([
+  u()
+], _.prototype, "_dashboardStatusMsg", 2);
+$([
+  u()
+], _.prototype, "_dashboardIsError", 2);
+$([
+  u()
+], _.prototype, "_dashboardLoading", 2);
+_ = $([
+  P("fuzzy-system-catalog")
+], _);
+var je = Object.defineProperty, Ne = Object.getOwnPropertyDescriptor, nt = (e, t, i, a) => {
+  for (var s = a > 1 ? void 0 : a ? Ne(t, i) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (s = (a ? n(t, i, s) : n(s)) || s);
+  return a && s && je(t, i, s), s;
 };
-function Vt(e, t, s, a) {
+function Jt(e, t, i, a) {
   switch (e.toLowerCase()) {
     case "trimf": {
-      const [i, r, n] = t;
-      return s <= i || s >= n ? 0 : s === r ? 1 : s < r ? (s - i) / (r - i || 1e-6) : (n - s) / (n - r || 1e-6);
+      const [s, r, n] = t;
+      return i <= s || i >= n ? 0 : i === r ? 1 : i < r ? (i - s) / (r - s || 1e-6) : (n - i) / (n - r || 1e-6);
     }
     case "trapmf": {
-      const [i, r, n, l] = t;
-      return s <= i || s >= l ? 0 : s >= r && s <= n ? 1 : s < r ? (s - i) / (r - i || 1e-6) : (l - s) / (l - n || 1e-6);
+      const [s, r, n, o] = t;
+      return i <= s || i >= o ? 0 : i >= r && i <= n ? 1 : i < r ? (i - s) / (r - s || 1e-6) : (o - i) / (o - n || 1e-6);
     }
     case "gaussmf": {
-      const [i, r] = t, n = r || 1;
-      return Math.exp(-0.5 * Math.pow((s - i) / n, 2));
+      const [s, r] = t, n = r || 1;
+      return Math.exp(-0.5 * Math.pow((i - s) / n, 2));
     }
     case "sigmf": {
-      const [i, r] = t;
-      return 1 / (1 + Math.exp(-i * (s - r)));
+      const [s, r] = t;
+      return 1 / (1 + Math.exp(-s * (i - r)));
     }
     case "gbellmf": {
-      const [i, r, n] = t;
-      return 1 / (1 + Math.pow(Math.abs((s - n) / (i || 1e-6)), 2 * (r || 1)));
+      const [s, r, n] = t;
+      return 1 / (1 + Math.pow(Math.abs((i - n) / (s || 1e-6)), 2 * (r || 1)));
     }
     case "singleton":
     case "constant": {
-      const [i] = t, r = (a || 100) * 0.015;
-      return Math.abs(s - i) <= r ? 1 : 0;
+      const [s] = t, r = (a || 100) * 0.015;
+      return Math.abs(i - s) <= r ? 1 : 0;
     }
     default:
       return 0;
   }
 }
-const nt = [
+const ot = [
   { stroke: "#38bdf8", fill: "rgba(56, 189, 248, 0.15)" },
   // cyan
   { stroke: "#34d399", fill: "rgba(52, 211, 153, 0.15)" },
@@ -1699,75 +2117,75 @@ const nt = [
   { stroke: "#a3e635", fill: "rgba(163, 230, 53, 0.15)" }
   // lime
 ];
-let B = class extends z {
+let q = class extends k {
   constructor() {
     super(...arguments), this.range = [0, 100], this.terms = {};
   }
   render() {
-    const e = Number.isFinite(this.range[0]) ? this.range[0] : 0, t = Number.isFinite(this.range[1]) && this.range[1] > e ? this.range[1] : e + 100, s = t - e || 1, a = 600, i = 180, r = 36, n = 24, l = 16, d = 28, p = a - r - n, c = i - l - d, u = (_) => r + (_ - e) / s * p, h = (_) => l + (1 - Math.max(0, Math.min(1, _))) * c, f = Object.keys(this.terms || {}), y = 120;
-    return o`
+    const e = Number.isFinite(this.range[0]) ? this.range[0] : 0, t = Number.isFinite(this.range[1]) && this.range[1] > e ? this.range[1] : e + 100, i = t - e || 1, a = 600, s = 180, r = 36, n = 24, o = 16, d = 28, p = a - r - n, c = s - o - d, h = (w) => r + (w - e) / i * p, g = (w) => o + (1 - Math.max(0, Math.min(1, w))) * c, f = Object.keys(this.terms || {}), y = 120;
+    return l`
       <div class="canvas-container">
-        <svg viewBox="0 0 ${a} ${i}" preserveAspectRatio="xMidYMid meet">
+        <svg viewBox="0 0 ${a} ${s}" preserveAspectRatio="xMidYMid meet">
           <!-- Horizontal Grid lines at mu = 0.0, 0.5, 1.0 -->
-          <line class="grid-line" x1=${r} y1=${h(0.5)} x2=${r + p} y2=${h(0.5)} />
-          <line class="grid-line" x1=${r} y1=${h(1)} x2=${r + p} y2=${h(1)} />
+          <line class="grid-line" x1=${r} y1=${g(0.5)} x2=${r + p} y2=${g(0.5)} />
+          <line class="grid-line" x1=${r} y1=${g(1)} x2=${r + p} y2=${g(1)} />
 
           <!-- Axes -->
-          <line class="axis-line" x1=${r} y1=${l} x2=${r} y2=${l + c} />
-          <line class="axis-line" x1=${r} y1=${l + c} x2=${r + p} y2=${l + c} />
+          <line class="axis-line" x1=${r} y1=${o} x2=${r} y2=${o + c} />
+          <line class="axis-line" x1=${r} y1=${o + c} x2=${r + p} y2=${o + c} />
 
           <!-- Y-axis tick labels -->
-          <text class="axis-text" x=${r - 6} y=${h(1) + 3} text-anchor="end">1.0</text>
-          <text class="axis-text" x=${r - 6} y=${h(0.5) + 3} text-anchor="end">0.5</text>
-          <text class="axis-text" x=${r - 6} y=${h(0) + 3} text-anchor="end">0.0</text>
+          <text class="axis-text" x=${r - 6} y=${g(1) + 3} text-anchor="end">1.0</text>
+          <text class="axis-text" x=${r - 6} y=${g(0.5) + 3} text-anchor="end">0.5</text>
+          <text class="axis-text" x=${r - 6} y=${g(0) + 3} text-anchor="end">0.0</text>
 
           <!-- X-axis tick labels -->
-          <text class="axis-text" x=${r} y=${i - 10} text-anchor="start">${e}</text>
-          <text class="axis-text" x=${r + p / 2} y=${i - 10} text-anchor="middle">
-            ${(e + s / 2).toFixed(1)}
+          <text class="axis-text" x=${r} y=${s - 10} text-anchor="start">${e}</text>
+          <text class="axis-text" x=${r + p / 2} y=${s - 10} text-anchor="middle">
+            ${(e + i / 2).toFixed(1)}
           </text>
-          <text class="axis-text" x=${r + p} y=${i - 10} text-anchor="end">
+          <text class="axis-text" x=${r + p} y=${s - 10} text-anchor="end">
             ${t} ${this.unit || ""}
           </text>
 
           <!-- Curves for each membership term -->
-          ${f.map((_, q) => {
-      const I = this.terms[_];
-      if (!I || !I.params) return J``;
-      const V = nt[q % nt.length], H = [];
-      for (let S = 0; S <= y; S++) {
-        const k = e + S / y * s, W = Vt(I.type, I.params, k, s);
-        H.push([u(k), h(W)]);
+          ${f.map((w, B) => {
+      const M = this.terms[w];
+      if (!M || !M.params) return Y``;
+      const D = ot[B % ot.length], W = [];
+      for (let C = 0; C <= y; C++) {
+        const E = e + C / y * i, G = Jt(M.type, M.params, E, i);
+        W.push([h(E), g(G)]);
       }
-      const M = H.reduce(
-        (S, [k, W], Lt) => Lt === 0 ? `M ${k} ${W}` : `${S} L ${k} ${W}`,
+      const j = W.reduce(
+        (C, [E, G], Yt) => Yt === 0 ? `M ${E} ${G}` : `${C} L ${E} ${G}`,
         ""
-      ), $ = `${M} L ${r + p} ${l + c} L ${r} ${l + c} Z`;
-      return J`
+      ), S = `${j} L ${r + p} ${o + c} L ${r} ${o + c} Z`;
+      return Y`
               <g>
-                <path class="curve-fill" d=${$} fill=${V.fill} />
-                <path class="curve-path" d=${M} fill="none" stroke=${V.stroke} />
+                <path class="curve-fill" d=${S} fill=${D.fill} />
+                <path class="curve-path" d=${j} fill="none" stroke=${D.stroke} />
               </g>
             `;
     })}
 
           <!-- Current Value Marker (if provided) -->
           ${this.currentValue !== void 0 && !isNaN(this.currentValue) ? (() => {
-      const _ = u(Math.max(e, Math.min(t, this.currentValue)));
-      return J`
+      const w = h(Math.max(e, Math.min(t, this.currentValue)));
+      return Y`
                   <g>
                     <line
                       class="current-val-line"
-                      x1=${_}
-                      y1=${l}
-                      x2=${_}
-                      y2=${l + c}
+                      x1=${w}
+                      y1=${o}
+                      x2=${w}
+                      y2=${o + c}
                     />
-                    <circle cx=${_} cy=${l + c} r="4" fill="#f43f5e" />
+                    <circle cx=${w} cy=${o + c} r="4" fill="#f43f5e" />
                     <text
                       class="axis-text"
-                      x=${_}
-                      y=${l - 4}
+                      x=${w}
+                      y=${o - 4}
                       text-anchor="middle"
                       fill="#f43f5e"
                       font-weight="700"
@@ -1776,18 +2194,18 @@ let B = class extends z {
                     </text>
                   </g>
                 `;
-    })() : J``}
+    })() : Y``}
         </svg>
 
         <!-- Color Legend -->
         <div class="legend-row">
-          ${f.map((_, q) => {
-      const I = this.terms[_], V = nt[q % nt.length];
-      return o`
-              <div class="legend-item" style="color: ${V.stroke};">
-                <span class="legend-swatch" style="background: ${V.stroke};"></span>
-                <span>${_}</span>
-                <span style="opacity: 0.6; font-size: 10px;">(${I.type})</span>
+          ${f.map((w, B) => {
+      const M = this.terms[w], D = ot[B % ot.length];
+      return l`
+              <div class="legend-item" style="color: ${D.stroke};">
+                <span class="legend-swatch" style="background: ${D.stroke};"></span>
+                <span>${w}</span>
+                <span style="opacity: 0.6; font-size: 10px;">(${M.type})</span>
               </div>
             `;
     })}
@@ -1796,7 +2214,7 @@ let B = class extends z {
     `;
   }
 };
-B.styles = T`
+q.styles = O`
     :host {
       display: block;
       width: 100%;
@@ -1875,27 +2293,27 @@ B.styles = T`
       border-radius: 3px;
     }
   `;
-rt([
+nt([
   v({ type: Array })
-], B.prototype, "range", 2);
-rt([
+], q.prototype, "range", 2);
+nt([
   v({ type: Object })
-], B.prototype, "terms", 2);
-rt([
+], q.prototype, "terms", 2);
+nt([
   v({ type: Number })
-], B.prototype, "currentValue", 2);
-rt([
+], q.prototype, "currentValue", 2);
+nt([
   v({ type: String })
-], B.prototype, "unit", 2);
-B = rt([
-  j("fuzzy-curve-canvas")
-], B);
-var Ce = Object.defineProperty, Ee = Object.getOwnPropertyDescriptor, b = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? Ee(t, s) : t, r = e.length - 1, n; r >= 0; r--)
-    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
-  return a && i && Ce(t, s, i), i;
+], q.prototype, "unit", 2);
+q = nt([
+  P("fuzzy-curve-canvas")
+], q);
+var Pe = Object.defineProperty, Le = Object.getOwnPropertyDescriptor, b = (e, t, i, a) => {
+  for (var s = a > 1 ? void 0 : a ? Le(t, i) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (s = (a ? n(t, i, s) : n(s)) || s);
+  return a && s && Pe(t, i, s), s;
 };
-let m = class extends z {
+let m = class extends k {
   constructor() {
     super(...arguments), this.source = "config_entry", this._activeTab = "general", this._rawJson = "", this._saving = !1, this._error = "", this._successMsg = "", this._simInputs = {}, this._simResults = null, this._simulating = !1, this._simError = "", this._showAddInputModal = !1, this._newInputEntityId = "", this._newInputVarName = "", this._newInputMin = 0, this._newInputMax = 100, this._newInputTermsPreset = "3_terms", this._newInputModalError = "", this._showRuleBuilderModal = !1, this._editingRuleIndex = -1, this._builderConditions = [], this._builderConsequent = {
       variable: "",
@@ -1928,22 +2346,22 @@ let m = class extends z {
   }
   _initSimInputs(e = !1) {
     const t = {};
-    for (const [s, a] of Object.entries(this._config?.inputs || {})) {
-      const i = Number.isFinite(a.range?.[0]) ? a.range[0] : 0, r = Number.isFinite(a.range?.[1]) && a.range[1] > i ? a.range[1] : i + 100, n = this._simInputs[s];
-      if (!e && n !== void 0 && n >= i && n <= r)
-        t[s] = n;
+    for (const [i, a] of Object.entries(this._config?.inputs || {})) {
+      const s = Number.isFinite(a.range?.[0]) ? a.range[0] : 0, r = Number.isFinite(a.range?.[1]) && a.range[1] > s ? a.range[1] : s + 100, n = this._simInputs[i];
+      if (!e && n !== void 0 && n >= s && n <= r)
+        t[i] = n;
       else if (a.entity_id && this.hass?.states?.[a.entity_id]) {
-        const l = parseFloat(this.hass.states[a.entity_id].state);
-        t[s] = isNaN(l) ? (i + r) / 2 : l;
-      } else a.default !== void 0 ? t[s] = a.default : t[s] = (i + r) / 2;
+        const o = parseFloat(this.hass.states[a.entity_id].state);
+        t[i] = isNaN(o) ? (s + r) / 2 : o;
+      } else a.default !== void 0 ? t[i] = a.default : t[i] = (s + r) / 2;
     }
     this._simInputs = t;
   }
   _syncSimWithLiveHass() {
     const e = { ...this._simInputs };
-    for (const [t, s] of Object.entries(this._config.inputs || {}))
-      if (s.entity_id && this.hass?.states?.[s.entity_id]) {
-        const a = parseFloat(this.hass.states[s.entity_id].state);
+    for (const [t, i] of Object.entries(this._config.inputs || {}))
+      if (i.entity_id && this.hass?.states?.[i.entity_id]) {
+        const a = parseFloat(this.hass.states[i.entity_id].state);
         isNaN(a) || (e[t] = a);
       }
     this._simInputs = e, this._runSimulation();
@@ -1957,7 +2375,7 @@ let m = class extends z {
     if (this.hass) {
       this._simulating = !0, this._simError = "";
       try {
-        const e = await _e(this.hass, this._config, this._simInputs);
+        const e = await Bt(this.hass, this._config, this._simInputs);
         this._simResults = e;
       } catch (e) {
         this._simError = e?.message || String(e);
@@ -1968,8 +2386,8 @@ let m = class extends z {
   }
   _findOutputSensor(e) {
     if (!this.hass?.states || !this._config.system_id) return null;
-    const s = `sensor.fuzzy_${this._config.system_id.toLowerCase()}_${e.toLowerCase()}`;
-    return this.hass.states[s] || null;
+    const i = `sensor.fuzzy_${this._config.system_id.toLowerCase()}_${e.toLowerCase()}`;
+    return this.hass.states[i] || null;
   }
   _handleBack() {
     this.dispatchEvent(new CustomEvent("back", { bubbles: !0, composed: !0 }));
@@ -2002,7 +2420,7 @@ let m = class extends z {
       return !0;
     })), this._saving = !0;
     try {
-      const e = await be(this.hass, this._config, this.entryId);
+      const e = await ke(this.hass, this._config, this.entryId);
       this._successMsg = `System '${e.system_id}' saved successfully!`, this.dispatchEvent(
         new CustomEvent("system-saved", {
           detail: { systemId: e.system_id, entryId: e.entry_id },
@@ -2024,9 +2442,9 @@ let m = class extends z {
     if (this._newInputEntityId = e, !e) return;
     const t = e.split(".")[1]?.replace(/[^a-z0-9_]/g, "_") || "";
     (!this._newInputVarName || this._newInputVarName.trim() === "") && (this._newInputVarName = t);
-    const s = this.hass?.states ? this.hass.states[e] : null;
-    if (s?.attributes) {
-      const a = s.attributes.unit_of_measurement;
+    const i = this.hass?.states ? this.hass.states[e] : null;
+    if (i?.attributes) {
+      const a = i.attributes.unit_of_measurement;
       a === "°C" ? (this._newInputMin = 10, this._newInputMax = 35) : a === "°F" ? (this._newInputMin = 50, this._newInputMax = 95) : a === "%" ? (this._newInputMin = 0, this._newInputMax = 100) : a === "lx" || a === "lux" ? (this._newInputMin = 0, this._newInputMax = 1e3) : a === "ppm" ? (this._newInputMin = 400, this._newInputMax = 2e3) : (a === "W" || a === "kW") && (this._newInputMin = 0, this._newInputMax = 5e3);
     }
     this.requestUpdate();
@@ -2042,51 +2460,51 @@ let m = class extends z {
       this._newInputModalError = `An input variable named '${e}' already exists.`;
       return;
     }
-    const t = Number.isFinite(this._newInputMin) ? this._newInputMin : 0, s = Number.isFinite(this._newInputMax) && this._newInputMax > t ? this._newInputMax : t + 100, a = s - t;
-    let i;
-    this._newInputTermsPreset === "5_terms" ? i = {
+    const t = Number.isFinite(this._newInputMin) ? this._newInputMin : 0, i = Number.isFinite(this._newInputMax) && this._newInputMax > t ? this._newInputMax : t + 100, a = i - t;
+    let s;
+    this._newInputTermsPreset === "5_terms" ? s = {
       very_low: { type: "trapmf", params: [t, t, t + a * 0.15, t + a * 0.3] },
       low: { type: "trimf", params: [t + a * 0.15, t + a * 0.35, t + a * 0.55] },
       medium: { type: "trimf", params: [t + a * 0.35, t + a * 0.5, t + a * 0.65] },
       high: { type: "trimf", params: [t + a * 0.45, t + a * 0.65, t + a * 0.85] },
-      very_high: { type: "trapmf", params: [t + a * 0.7, t + a * 0.85, s, s] }
-    } : i = {
+      very_high: { type: "trapmf", params: [t + a * 0.7, t + a * 0.85, i, i] }
+    } : s = {
       low: { type: "trapmf", params: [t, t, t + a * 0.25, t + a * 0.5] },
       medium: { type: "trimf", params: [t + a * 0.25, t + a * 0.5, t + a * 0.75] },
-      high: { type: "trapmf", params: [t + a * 0.5, t + a * 0.75, s, s] }
+      high: { type: "trapmf", params: [t + a * 0.5, t + a * 0.75, i, i] }
     }, this._config.inputs || (this._config.inputs = {}), this._config.inputs[e] = {
       entity_id: this._newInputEntityId || "",
-      range: [t, s],
+      range: [t, i],
       resolution: 100,
       default: t,
-      terms: i
+      terms: s
     }, this._showAddInputModal = !1, this.requestUpdate();
   }
   _getAvailableEntities() {
     if (!this.hass?.states) return [];
     const e = [];
-    for (const [t, s] of Object.entries(this.hass.states)) {
+    for (const [t, i] of Object.entries(this.hass.states)) {
       const a = t.split(".")[0];
       (a === "sensor" || a === "input_number" || a === "number" || a === "climate" || a === "weather") && e.push({
         entity_id: t,
-        friendly_name: s.attributes?.friendly_name || t,
-        unit: s.attributes?.unit_of_measurement || "",
-        state: s.state
+        friendly_name: i.attributes?.friendly_name || t,
+        unit: i.attributes?.unit_of_measurement || "",
+        state: i.state
       });
     }
-    return e.sort((t, s) => t.friendly_name.localeCompare(s.friendly_name)), e;
+    return e.sort((t, i) => t.friendly_name.localeCompare(i.friendly_name)), e;
   }
-  _renderEntityPicker(e, t, s) {
-    const a = !!customElements.get("ha-entity-picker"), i = this._getAvailableEntities();
-    return a ? o`
+  _renderEntityPicker(e, t, i) {
+    const a = !!customElements.get("ha-entity-picker"), s = this._getAvailableEntities();
+    return a ? l`
         <ha-entity-picker
           .hass=${this.hass}
           .value=${e || ""}
           ?disabled=${t}
           .includeDomains=${["sensor", "input_number", "number", "climate", "weather"]}
-          @value-changed=${(r) => s(r.detail.value || "")}
+          @value-changed=${(r) => i(r.detail.value || "")}
         ></ha-entity-picker>
-      ` : o`
+      ` : l`
       <div style="position: relative;">
         <input
           class="input-text"
@@ -2095,11 +2513,11 @@ let m = class extends z {
           .value=${e || ""}
           ?disabled=${t}
           placeholder="Search entities (e.g. sensor.temperature)..."
-          @input=${(r) => s(r.target.value)}
+          @input=${(r) => i(r.target.value)}
         />
         <datalist id="ha-fuzzy-entities">
-          ${i.map(
-      (r) => o`
+          ${s.map(
+      (r) => l`
               <option value=${r.entity_id}>
                 ${r.friendly_name} (${r.state} ${r.unit})
               </option>
@@ -2111,22 +2529,22 @@ let m = class extends z {
   }
   _renderEntityStatusTag(e) {
     if (!e || !e.trim())
-      return o`
+      return l`
         <span class="badge badge-amber" title="This variable has no live sensor bound yet">
           ⚠️ Unbound (Add entity to track live values)
         </span>
       `;
     const t = this.hass?.states ? this.hass.states[e] : null;
     if (!t)
-      return o`
+      return l`
         <span class="badge" style="background: rgba(239,68,68,0.15); color: #f87171;">
           ❓ ${e} (Not found in HA)
         </span>
       `;
-    const s = t.attributes?.unit_of_measurement || "";
-    return o`
+    const i = t.attributes?.unit_of_measurement || "";
+    return l`
       <span class="badge badge-emerald" title="Live sensor state in Home Assistant">
-        🟢 Live: ${t.state} ${s}
+        🟢 Live: ${t.state} ${i}
       </span>
     `;
   }
@@ -2163,19 +2581,19 @@ let m = class extends z {
     if (!e || !e.trim()) return null;
     const t = e.trim().match(/^IF\s+(.+)\s+THEN\s+(.+)$/i);
     if (!t) return null;
-    const s = t[1].trim(), i = t[2].trim().match(/^([a-zA-Z0-9_]+)\s*(?:IS|=)\s*(.+)$/i);
-    if (!i) return null;
-    const r = i[1].trim(), n = i[2].trim(), l = parseFloat(n), d = !isNaN(l) && isFinite(l) && !n.match(/[a-zA-Z]/), p = s.split(/\s+(AND|OR)\s+/i), c = [];
-    let u = "AND";
-    for (let h = 0; h < p.length; h++) {
-      const f = p[h].trim();
+    const i = t[1].trim(), s = t[2].trim().match(/^([a-zA-Z0-9_]+)\s*(?:IS|=)\s*(.+)$/i);
+    if (!s) return null;
+    const r = s[1].trim(), n = s[2].trim(), o = parseFloat(n), d = !isNaN(o) && isFinite(o) && !n.match(/[a-zA-Z]/), p = i.split(/\s+(AND|OR)\s+/i), c = [];
+    let h = "AND";
+    for (let g = 0; g < p.length; g++) {
+      const f = p[g].trim();
       if (!f) continue;
       if (f.toUpperCase() === "AND") {
-        u = "AND";
+        h = "AND";
         continue;
       }
       if (f.toUpperCase() === "OR") {
-        u = "OR";
+        h = "OR";
         continue;
       }
       const y = f.match(
@@ -2186,7 +2604,7 @@ let m = class extends z {
         variable: y[1].trim(),
         hedge: (y[2] || "").trim().toLowerCase(),
         term: y[3].trim(),
-        connector: c.length === 0 ? "AND" : u
+        connector: c.length === 0 ? "AND" : h
       });
     }
     return c.length === 0 ? null : {
@@ -2195,18 +2613,18 @@ let m = class extends z {
         variable: r,
         term: d ? "" : n,
         isConstant: d,
-        constantValue: d ? l : 0
+        constantValue: d ? o : 0
       }
     };
   }
   _compileRuleString(e, t) {
-    const s = [];
+    const i = [];
     e.forEach((r, n) => {
-      const l = r.hedge ? `${r.hedge} ` : "", d = `${r.variable} IS ${l}${r.term}`;
-      n === 0 ? s.push(d) : s.push(`${r.connector} ${d}`);
+      const o = r.hedge ? `${r.hedge} ` : "", d = `${r.variable} IS ${o}${r.term}`;
+      n === 0 ? i.push(d) : i.push(`${r.connector} ${d}`);
     });
-    const a = s.join(" "), i = t.isConstant ? `${t.variable} IS ${t.constantValue}` : `${t.variable} IS ${t.term}`;
-    return `IF ${a} THEN ${i}`;
+    const a = i.join(" "), s = t.isConstant ? `${t.variable} IS ${t.constantValue}` : `${t.variable} IS ${t.term}`;
+    return `IF ${a} THEN ${s}`;
   }
   _openAddRuleBuilder() {
     this._ruleBuilderError = "";
@@ -2219,16 +2637,16 @@ let m = class extends z {
       this._error = "Please define at least one output consequent variable before creating rules.", this._activeTab = "outputs";
       return;
     }
-    const s = e[0], a = Object.keys(this._config.inputs[s]?.terms || {}), i = t[0], r = Object.keys(this._config.outputs[i]?.terms || {});
+    const i = e[0], a = Object.keys(this._config.inputs[i]?.terms || {}), s = t[0], r = Object.keys(this._config.outputs[s]?.terms || {});
     this._editingRuleIndex = -1, this._builderConditions = [
       {
-        variable: s,
+        variable: i,
         hedge: "",
         term: a[0] || "low",
         connector: "AND"
       }
     ], this._builderConsequent = {
-      variable: i,
+      variable: s,
       term: r[0] || "low",
       isConstant: !1,
       constantValue: 0
@@ -2236,11 +2654,11 @@ let m = class extends z {
   }
   _openEditRuleBuilder(e) {
     this._ruleBuilderError = "";
-    const t = this._config.rules[e] || "", s = this._parseRuleToBuilder(t);
-    if (s)
-      this._editingRuleIndex = e, this._builderConditions = s.conditions, this._builderConsequent = s.consequent, this._showRuleBuilderModal = !0;
+    const t = this._config.rules[e] || "", i = this._parseRuleToBuilder(t);
+    if (i)
+      this._editingRuleIndex = e, this._builderConditions = i.conditions, this._builderConsequent = i.consequent, this._showRuleBuilderModal = !0;
     else {
-      const a = Object.keys(this._config.inputs || {}), i = Object.keys(this._config.outputs || {}), r = a[0] || "", n = Object.keys(this._config.inputs[r]?.terms || {}), l = i[0] || "", d = Object.keys(this._config.outputs[l]?.terms || {});
+      const a = Object.keys(this._config.inputs || {}), s = Object.keys(this._config.outputs || {}), r = a[0] || "", n = Object.keys(this._config.inputs[r]?.terms || {}), o = s[0] || "", d = Object.keys(this._config.outputs[o]?.terms || {});
       this._editingRuleIndex = e, this._builderConditions = [
         {
           variable: r,
@@ -2249,7 +2667,7 @@ let m = class extends z {
           connector: "AND"
         }
       ], this._builderConsequent = {
-        variable: l,
+        variable: o,
         term: d[0] || "low",
         isConstant: !1,
         constantValue: 0
@@ -2257,17 +2675,17 @@ let m = class extends z {
     }
   }
   _onBuilderConditionVarChange(e, t) {
-    const s = Object.keys(this._config.inputs[t]?.terms || {});
-    this._builderConditions[e].variable = t, this._builderConditions[e].term = s[0] || "", this.requestUpdate();
+    const i = Object.keys(this._config.inputs[t]?.terms || {});
+    this._builderConditions[e].variable = t, this._builderConditions[e].term = i[0] || "", this.requestUpdate();
   }
   _onBuilderConsequentVarChange(e) {
     const t = Object.keys(this._config.outputs[e]?.terms || {});
     this._builderConsequent.variable = e, this._builderConsequent.isConstant || (this._builderConsequent.term = t[0] || ""), this.requestUpdate();
   }
   _addBuilderCondition(e = "AND") {
-    const s = Object.keys(this._config.inputs || {})[0] || "", a = Object.keys(this._config.inputs[s]?.terms || {});
+    const i = Object.keys(this._config.inputs || {})[0] || "", a = Object.keys(this._config.inputs[i]?.terms || {});
     this._builderConditions.push({
-      variable: s,
+      variable: i,
       hedge: "",
       term: a[0] || "",
       connector: e
@@ -2310,9 +2728,9 @@ let m = class extends z {
     this._config.rules.splice(e, 1), this.requestUpdate();
   }
   render() {
-    if (!this._config) return o``;
+    if (!this._config) return l``;
     const e = this.source === "yaml";
-    return o`
+    return l`
       <div class="header-actions">
         <div>
           <button class="btn btn-secondary" @click=${this._handleBack}>
@@ -2321,8 +2739,8 @@ let m = class extends z {
         </div>
 
         <div style="display: flex; gap: 10px; align-items: center;">
-          ${this._saving ? o`<span class="chip">Saving...</span>` : ""}
-          ${e ? "" : o`
+          ${this._saving ? l`<span class="chip">Saving...</span>` : ""}
+          ${e ? "" : l`
                 <button
                   class="btn btn-primary"
                   @click=${this._handleSave}
@@ -2334,7 +2752,7 @@ let m = class extends z {
         </div>
       </div>
 
-      ${e ? o`
+      ${e ? l`
             <div class="yaml-banner">
               <span>⚠️</span>
               <div>
@@ -2342,8 +2760,8 @@ let m = class extends z {
               </div>
             </div>
           ` : ""}
-      ${this._error ? o`<div style="color: var(--fuzzy-danger); margin-bottom: 16px;">${this._error}</div>` : ""}
-      ${this._successMsg ? o`<div style="color: var(--fuzzy-success); margin-bottom: 16px;">${this._successMsg}</div>` : ""}
+      ${this._error ? l`<div style="color: var(--fuzzy-danger); margin-bottom: 16px;">${this._error}</div>` : ""}
+      ${this._successMsg ? l`<div style="color: var(--fuzzy-success); margin-bottom: 16px;">${this._successMsg}</div>` : ""}
 
       <div class="card">
         <div class="tabs">
@@ -2397,7 +2815,7 @@ let m = class extends z {
     `;
   }
   _renderAddInputModal() {
-    return o`
+    return l`
       <div
         class="modal-overlay"
         @click=${(e) => {
@@ -2428,7 +2846,7 @@ let m = class extends z {
             </div>
           </div>
 
-          ${this._newInputModalError ? o`<div style="color: var(--fuzzy-danger); margin-bottom: 14px; font-size: 13px;">${this._newInputModalError}</div>` : ""}
+          ${this._newInputModalError ? l`<div style="color: var(--fuzzy-danger); margin-bottom: 14px; font-size: 13px;">${this._newInputModalError}</div>` : ""}
 
           <div class="form-group">
             <label class="form-label" style="font-weight: 600;">1. Select Home Assistant Sensor Entity</label>
@@ -2442,7 +2860,7 @@ let m = class extends z {
             </div>
           </div>
 
-          ${this._newInputEntityId ? o`
+          ${this._newInputEntityId ? l`
                 <div
                   style="margin-bottom: 18px; padding: 10px 14px; background: rgba(255,255,255,0.03); border-radius: var(--fuzzy-radius-sm); display: flex; align-items: center; justify-content: space-between;"
                 >
@@ -2531,7 +2949,7 @@ let m = class extends z {
     }
   }
   _renderGeneralTab(e) {
-    return o`
+    return l`
       <div class="grid-2">
         <div class="form-group">
           <label class="form-label">System Identifier (system_id)</label>
@@ -2594,10 +3012,10 @@ let m = class extends z {
             ?disabled=${e}
             @change=${(t) => this._config.defuzzifier = t.target.value}
           >
-            ${this._config.inference === "sugeno" ? o`
+            ${this._config.inference === "sugeno" ? l`
                   <option value="weighted_average">Weighted Average (weighted_average)</option>
                   <option value="wtsum">Weighted Sum (wtsum)</option>
-                ` : o`
+                ` : l`
                   <option value="cog">Centroid / Center of Gravity (cog)</option>
                   <option value="boa">Bisector of Area (boa)</option>
                   <option value="mom">Mean of Maximum (mom)</option>
@@ -2670,31 +3088,31 @@ let m = class extends z {
     `;
   }
   _renderInputsTab(e) {
-    const t = this._config.inputs || {}, s = Object.keys(t);
-    return o`
+    const t = this._config.inputs || {}, i = Object.keys(t);
+    return l`
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <div>
           <h3 class="section-title">Input Antecedents</h3>
           <p class="helper-text">Sensors and numerical inputs mapped to linguistic membership terms</p>
         </div>
-        ${e ? "" : o`
+        ${e ? "" : l`
               <button class="btn btn-secondary" @click=${this._openAddInputModal}>
                 + Add Input Variable
               </button>
             `}
       </div>
 
-      ${s.length === 0 ? o`<p class="subtitle" style="padding: 20px 0;">No input variables defined yet.</p>` : s.map((a) => {
-      const i = t[a], r = i.entity_id && this.hass?.states ? this.hass.states[i.entity_id] : null, n = r && !isNaN(parseFloat(r.state)) ? parseFloat(r.state) : void 0, l = r?.attributes?.unit_of_measurement || "";
-      return o`
+      ${i.length === 0 ? l`<p class="subtitle" style="padding: 20px 0;">No input variables defined yet.</p>` : i.map((a) => {
+      const s = t[a], r = s.entity_id && this.hass?.states ? this.hass.states[s.entity_id] : null, n = r && !isNaN(parseFloat(r.state)) ? parseFloat(r.state) : void 0, o = r?.attributes?.unit_of_measurement || "";
+      return l`
               <div class="section-box">
                 <div class="section-header">
                   <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <span class="badge badge-cyan">${a}</span>
-                    ${this._renderEntityStatusTag(i.entity_id)}
-                    <span class="chip">Range: [${i.range[0]}, ${i.range[1]}]</span>
+                    ${this._renderEntityStatusTag(s.entity_id)}
+                    <span class="chip">Range: [${s.range[0]}, ${s.range[1]}]</span>
                   </div>
-                  ${e ? "" : o`
+                  ${e ? "" : l`
                         <button class="btn btn-danger btn-icon" @click=${() => this._removeInput(a)} title="Delete Input">
                           ✕
                         </button>
@@ -2704,11 +3122,11 @@ let m = class extends z {
                 <div class="grid-2">
                   <div class="form-group">
                     <label class="form-label">Bound Home Assistant Sensor Entity</label>
-                    ${this._renderEntityPicker(i.entity_id, e, (d) => {
-        i.entity_id = d, this.requestUpdate();
+                    ${this._renderEntityPicker(s.entity_id, e, (d) => {
+        s.entity_id = d, this.requestUpdate();
       })}
                     <div class="helper-text">
-                      ${i.entity_id ? o`Feeds live numerical measurements from <code>${i.entity_id}</code> into <code>${a}</code>.` : o`<span style="color: #fbbf24;">⚠️ Unbound: select an entity to evaluate live rules in HA.</span>`}
+                      ${s.entity_id ? l`Feeds live numerical measurements from <code>${s.entity_id}</code> into <code>${a}</code>.` : l`<span style="color: #fbbf24;">⚠️ Unbound: select an entity to evaluate live rules in HA.</span>`}
                     </div>
                   </div>
 
@@ -2718,10 +3136,10 @@ let m = class extends z {
                       <input
                         class="input-text"
                         type="number"
-                        .value=${String(i.range[0])}
+                        .value=${String(s.range[0])}
                         ?disabled=${e}
                         @input=${(d) => {
-        i.range[0] = parseFloat(d.target.value), this.requestUpdate();
+        s.range[0] = parseFloat(d.target.value), this.requestUpdate();
       }}
                       />
                     </div>
@@ -2730,10 +3148,10 @@ let m = class extends z {
                       <input
                         class="input-text"
                         type="number"
-                        .value=${String(i.range[1])}
+                        .value=${String(s.range[1])}
                         ?disabled=${e}
                         @input=${(d) => {
-        i.range[1] = parseFloat(d.target.value), this.requestUpdate();
+        s.range[1] = parseFloat(d.target.value), this.requestUpdate();
       }}
                       />
                     </div>
@@ -2743,48 +3161,48 @@ let m = class extends z {
                 <div style="margin-top: 14px;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <span class="form-label" style="margin: 0;">Membership Curves Preview</span>
-                    ${n !== void 0 ? o`<span class="chip" style="color: #34d399;">Live Sensor State: ${n}${l ? ` ${l}` : ""}</span>` : ""}
+                    ${n !== void 0 ? l`<span class="chip" style="color: #34d399;">Live Sensor State: ${n}${o ? ` ${o}` : ""}</span>` : ""}
                   </div>
                   <fuzzy-curve-canvas
-                    .range=${i.range}
-                    .terms=${i.terms || {}}
+                    .range=${s.range}
+                    .terms=${s.terms || {}}
                     .currentValue=${n}
-                    .unit=${l}
+                    .unit=${o}
                   ></fuzzy-curve-canvas>
                 </div>
 
-                ${this._renderTermsEditor(i.terms, i.range, e, () => this.requestUpdate())}
+                ${this._renderTermsEditor(s.terms, s.range, e, () => this.requestUpdate())}
               </div>
             `;
     })}
     `;
   }
   _renderOutputsTab(e) {
-    const t = this._config.outputs || {}, s = Object.keys(t);
-    return o`
+    const t = this._config.outputs || {}, i = Object.keys(t);
+    return l`
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <div>
           <h3 class="section-title">Output Consequents</h3>
           <p class="helper-text">Control targets defuzzified and published to Home Assistant sensors</p>
         </div>
-        ${e ? "" : o`
+        ${e ? "" : l`
               <button class="btn btn-secondary" @click=${this._addOutput}>
                 + Add Output Variable
               </button>
             `}
       </div>
 
-      ${s.length === 0 ? o`<p class="subtitle" style="padding: 20px 0;">No output variables defined yet.</p>` : s.map((a) => {
-      const i = t[a], r = this._findOutputSensor(a), n = r && !isNaN(parseFloat(r.state)) ? parseFloat(r.state) : void 0;
-      return o`
+      ${i.length === 0 ? l`<p class="subtitle" style="padding: 20px 0;">No output variables defined yet.</p>` : i.map((a) => {
+      const s = t[a], r = this._findOutputSensor(a), n = r && !isNaN(parseFloat(r.state)) ? parseFloat(r.state) : void 0;
+      return l`
               <div class="section-box">
                 <div class="section-header">
                   <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="badge badge-amber">${a}</span>
-                    <span class="chip">Range: [${i.range[0]}, ${i.range[1]}]</span>
-                    ${i.unit_of_measurement ? o`<span class="chip">${i.unit_of_measurement}</span>` : ""}
+                    <span class="chip">Range: [${s.range[0]}, ${s.range[1]}]</span>
+                    ${s.unit_of_measurement ? l`<span class="chip">${s.unit_of_measurement}</span>` : ""}
                   </div>
-                  ${e ? "" : o`
+                  ${e ? "" : l`
                         <button class="btn btn-danger btn-icon" @click=${() => this._removeOutput(a)} title="Delete Output">
                           ✕
                         </button>
@@ -2797,10 +3215,10 @@ let m = class extends z {
                     <input
                       class="input-text"
                       type="number"
-                      .value=${String(i.range[0])}
+                      .value=${String(s.range[0])}
                       ?disabled=${e}
-                      @input=${(l) => {
-        i.range[0] = parseFloat(l.target.value), this.requestUpdate();
+                      @input=${(o) => {
+        s.range[0] = parseFloat(o.target.value), this.requestUpdate();
       }}
                     />
                   </div>
@@ -2809,10 +3227,10 @@ let m = class extends z {
                     <input
                       class="input-text"
                       type="number"
-                      .value=${String(i.range[1])}
+                      .value=${String(s.range[1])}
                       ?disabled=${e}
-                      @input=${(l) => {
-        i.range[1] = parseFloat(l.target.value), this.requestUpdate();
+                      @input=${(o) => {
+        s.range[1] = parseFloat(o.target.value), this.requestUpdate();
       }}
                     />
                   </div>
@@ -2823,11 +3241,11 @@ let m = class extends z {
                       type="number"
                       step="0.001"
                       placeholder="Inherit system default"
-                      .value=${i.epsilon !== void 0 ? String(i.epsilon) : ""}
+                      .value=${s.epsilon !== void 0 ? String(s.epsilon) : ""}
                       ?disabled=${e}
-                      @input=${(l) => {
-        const d = l.target.value.trim();
-        i.epsilon = d ? parseFloat(d) : void 0, this.requestUpdate();
+                      @input=${(o) => {
+        const d = o.target.value.trim();
+        s.epsilon = d ? parseFloat(d) : void 0, this.requestUpdate();
       }}
                     />
                   </div>
@@ -2836,37 +3254,37 @@ let m = class extends z {
                 <div style="margin-top: 14px;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <span class="form-label" style="margin: 0;">Output Membership Curves Preview</span>
-                    ${n !== void 0 ? o`<span class="chip" style="color: #34d399;">Live Sensor Output: ${n}${i.unit_of_measurement ? ` ${i.unit_of_measurement}` : ""}</span>` : ""}
+                    ${n !== void 0 ? l`<span class="chip" style="color: #34d399;">Live Sensor Output: ${n}${s.unit_of_measurement ? ` ${s.unit_of_measurement}` : ""}</span>` : ""}
                   </div>
                   <fuzzy-curve-canvas
-                    .range=${i.range}
-                    .terms=${i.terms || {}}
+                    .range=${s.range}
+                    .terms=${s.terms || {}}
                     .currentValue=${n}
-                    .unit=${i.unit_of_measurement || ""}
+                    .unit=${s.unit_of_measurement || ""}
                   ></fuzzy-curve-canvas>
                 </div>
 
-                ${this._renderTermsEditor(i.terms, i.range, e, () => this.requestUpdate())}
+                ${this._renderTermsEditor(s.terms, s.range, e, () => this.requestUpdate())}
               </div>
             `;
     })}
     `;
   }
-  _renderTermsEditor(e, t, s, a) {
-    const i = Object.keys(e || {});
-    return o`
+  _renderTermsEditor(e, t, i, a) {
+    const s = Object.keys(e || {});
+    return l`
       <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <span class="form-label" style="margin: 0; font-size: 13px;">Linguistic Membership Terms</span>
-          ${s ? "" : o`
+          ${i ? "" : l`
                 <button
                   class="btn btn-secondary"
                   style="font-size: 12px; padding: 4px 10px;"
                   @click=${() => {
-      const r = `term_${i.length + 1}`, n = (t[0] + t[1]) / 2, l = t[1] - t[0] || 10;
+      const r = `term_${s.length + 1}`, n = (t[0] + t[1]) / 2, o = t[1] - t[0] || 10;
       e[r] = {
         type: "trimf",
-        params: [n - l * 0.25, n, n + l * 0.25]
+        params: [n - o * 0.25, n, n + o * 0.25]
       }, a();
     }}
                 >
@@ -2876,9 +3294,9 @@ let m = class extends z {
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 8px;">
-          ${i.map((r) => {
+          ${s.map((r) => {
       const n = e[r];
-      return o`
+      return l`
               <div
                 style="display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.25); padding: 8px 12px; border-radius: var(--fuzzy-radius-md); border: 1px solid rgba(255, 255, 255, 0.04); flex-wrap: wrap;"
               >
@@ -2891,9 +3309,9 @@ let m = class extends z {
                     class="select-input"
                     style="padding: 4px 8px; font-size: 12px;"
                     .value=${n.type || "trimf"}
-                    ?disabled=${s}
-                    @change=${(l) => {
-        n.type = l.target.value, a();
+                    ?disabled=${i}
+                    @change=${(o) => {
+        n.type = o.target.value, a();
       }}
                   >
                     <option value="trimf">trimf (a, b, c)</option>
@@ -2913,15 +3331,15 @@ let m = class extends z {
                     type="text"
                     .value=${Array.isArray(n.params) ? n.params.join(", ") : ""}
                     placeholder="e.g. 18, 21, 24"
-                    ?disabled=${s}
-                    @input=${(l) => {
-        const d = l.target.value.split(",").map((p) => parseFloat(p.trim()));
+                    ?disabled=${i}
+                    @input=${(o) => {
+        const d = o.target.value.split(",").map((p) => parseFloat(p.trim()));
         d.every((p) => !isNaN(p)) && (n.params = d, a());
       }}
                   />
                 </div>
 
-                ${s ? "" : o`
+                ${i ? "" : l`
                       <button
                         class="btn btn-danger btn-icon"
                         style="width: 26px; height: 26px; padding: 0;"
@@ -2941,8 +3359,8 @@ let m = class extends z {
     `;
   }
   _renderSimulationTab() {
-    const e = this._config.inputs || {}, t = this._config.outputs || {}, s = Object.keys(e), a = Object.keys(t);
-    return o`
+    const e = this._config.inputs || {}, t = this._config.outputs || {}, i = Object.keys(e), a = Object.keys(t);
+    return l`
       <div style="margin-bottom: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
           <div>
@@ -2961,7 +3379,7 @@ let m = class extends z {
           </div>
         </div>
 
-        ${this._simError ? o`<div style="color: var(--fuzzy-danger); margin-bottom: 16px;">Simulation Error: ${this._simError}</div>` : ""}
+        ${this._simError ? l`<div style="color: var(--fuzzy-danger); margin-bottom: 16px;">Simulation Error: ${this._simError}</div>` : ""}
 
         <div class="grid-2" style="gap: 24px; align-items: start;">
           <!-- Left: Antecedent Sliders -->
@@ -2970,14 +3388,14 @@ let m = class extends z {
               📥 Antecedents (Input Values)
             </h4>
 
-            ${s.length === 0 ? o`<p class="subtitle">No input variables defined yet.</p>` : s.map((i) => {
-      const r = e[i], n = r.range[0], l = r.range[1], d = (l - n) / 100 || 1, p = this._simInputs[i] ?? n;
-      return o`
+            ${i.length === 0 ? l`<p class="subtitle">No input variables defined yet.</p>` : i.map((s) => {
+      const r = e[s], n = r.range[0], o = r.range[1], d = (o - n) / 100 || 1, p = this._simInputs[s] ?? n;
+      return l`
                     <div class="section-box" style="margin-bottom: 14px; padding: 14px;">
                       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <div>
-                          <strong style="color: var(--fuzzy-text); font-size: 14px;">${i}</strong>
-                          ${r.entity_id ? o`<span class="helper-text" style="margin-left: 6px;">(${r.entity_id})</span>` : ""}
+                          <strong style="color: var(--fuzzy-text); font-size: 14px;">${s}</strong>
+                          ${r.entity_id ? l`<span class="helper-text" style="margin-left: 6px;">(${r.entity_id})</span>` : ""}
                         </div>
                         <span class="badge badge-cyan" style="font-size: 13px; font-weight: 700;">
                           ${typeof p == "number" ? p.toFixed(2) : p}
@@ -2989,33 +3407,33 @@ let m = class extends z {
                           type="range"
                           style="flex: 1; accent-color: var(--fuzzy-primary, #0284c7); cursor: pointer;"
                           min=${n}
-                          max=${l}
+                          max=${o}
                           step=${d}
                           .value=${String(p)}
-                          @input=${(c) => this._onSimInputChange(i, parseFloat(c.target.value))}
+                          @input=${(c) => this._onSimInputChange(s, parseFloat(c.target.value))}
                         />
                         <input
                           class="input-text"
                           type="number"
                           style="width: 80px; padding: 4px 8px; font-size: 12px;"
                           min=${n}
-                          max=${l}
+                          max=${o}
                           step=${d}
                           .value=${String(p)}
-                          @input=${(c) => this._onSimInputChange(i, parseFloat(c.target.value))}
+                          @input=${(c) => this._onSimInputChange(s, parseFloat(c.target.value))}
                         />
                       </div>
 
                       <!-- Real-time term membership degrees -->
                       <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
                         ${Object.keys(r.terms || {}).map((c) => {
-        const u = r.terms[c], h = Vt(u.type, u.params, p, l - n), f = h > 0.01;
-        return o`
+        const h = r.terms[c], g = Jt(h.type, h.params, p, o - n), f = g > 0.01;
+        return l`
                             <span
                               class="chip"
                               style="${f ? "background: rgba(2, 132, 199, 0.15); border: 1px solid rgba(2, 132, 199, 0.4); color: #0284c7; font-weight: 600;" : "opacity: 0.6; color: var(--secondary-text-color);"}"
                             >
-                              ${c}: <strong>${h.toFixed(2)}</strong>
+                              ${c}: <strong>${g.toFixed(2)}</strong>
                             </span>
                           `;
       })}
@@ -3031,58 +3449,58 @@ let m = class extends z {
               📤 Consequents & Distribution Waveforms
             </h4>
 
-            ${a.length === 0 ? o`<p class="subtitle">No output variables defined yet.</p>` : a.map((i) => {
-      const r = t[i], n = this._simResults ? this._simResults[i] : null, l = r.unit_of_measurement || "", d = this._config.inference === "mamdani";
-      return o`
+            ${a.length === 0 ? l`<p class="subtitle">No output variables defined yet.</p>` : a.map((s) => {
+      const r = t[s], n = this._simResults ? this._simResults[s] : null, o = r.unit_of_measurement || "", d = this._config.inference === "mamdani";
+      return l`
                     <div class="section-box" style="margin-bottom: 16px; padding: 14px;">
                       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                         <div>
-                          <strong style="font-size: 15px; color: var(--fuzzy-text);">${i}</strong>
+                          <strong style="font-size: 15px; color: var(--fuzzy-text);">${s}</strong>
                           <span class="chip" style="margin-left: 8px;">Range: [${r.range[0]}, ${r.range[1]}]</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                          ${n?.dominant_term ? o`<span class="badge badge-amber">Dominant: ${n.dominant_term}</span>` : ""}
+                          ${n?.dominant_term ? l`<span class="badge badge-amber">Dominant: ${n.dominant_term}</span>` : ""}
                           <span class="badge badge-emerald" style="font-size: 14px; font-weight: 700;">
-                            ${n?.defuzzified_value !== void 0 && n?.defuzzified_value !== null ? `${n.defuzzified_value.toFixed(2)}${l ? ` ${l}` : ""}` : "N/A"}
+                            ${n?.defuzzified_value !== void 0 && n?.defuzzified_value !== null ? `${n.defuzzified_value.toFixed(2)}${o ? ` ${o}` : ""}` : "N/A"}
                           </span>
                         </div>
                       </div>
 
-                      ${d && n?.universe && n.universe.length > 0 ? o`
+                      ${d && n?.universe && n.universe.length > 0 ? l`
                             <fuzzy-aggregated-graph
                               .universe=${n.universe}
                               .aggregatedSet=${n.aggregated_set || []}
                               .defuzzifiedValue=${n.defuzzified_value}
                               .defuzzifier=${r.defuzzifier || this._config.defuzzifier || "cog"}
                               .dominantTerm=${n.dominant_term || ""}
-                              .unit=${l}
-                              .outputName=${i}
+                              .unit=${o}
+                              .outputName=${s}
                             ></fuzzy-aggregated-graph>
-                          ` : d ? o`
+                          ` : d ? l`
                               <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 16px; text-align: center; color: var(--fuzzy-text-secondary); font-size: 12px;">
                                 Awaiting simulation results...
                               </div>
-                            ` : o`
+                            ` : l`
                               <!-- Sugeno singleton activations preview -->
                               <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 14px; border: 1px solid rgba(255,255,255,0.06);">
                                 <div style="font-size: 11px; font-weight: 700; color: #fbbf24; text-transform: uppercase; margin-bottom: 8px;">
                                   ⚡ Sugeno Crisp Singleton Weighting (${this._config.defuzzifier || "weighted_average"})
                                 </div>
                                 <div style="font-size: 13px; color: var(--fuzzy-text);">
-                                  Weighted Output: <strong>${n?.defuzzified_value !== void 0 ? n.defuzzified_value.toFixed(2) : "0.00"}${l ? ` ${l}` : ""}</strong>
+                                  Weighted Output: <strong>${n?.defuzzified_value !== void 0 ? n.defuzzified_value.toFixed(2) : "0.00"}${o ? ` ${o}` : ""}</strong>
                                 </div>
                               </div>
                             `}
 
                       <!-- Term activations chips -->
-                      ${n?.term_activations ? o`
+                      ${n?.term_activations ? l`
                             <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;">
                               ${Object.entries(n.term_activations).map(([p, c]) => {
-        const u = c > 0.01;
-        return o`
+        const h = c > 0.01;
+        return l`
                                   <span
                                     class="chip"
-                                    style="${u ? "background: rgba(5, 150, 105, 0.15); border: 1px solid rgba(5, 150, 105, 0.4); color: #059669; font-weight: 600;" : "opacity: 0.6; color: var(--secondary-text-color);"}"
+                                    style="${h ? "background: rgba(5, 150, 105, 0.15); border: 1px solid rgba(5, 150, 105, 0.4); color: #059669; font-weight: 600;" : "opacity: 0.6; color: var(--secondary-text-color);"}"
                                   >
                                     ${p === "false" || p === !1 ? "off" : p}: <strong>${c.toFixed(2)}</strong>
                                   </span>
@@ -3102,13 +3520,13 @@ let m = class extends z {
             📜 Rule Firings & Strengths
           </h4>
 
-          ${!this._simResults || Object.keys(this._simResults).length === 0 ? o`<p class="subtitle">Run simulation to inspect rule firings.</p>` : o`
+          ${!this._simResults || Object.keys(this._simResults).length === 0 ? l`<p class="subtitle">Run simulation to inspect rule firings.</p>` : l`
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                   ${(() => {
-      const i = a[0], r = this._simResults[i]?.rule_strengths || [];
-      return r.length === 0 ? o`<p class="subtitle">No rules fired or defined.</p>` : r.map((n) => {
-        const l = n.firing_strength || 0, d = l > 0.01;
-        return o`
+      const s = a[0], r = this._simResults[s]?.rule_strengths || [];
+      return r.length === 0 ? l`<p class="subtitle">No rules fired or defined.</p>` : r.map((n) => {
+        const o = n.firing_strength || 0, d = o > 0.01;
+        return l`
                         <div
                           style="display: flex; align-items: center; gap: 12px; background: ${d ? "rgba(2, 132, 199, 0.12)" : "var(--secondary-background-color, rgba(125, 125, 125, 0.05))"}; padding: 10px 14px; border-radius: var(--fuzzy-radius-md); border: 1px solid ${d ? "rgba(2, 132, 199, 0.4)" : "var(--divider-color, rgba(125, 125, 125, 0.18))"};"
                         >
@@ -3118,11 +3536,11 @@ let m = class extends z {
                           <div style="width: 140px; display: flex; align-items: center; gap: 8px;">
                             <div style="flex: 1; height: 6px; background: var(--divider-color, rgba(125, 125, 125, 0.2)); border-radius: 3px; overflow: hidden;">
                               <div
-                                style="width: ${Math.round(l * 100)}%; height: 100%; background: ${d ? "linear-gradient(90deg, #0284c7, #38bdf8)" : "var(--secondary-text-color, #64748b)"}; border-radius: 3px;"
+                                style="width: ${Math.round(o * 100)}%; height: 100%; background: ${d ? "linear-gradient(90deg, #0284c7, #38bdf8)" : "var(--secondary-text-color, #64748b)"}; border-radius: 3px;"
                               ></div>
                             </div>
                             <span style="font-size: 11px; font-weight: 700; font-family: monospace; color: ${d ? "var(--fuzzy-primary, #0284c7)" : "var(--secondary-text-color, #64748b)"}; width: 34px; text-align: right;">
-                              ${l.toFixed(2)}
+                              ${o.toFixed(2)}
                             </span>
                           </div>
                         </div>
@@ -3137,7 +3555,7 @@ let m = class extends z {
   }
   _renderRulesTab(e) {
     const t = this._config.rules || [];
-    return o`
+    return l`
       <div
         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;"
       >
@@ -3147,7 +3565,7 @@ let m = class extends z {
             Declarative IF &lt;antecedents&gt; THEN &lt;consequents&gt; with AND, OR, NOT and linguistic hedges
           </p>
         </div>
-        ${e ? "" : o`
+        ${e ? "" : l`
               <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                 <div
                   style="display: inline-flex; background: rgba(255, 255, 255, 0.05); border-radius: var(--fuzzy-radius-md); padding: 2px; border: 1px solid var(--fuzzy-card-border);"
@@ -3185,7 +3603,7 @@ let m = class extends z {
             `}
       </div>
 
-      ${t.length === 0 ? o`
+      ${t.length === 0 ? l`
             <div
               style="text-align: center; padding: 40px 20px; background: rgba(15, 23, 42, 0.3); border-radius: var(--fuzzy-radius-md); border: 1px dashed var(--fuzzy-card-border);"
             >
@@ -3194,23 +3612,23 @@ let m = class extends z {
               <p class="helper-text" style="margin-bottom: 18px;">
                 Rules map your input linguistic terms (e.g. temperature IS hot) to output targets (e.g. fan_speed IS fast).
               </p>
-              ${e ? "" : o`
+              ${e ? "" : l`
                     <button class="btn btn-primary" @click=${this._openAddRuleBuilder}>
                       ✨ Create First Rule with Builder
                     </button>
                   `}
             </div>
-          ` : this._rulesViewMode === "visual" ? t.map((s, a) => {
-      const i = this._parseRuleToBuilder(s);
-      return i ? o`
+          ` : this._rulesViewMode === "visual" ? t.map((i, a) => {
+      const s = this._parseRuleToBuilder(i);
+      return s ? l`
               <div class="rule-card">
                 <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
                   <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <span class="badge badge-purple" style="min-width: 28px; justify-content: center;">R${a + 1}</span>
                     <span class="badge badge-cyan">IF</span>
-                    ${i.conditions.map(
-        (r, n) => o`
-                        ${n > 0 ? o`<span class="badge badge-purple">${r.connector}</span>` : ""}
+                    ${s.conditions.map(
+        (r, n) => l`
+                        ${n > 0 ? l`<span class="badge badge-purple">${r.connector}</span>` : ""}
                         <span class="rule-var">${r.variable}</span>
                         <span class="rule-op">${r.hedge ? `is ${r.hedge}` : "is"}</span>
                         <span class="rule-term">${r.term}</span>
@@ -3218,19 +3636,19 @@ let m = class extends z {
       )}
                     <span class="badge badge-amber">THEN</span>
                     <span class="rule-var-consequent">
-                      ${i.consequent.variable}
+                      ${s.consequent.variable}
                     </span>
                     <span class="rule-op">is</span>
                     <span class="rule-term">
-                      ${i.consequent.isConstant ? i.consequent.constantValue : i.consequent.term}
+                      ${s.consequent.isConstant ? s.consequent.constantValue : s.consequent.term}
                     </span>
                   </div>
                   <div class="rule-raw">
-                    ${s}
+                    ${i}
                   </div>
                 </div>
 
-                ${e ? "" : o`
+                ${e ? "" : l`
                       <div style="display: flex; gap: 8px; align-items: center;">
                         <button
                           class="btn btn-secondary"
@@ -3250,13 +3668,13 @@ let m = class extends z {
                       </div>
                     `}
               </div>
-            ` : o`
+            ` : l`
                 <div class="rule-card">
                   <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
                     <span class="badge badge-purple" style="width: 24px; justify-content: center;">${a + 1}</span>
-                    <span style="font-family: monospace; font-size: 13px;">${s}</span>
+                    <span style="font-family: monospace; font-size: 13px;">${i}</span>
                   </div>
-                  ${e ? "" : o`
+                  ${e ? "" : l`
                         <div style="display: flex; gap: 8px; align-items: center;">
                           <button
                             class="btn btn-secondary"
@@ -3277,17 +3695,17 @@ let m = class extends z {
                 </div>
               `;
     }) : t.map(
-      (s, a) => o`
+      (i, a) => l`
               <div class="rule-item">
                 <span class="badge badge-purple" style="width: 24px; justify-content: center;">${a + 1}</span>
                 <input
                   class="input-text rule-input"
                   type="text"
-                  .value=${s}
+                  .value=${i}
                   ?disabled=${e}
-                  @input=${(i) => this._updateRule(a, i.target.value)}
+                  @input=${(s) => this._updateRule(a, s.target.value)}
                 />
-                ${e ? "" : o`
+                ${e ? "" : l`
                       <button
                         class="btn btn-secondary"
                         style="padding: 6px 10px; font-size: 12px;"
@@ -3311,11 +3729,11 @@ let m = class extends z {
   }
   _renderRuleBuilderModal() {
     const e = Object.keys(this._config.inputs || {}), t = Object.keys(this._config.outputs || {});
-    return o`
+    return l`
       <div
         class="modal-overlay"
-        @click=${(s) => {
-      s.target.classList.contains("modal-overlay") && (this._showRuleBuilderModal = !1);
+        @click=${(i) => {
+      i.target.classList.contains("modal-overlay") && (this._showRuleBuilderModal = !1);
     }}
       >
         <div class="modal-content" style="max-width: 780px;">
@@ -3344,7 +3762,7 @@ let m = class extends z {
             </div>
           </div>
 
-          ${this._ruleBuilderError ? o`<div style="color: var(--fuzzy-danger); margin-bottom: 14px; font-size: 13px;">${this._ruleBuilderError}</div>` : ""}
+          ${this._ruleBuilderError ? l`<div style="color: var(--fuzzy-danger); margin-bottom: 14px; font-size: 13px;">${this._ruleBuilderError}</div>` : ""}
 
           <!-- Antecedents (IF) -->
           <div
@@ -3364,41 +3782,41 @@ let m = class extends z {
               </button>
             </div>
 
-            ${this._builderConditions.map((s, a) => {
-      const i = Object.keys(this._config.inputs[s.variable]?.terms || {});
-      return o`
+            ${this._builderConditions.map((i, a) => {
+      const s = Object.keys(this._config.inputs[i.variable]?.terms || {});
+      return l`
                 <div class="builder-row">
-                  ${a > 0 ? o`
+                  ${a > 0 ? l`
                         <select
                           class="input-select"
                           style="width: 85px; font-weight: 700; color: #c084fc; border-color: rgba(168, 85, 247, 0.4);"
-                          .value=${s.connector}
+                          .value=${i.connector}
                           @change=${(r) => {
-        s.connector = r.target.value, this.requestUpdate();
+        i.connector = r.target.value, this.requestUpdate();
       }}
                         >
                           <option value="AND">AND</option>
                           <option value="OR">OR</option>
                         </select>
-                      ` : o`<span class="badge badge-cyan" style="width: 70px; justify-content: center;">IF</span>`}
+                      ` : l`<span class="badge badge-cyan" style="width: 70px; justify-content: center;">IF</span>`}
 
                   <!-- Input Variable -->
                   <select
                     class="input-select"
                     style="flex: 1; min-width: 140px; font-weight: 600;"
-                    .value=${s.variable}
+                    .value=${i.variable}
                     @change=${(r) => this._onBuilderConditionVarChange(a, r.target.value)}
                   >
-                    ${e.map((r) => o`<option value=${r}>${r}</option>`)}
+                    ${e.map((r) => l`<option value=${r}>${r}</option>`)}
                   </select>
 
                   <!-- Hedge -->
                   <select
                     class="input-select"
                     style="width: 130px;"
-                    .value=${s.hedge}
+                    .value=${i.hedge}
                     @change=${(r) => {
-        s.hedge = r.target.value, this.requestUpdate();
+        i.hedge = r.target.value, this.requestUpdate();
       }}
                   >
                     <option value="">IS</option>
@@ -3413,15 +3831,15 @@ let m = class extends z {
                   <select
                     class="input-select"
                     style="flex: 1; min-width: 120px; font-weight: 600; color: #34d399;"
-                    .value=${s.term}
+                    .value=${i.term}
                     @change=${(r) => {
-        s.term = r.target.value, this.requestUpdate();
+        i.term = r.target.value, this.requestUpdate();
       }}
                   >
-                    ${i.map((r) => o`<option value=${r}>${r}</option>`)}
+                    ${s.map((r) => l`<option value=${r}>${r}</option>`)}
                   </select>
 
-                  ${this._builderConditions.length > 1 ? o`
+                  ${this._builderConditions.length > 1 ? l`
                         <button
                           class="btn btn-danger btn-icon"
                           title="Remove Condition"
@@ -3452,46 +3870,46 @@ let m = class extends z {
                 class="input-select"
                 style="flex: 1; min-width: 150px; font-weight: 600;"
                 .value=${this._builderConsequent.variable}
-                @change=${(s) => this._onBuilderConsequentVarChange(s.target.value)}
+                @change=${(i) => this._onBuilderConsequentVarChange(i.target.value)}
               >
-                ${t.map((s) => o`<option value=${s}>${s}</option>`)}
+                ${t.map((i) => l`<option value=${i}>${i}</option>`)}
               </select>
 
               <span style="font-size: 13px; font-weight: 700; color: var(--fuzzy-text-secondary);">IS</span>
 
-              ${this._builderConsequent.isConstant ? o`
+              ${this._builderConsequent.isConstant ? l`
                     <input
                       class="input-text"
                       style="flex: 1; min-width: 120px;"
                       type="number"
                       step="any"
                       .value=${String(this._builderConsequent.constantValue)}
-                      @input=${(s) => {
-      this._builderConsequent.constantValue = parseFloat(s.target.value), this.requestUpdate();
+                      @input=${(i) => {
+      this._builderConsequent.constantValue = parseFloat(i.target.value), this.requestUpdate();
     }}
                     />
-                  ` : o`
+                  ` : l`
                     <select
                       class="input-select"
                       style="flex: 1; min-width: 120px; font-weight: 600; color: var(--fuzzy-success, #059669);"
                       .value=${this._builderConsequent.term}
-                      @change=${(s) => {
-      this._builderConsequent.term = s.target.value, this.requestUpdate();
+                      @change=${(i) => {
+      this._builderConsequent.term = i.target.value, this.requestUpdate();
     }}
                     >
                       ${Object.keys(
       this._config.outputs[this._builderConsequent.variable]?.terms || {}
-    ).map((s) => o`<option value=${s}>${s}</option>`)}
+    ).map((i) => l`<option value=${i}>${i}</option>`)}
                     </select>
                   `}
 
-              ${this._config.inference === "sugeno" ? o`
+              ${this._config.inference === "sugeno" ? l`
                     <label class="checkbox-label" style="font-size: 12px; margin-left: 8px;">
                       <input
                         type="checkbox"
                         .checked=${this._builderConsequent.isConstant}
-                        @change=${(s) => {
-      this._builderConsequent.isConstant = s.target.checked, this.requestUpdate();
+                        @change=${(i) => {
+      this._builderConsequent.isConstant = i.target.checked, this.requestUpdate();
     }}
                       />
                       Numeric Constant
@@ -3529,7 +3947,7 @@ let m = class extends z {
     `;
   }
   _renderRawTab(e) {
-    return o`
+    return l`
       <div class="form-group">
         <label class="form-label">Full Configuration JSON</label>
         <textarea
@@ -3546,8 +3964,8 @@ let m = class extends z {
   }
 };
 m.styles = [
-  ut,
-  T`
+  ht,
+  O`
       .tabs {
         display: flex;
         gap: 8px;
@@ -3770,83 +4188,83 @@ b([
   v({ type: String })
 ], m.prototype, "source", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_activeTab", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_config", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_rawJson", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_saving", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_error", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_successMsg", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_simInputs", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_simResults", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_simulating", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_simError", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_showAddInputModal", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_newInputEntityId", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_newInputVarName", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_newInputMin", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_newInputMax", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_newInputTermsPreset", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_newInputModalError", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_showRuleBuilderModal", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_editingRuleIndex", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_builderConditions", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_builderConsequent", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_ruleBuilderError", 2);
 b([
-  g()
+  u()
 ], m.prototype, "_rulesViewMode", 2);
 m = b([
-  j("fuzzy-system-editor")
+  P("fuzzy-system-editor")
 ], m);
-var Ie = Object.defineProperty, Te = Object.getOwnPropertyDescriptor, F = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? Te(t, s) : t, r = e.length - 1, n; r >= 0; r--)
-    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
-  return a && i && Ie(t, s, i), i;
+var Fe = Object.defineProperty, De = Object.getOwnPropertyDescriptor, F = (e, t, i, a) => {
+  for (var s = a > 1 ? void 0 : a ? De(t, i) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (s = (a ? n(t, i, s) : n(s)) || s);
+  return a && s && Fe(t, i, s), s;
 };
-let E = class extends z {
+let T = class extends k {
   constructor() {
     super(...arguments), this._templates = [], this._selectedTemplate = null, this._systemId = "", this._systemName = "", this._loading = !1, this._error = "";
   }
@@ -3860,7 +4278,7 @@ let E = class extends z {
     if (this.hass) {
       this._loading = !0;
       try {
-        this._templates = await ve(this.hass);
+        this._templates = await Ut(this.hass);
       } catch (e) {
         this._error = e.message || "Failed to load templates";
       } finally {
@@ -3880,7 +4298,7 @@ let E = class extends z {
     }
     this._loading = !0, this._error = "";
     try {
-      const t = await xe(
+      const t = await qt(
         this.hass,
         this._selectedTemplate.id,
         e,
@@ -3903,7 +4321,7 @@ let E = class extends z {
     this.dispatchEvent(new CustomEvent("close", { bubbles: !0, composed: !0 }));
   }
   render() {
-    return o`
+    return l`
       <div class="modal-overlay" @click=${(e) => e.target === e.currentTarget && this._close()}>
         <div class="modal-content">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -3914,11 +4332,11 @@ let E = class extends z {
             <button class="btn btn-icon" @click=${this._close}>✕</button>
           </div>
 
-          ${this._error ? o`<div style="color: var(--fuzzy-danger); font-size: 13px; margin-bottom: 12px;">${this._error}</div>` : ""}
+          ${this._error ? l`<div style="color: var(--fuzzy-danger); font-size: 13px; margin-bottom: 12px;">${this._error}</div>` : ""}
 
           <div class="template-grid">
             ${this._templates.map(
-      (e) => o`
+      (e) => l`
                 <div
                   class="template-card ${this._selectedTemplate?.id === e.id ? "selected" : ""}"
                   @click=${() => this._selectTemplate(e)}
@@ -3938,7 +4356,7 @@ let E = class extends z {
     )}
           </div>
 
-          ${this._selectedTemplate ? o`
+          ${this._selectedTemplate ? l`
                 <div style="border-top: 1px solid var(--fuzzy-card-border); padding-top: 18px; margin-bottom: 18px;">
                   <div class="form-group">
                     <label class="form-label">System Identifier (slug)</label>
@@ -3978,9 +4396,9 @@ let E = class extends z {
     `;
   }
 };
-E.styles = [
-  ut,
-  T`
+T.styles = [
+  ht,
+  O`
       .template-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -4033,34 +4451,34 @@ E.styles = [
 ];
 F([
   v({ attribute: !1 })
-], E.prototype, "hass", 2);
+], T.prototype, "hass", 2);
 F([
-  g()
-], E.prototype, "_templates", 2);
+  u()
+], T.prototype, "_templates", 2);
 F([
-  g()
-], E.prototype, "_selectedTemplate", 2);
+  u()
+], T.prototype, "_selectedTemplate", 2);
 F([
-  g()
-], E.prototype, "_systemId", 2);
+  u()
+], T.prototype, "_systemId", 2);
 F([
-  g()
-], E.prototype, "_systemName", 2);
+  u()
+], T.prototype, "_systemName", 2);
 F([
-  g()
-], E.prototype, "_loading", 2);
+  u()
+], T.prototype, "_loading", 2);
 F([
-  g()
-], E.prototype, "_error", 2);
-E = F([
-  j("fuzzy-template-modal")
-], E);
-var Oe = Object.defineProperty, Me = Object.getOwnPropertyDescriptor, xt = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? Me(t, s) : t, r = e.length - 1, n; r >= 0; r--)
-    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
-  return a && i && Oe(t, s, i), i;
+  u()
+], T.prototype, "_error", 2);
+T = F([
+  P("fuzzy-template-modal")
+], T);
+var He = Object.defineProperty, Ve = Object.getOwnPropertyDescriptor, xt = (e, t, i, a) => {
+  for (var s = a > 1 ? void 0 : a ? Ve(t, i) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (s = (a ? n(t, i, s) : n(s)) || s);
+  return a && s && He(t, i, s), s;
 };
-let st = class extends z {
+let it = class extends k {
   setConfig(e) {
     this._config = {
       show_graph: !0,
@@ -4072,33 +4490,33 @@ let st = class extends z {
   _getAvailableSystems() {
     const e = /* @__PURE__ */ new Set();
     if (!this.hass?.states) return ["fan_simulator", "tipping"];
-    for (const [t, s] of Object.entries(this.hass.states)) {
+    for (const [t, i] of Object.entries(this.hass.states)) {
       const a = t.match(/^sensor\.fuzzy_([a-zA-Z0-9_-]+)_status$/);
-      a && e.add(a[1]), s.attributes?.system && e.add(s.attributes.system);
+      a && e.add(a[1]), i.attributes?.system && e.add(i.attributes.system);
     }
     return e.size === 0 && (e.add("fan_simulator"), e.add("tipping")), Array.from(e).sort();
   }
   _valueChanged(e) {
     if (!this._config) return;
-    const t = e.target, s = t.dataset.configValue;
-    if (!s) return;
+    const t = e.target, i = t.dataset.configValue;
+    if (!i) return;
     let a;
     t.type === "checkbox" ? a = t.checked : a = t.value, this._config = {
       ...this._config,
-      [s]: a
+      [i]: a
     };
-    const i = new CustomEvent("config-changed", {
+    const s = new CustomEvent("config-changed", {
       detail: { config: this._config },
       bubbles: !0,
       composed: !0
     });
-    this.dispatchEvent(i);
+    this.dispatchEvent(s);
   }
   render() {
     if (!this.hass || !this._config)
-      return o``;
+      return l``;
     const e = this._getAvailableSystems(), t = this._config.system_id || e[0] || "";
-    return o`
+    return l`
       <div class="card-config">
         <!-- Fuzzy System Selector -->
         <div class="form-group">
@@ -4114,9 +4532,9 @@ let st = class extends z {
             @change=${this._valueChanged}
           >
             ${e.map(
-      (s) => o`
-                <option value=${s} ?selected=${s === t}>
-                  ${s} (${this.hass.states[`sensor.fuzzy_${s}_status`]?.state || "active"})
+      (i) => l`
+                <option value=${i} ?selected=${i === t}>
+                  ${i} (${this.hass.states[`sensor.fuzzy_${i}_status`]?.state || "active"})
                 </option>
               `
     )}
@@ -4201,7 +4619,7 @@ let st = class extends z {
     `;
   }
 };
-st.styles = T`
+it.styles = O`
     :host {
       display: block;
       padding: 16px 0;
@@ -4346,17 +4764,17 @@ st.styles = T`
   `;
 xt([
   v({ attribute: !1 })
-], st.prototype, "hass", 2);
+], it.prototype, "hass", 2);
 xt([
-  g()
-], st.prototype, "_config", 2);
-st = xt([
-  j("fuzzy-system-card-editor")
-], st);
-var Re = Object.defineProperty, je = Object.getOwnPropertyDescriptor, _t = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? je(t, s) : t, r = e.length - 1, n; r >= 0; r--)
-    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
-  return a && i && Re(t, s, i), i;
+  u()
+], it.prototype, "_config", 2);
+it = xt([
+  P("fuzzy-system-card-editor")
+], it);
+var Ue = Object.defineProperty, qe = Object.getOwnPropertyDescriptor, $t = (e, t, i, a) => {
+  for (var s = a > 1 ? void 0 : a ? qe(t, i) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (s = (a ? n(t, i, s) : n(s)) || s);
+  return a && s && Ue(t, i, s), s;
 };
 window.customCards = window.customCards || [];
 window.customCards.some((e) => e.type === "fuzzy-system-card") || window.customCards.push({
@@ -4366,7 +4784,7 @@ window.customCards.some((e) => e.type === "fuzzy-system-card") || window.customC
   preview: !0,
   documentationURL: "https://github.com/dougransom/fuzzy_system"
 });
-let it = class extends z {
+let at = class extends k {
   constructor() {
     super(...arguments), this._config = {};
   }
@@ -4376,9 +4794,9 @@ let it = class extends z {
   static getStubConfig(e) {
     const t = /* @__PURE__ */ new Set();
     if (e?.states)
-      for (const [a, i] of Object.entries(e.states)) {
+      for (const [a, s] of Object.entries(e.states)) {
         const r = a.match(/^sensor\.fuzzy_([a-zA-Z0-9_-]+)_status$/);
-        r && t.add(r[1]), i.attributes?.system && t.add(i.attributes.system);
+        r && t.add(r[1]), s.attributes?.system && t.add(s.attributes.system);
       }
     return {
       type: "custom:fuzzy-system-card",
@@ -4405,28 +4823,28 @@ let it = class extends z {
   _findSensors() {
     if (!this.hass?.states || !this._config.system_id) return { outputs: [], status: null };
     const e = this._config.system_id.toLowerCase(), t = [];
-    let s = null;
-    for (const [a, i] of Object.entries(this.hass.states))
+    let i = null;
+    for (const [a, s] of Object.entries(this.hass.states))
       if (a.startsWith("sensor.")) {
         if (a === `sensor.fuzzy_${e}_status`) {
-          s = i;
+          i = s;
           continue;
         }
-        (a.startsWith(`sensor.fuzzy_${e}_`) || i.attributes?.system === this._config.system_id) && !a.endsWith("_set") && !a.endsWith("_status") && t.push({ entityId: a, stateObj: i });
+        (a.startsWith(`sensor.fuzzy_${e}_`) || s.attributes?.system === this._config.system_id) && !a.endsWith("_set") && !a.endsWith("_status") && t.push({ entityId: a, stateObj: s });
       }
-    return { outputs: t, status: s };
+    return { outputs: t, status: i };
   }
   render() {
     if (!this.hass || !this._config.system_id)
-      return o`<ha-card><p style="padding: 16px;">Configuring fuzzy-system-card...</p></ha-card>`;
-    const { outputs: e } = this._findSensors(), t = this._config.system_id, s = this._config.title || `Fuzzy System: ${t}`, a = e[0], i = a?.stateObj?.attributes || {}, r = i.universe || [], n = i.aggregated_set || [], l = a?.stateObj?.state ? parseFloat(a.stateObj.state) : void 0, d = i.unit_of_measurement || "", p = i.defuzzifier || "cog", c = i.dominant_term || "", u = i.inputs || {}, h = i.rule_strengths || [];
-    return o`
+      return l`<ha-card><p style="padding: 16px;">Configuring fuzzy-system-card...</p></ha-card>`;
+    const { outputs: e } = this._findSensors(), t = this._config.system_id, i = this._config.title || `Fuzzy System: ${t}`, a = e[0], s = a?.stateObj?.attributes || {}, r = s.universe || [], n = s.aggregated_set || [], o = a?.stateObj?.state ? parseFloat(a.stateObj.state) : void 0, d = s.unit_of_measurement || "", p = s.defuzzifier || "cog", c = s.dominant_term || "", h = s.inputs || {}, g = s.rule_strengths || [];
+    return l`
       <ha-card>
         <div class="card-header">
           <div class="title-group">
             <div class="card-icon">⚡</div>
             <div>
-              <div class="card-title">${s}</div>
+              <div class="card-title">${i}</div>
               <div class="card-subtitle">${t}</div>
             </div>
           </div>
@@ -4436,11 +4854,11 @@ let it = class extends z {
           </div>
         </div>
 
-        ${this._config.show_inputs !== !1 && Object.keys(u).length > 0 ? o`
+        ${this._config.show_inputs !== !1 && Object.keys(h).length > 0 ? l`
               <div class="section-title">Live Inputs</div>
               <div class="inputs-grid">
-                ${Object.entries(u).map(
-      ([f, y]) => o`
+                ${Object.entries(h).map(
+      ([f, y]) => l`
                     <div class="metric-pill">
                       <span class="metric-label">${f}</span>
                       <span class="metric-val">${typeof y == "number" ? y.toFixed(1) : y}</span>
@@ -4450,21 +4868,21 @@ let it = class extends z {
               </div>
             ` : ""}
 
-        ${this._config.show_graph !== !1 && r.length > 0 ? o`
+        ${this._config.show_graph !== !1 && r.length > 0 ? l`
               <div class="section-title">Live Aggregated Output Set</div>
               <fuzzy-aggregated-graph
                 .universe=${r}
                 .aggregatedSet=${n}
-                .defuzzifiedValue=${l}
+                .defuzzifiedValue=${o}
                 .defuzzifier=${p}
                 .dominantTerm=${c}
                 .unit=${d}
                 .outputName=${a.entityId.replace(`sensor.fuzzy_${t}_`, "")}
               ></fuzzy-aggregated-graph>
-            ` : e.length > 0 ? o`
+            ` : e.length > 0 ? l`
               <div class="section-title">Outputs</div>
               ${e.map(
-      (f) => o`
+      (f) => l`
                   <div class="metric-pill" style="margin-bottom: 6px;">
                     <span class="metric-label">${f.entityId}</span>
                     <span class="metric-val">${f.stateObj.state} ${f.stateObj.attributes?.unit_of_measurement || ""}</span>
@@ -4473,10 +4891,10 @@ let it = class extends z {
     )}
             ` : ""}
 
-        ${this._config.show_rules !== !1 && h.length > 0 ? o`
+        ${this._config.show_rules !== !1 && g.length > 0 ? l`
               <div class="section-title">Active Rule Firing Strengths</div>
-              ${h.slice(0, 4).map(
-      (f, y) => o`
+              ${g.slice(0, 4).map(
+      (f, y) => l`
                   <div class="rule-bar-row">
                     <span style="font-size: 11px; width: 45px; color: var(--secondary-text-color);">R${y + 1}</span>
                     <div class="rule-progress-bg">
@@ -4493,7 +4911,7 @@ let it = class extends z {
     `;
   }
 };
-it.styles = T`
+at.styles = O`
     :host {
       display: block;
     }
@@ -4626,23 +5044,45 @@ it.styles = T`
       transition: width 0.3s ease;
     }
   `;
-_t([
+$t([
   v({ attribute: !1 })
-], it.prototype, "hass", 2);
-_t([
-  g()
-], it.prototype, "_config", 2);
-it = _t([
-  j("fuzzy-system-card")
-], it);
-var Ne = Object.defineProperty, Pe = Object.getOwnPropertyDescriptor, O = (e, t, s, a) => {
-  for (var i = a > 1 ? void 0 : a ? Pe(t, s) : t, r = e.length - 1, n; r >= 0; r--)
-    (n = e[r]) && (i = (a ? n(t, s, i) : n(i)) || i);
-  return a && i && Ne(t, s, i), i;
+], at.prototype, "hass", 2);
+$t([
+  u()
+], at.prototype, "_config", 2);
+at = $t([
+  P("fuzzy-system-card")
+], at);
+var Be = Object.defineProperty, We = Object.getOwnPropertyDescriptor, R = (e, t, i, a) => {
+  for (var s = a > 1 ? void 0 : a ? We(t, i) : t, r = e.length - 1, n; r >= 0; r--)
+    (n = e[r]) && (s = (a ? n(t, i, s) : n(s)) || s);
+  return a && s && Be(t, i, s), s;
 };
-let w = class extends z {
+let A = class extends k {
   constructor() {
     super(...arguments), this.narrow = !1, this._view = "catalog", this._selectedSource = "config_entry";
+  }
+  firstUpdated() {
+    Ie({
+      getHass: () => this.hass,
+      getActiveConfig: () => {
+        if (this._view === "editor")
+          return this.shadowRoot?.querySelector("fuzzy-system-editor")?._config || this._selectedConfig;
+      },
+      updateActiveConfig: (e) => {
+        if (this._view === "editor") {
+          const t = this.shadowRoot?.querySelector("fuzzy-system-editor");
+          t && (t._config = e(t._config), t.requestUpdate());
+        }
+      },
+      openSystemInEditor: (e) => {
+        this._selectedConfig = e, this._selectedEntryId = void 0, this._selectedSource = "config_entry", this._view = "editor";
+      },
+      refreshCatalog: () => {
+        const e = this.shadowRoot?.querySelector("fuzzy-system-catalog");
+        e && typeof e.refresh == "function" && e.refresh();
+      }
+    });
   }
   _handleCreateSystem() {
     this._selectedConfig = void 0, this._selectedEntryId = void 0, this._selectedSource = "config_entry", this._view = "editor";
@@ -4656,7 +5096,7 @@ let w = class extends z {
     e && typeof e.refresh == "function" && e.refresh();
   }
   render() {
-    return o`
+    return l`
       <header class="app-header">
         <div class="brand">
           <div class="brand-icon">⚡</div>
@@ -4666,18 +5106,21 @@ let w = class extends z {
         </div>
 
         <div class="nav-links">
+          <span class="badge badge-purple" title="WebMCP tool contract exposed for browser AI agents and DevTools">
+            🌐 WebMCP
+          </span>
           <span class="badge badge-cyan">v0.1.3</span>
         </div>
       </header>
 
       <main class="panel-content container">
-        ${this._view === "catalog" ? o`
+        ${this._view === "catalog" ? l`
               <fuzzy-system-catalog
                 .hass=${this.hass}
                 @create-system=${this._handleCreateSystem}
                 @edit-system=${this._handleEditSystem}
               ></fuzzy-system-catalog>
-            ` : o`
+            ` : l`
               <fuzzy-system-editor
                 .hass=${this.hass}
                 .systemConfig=${this._selectedConfig}
@@ -4691,9 +5134,9 @@ let w = class extends z {
     `;
   }
 };
-w.styles = [
-  ut,
-  T`
+A.styles = [
+  ht,
+  O`
       :host {
         display: block;
         min-height: 100vh;
@@ -4753,33 +5196,33 @@ w.styles = [
       }
     `
 ];
-O([
+R([
   v({ attribute: !1 })
-], w.prototype, "hass", 2);
-O([
+], A.prototype, "hass", 2);
+R([
   v({ type: Boolean })
-], w.prototype, "narrow", 2);
-O([
+], A.prototype, "narrow", 2);
+R([
   v({ type: Object })
-], w.prototype, "route", 2);
-O([
+], A.prototype, "route", 2);
+R([
   v({ type: Object })
-], w.prototype, "panel", 2);
-O([
-  g()
-], w.prototype, "_view", 2);
-O([
-  g()
-], w.prototype, "_selectedConfig", 2);
-O([
-  g()
-], w.prototype, "_selectedEntryId", 2);
-O([
-  g()
-], w.prototype, "_selectedSource", 2);
-w = O([
-  j("fuzzy-system-panel")
-], w);
+], A.prototype, "panel", 2);
+R([
+  u()
+], A.prototype, "_view", 2);
+R([
+  u()
+], A.prototype, "_selectedConfig", 2);
+R([
+  u()
+], A.prototype, "_selectedEntryId", 2);
+R([
+  u()
+], A.prototype, "_selectedSource", 2);
+A = R([
+  P("fuzzy-system-panel")
+], A);
 export {
-  w as FuzzySystemPanel
+  A as FuzzySystemPanel
 };

@@ -19,7 +19,9 @@ from custom_components.fuzzy_system.const import (
     INFERENCE_MAMDANI,
     SOURCE_CONFIG_ENTRY,
     SOURCE_YAML,
+    WS_TYPE_ADD_CARD_TO_DASHBOARD,
     WS_TYPE_DELETE_SYSTEM,
+    WS_TYPE_GENERATE_CARD,
     WS_TYPE_GET_SYSTEM,
     WS_TYPE_INSTANTIATE_TEMPLATE,
     WS_TYPE_LIST_SYSTEMS,
@@ -641,4 +643,100 @@ async def test_ws_simulate_and_template_errors(
     res2 = await client.receive_json()
     assert not res2["success"]
     assert res2["error"]["code"] == "template_not_found"
+
+
+async def test_ws_dashboard_card_commands(
+    hass: HomeAssistant, enable_custom_integrations, hass_ws_client
+) -> None:
+    """Test generating card config and adding to dashboard via WebSocket API."""
+    assert await async_setup_component(hass, DOMAIN, {})
+    await hass.async_block_till_done()
+
+    client = await hass_ws_client(hass)
+
+    # 1. Generate card
+    await client.send_json(
+        {
+            "id": 101,
+            "type": WS_TYPE_GENERATE_CARD,
+            "system_id": "living_room_fan",
+            "title": "Living Room Fan Control",
+            "show_graph": True,
+            "show_inputs": True,
+            "show_rules": False,
+        }
+    )
+    res1 = await client.receive_json()
+    assert res1["success"]
+    assert res1["result"]["system_id"] == "living_room_fan"
+    assert res1["result"]["card"]["type"] == "custom:fuzzy-system-card"
+    assert res1["result"]["card"]["title"] == "Living Room Fan Control"
+    assert res1["result"]["card"]["show_rules"] is False
+    assert "custom:fuzzy-system-card" in res1["result"]["yaml"]
+
+    # 2. Add card to dashboard (with mock LovelaceStorage)
+    class MockStorage:
+        def __init__(self):
+            self.saved = None
+
+        async def async_load(self, force=False):
+            return {"views": [{"title": "Home", "cards": []}]}
+
+        async def async_save(self, config):
+            self.saved = config
+
+    mock_storage = MockStorage()
+    hass.data["lovelace"] = {"dashboards": {None: mock_storage}}
+
+    await client.send_json(
+        {
+            "id": 102,
+            "type": WS_TYPE_ADD_CARD_TO_DASHBOARD,
+            "system_id": "living_room_fan",
+            "view_title": "Fuzzy Panel",
+            "card_title": "Ceiling Fan",
+        }
+    )
+    res2 = await client.receive_json()
+    assert res2["success"]
+    assert res2["result"]["success"] is True
+    assert res2["result"]["view"] == "Fuzzy Panel"
+    assert mock_storage.saved is not None
+    view_cards = mock_storage.saved["views"][1]["cards"]
+    assert len(view_cards) == 1
+    assert view_cards[0]["system_id"] == "living_room_fan"
+
+    # 3. Add card when Lovelace storage is None (YAML mode fallback)
+    hass.data.pop("lovelace", None)
+    await client.send_json(
+        {
+            "id": 103,
+            "type": WS_TYPE_ADD_CARD_TO_DASHBOARD,
+            "system_id": "living_room_fan",
+        }
+    )
+    res3 = await client.receive_json()
+    assert res3["success"]
+    assert res3["result"]["success"] is False
+    assert "yaml" in res3["result"]
+    assert "instruction" in res3["result"]
+
+    # 4. Generate card without title and with flags False
+    await client.send_json(
+        {
+            "id": 104,
+            "type": WS_TYPE_GENERATE_CARD,
+            "system_id": "living_room_fan",
+            "show_graph": False,
+            "show_inputs": False,
+            "show_rules": False,
+        }
+    )
+    res4 = await client.receive_json()
+    assert res4["success"]
+    assert "title" not in res4["result"]["card"]
+    assert res4["result"]["card"]["show_graph"] is False
+    assert res4["result"]["card"]["show_inputs"] is False
+    assert res4["result"]["card"]["show_rules"] is False
+
 

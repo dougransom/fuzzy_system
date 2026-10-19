@@ -39,7 +39,9 @@ from .const import (
     SOURCE_YAML,
     VALID_DEFUZZIFIERS,
     VALID_INFERENCE_TYPES,
+    WS_TYPE_ADD_CARD_TO_DASHBOARD,
     WS_TYPE_DELETE_SYSTEM,
+    WS_TYPE_GENERATE_CARD,
     WS_TYPE_GET_SYSTEM,
     WS_TYPE_INSTANTIATE_TEMPLATE,
     WS_TYPE_LIST_SYSTEMS,
@@ -49,7 +51,7 @@ from .const import (
 )
 from .fuzzy_engine import FuzzySystemEngine
 from .schema import WS_INPUT_VAR_SCHEMA, WS_OUTPUT_VAR_SCHEMA
-from .services import get_system_data
+from .services import _async_add_to_dashboard, _generate_card_config, get_system_data
 from .templates import get_templates, instantiate_template
 
 _LOGGER = logging.getLogger(__name__)
@@ -445,6 +447,67 @@ async def ws_instantiate_template(
     connection.send_result(msg["id"], instantiated)
 
 
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): WS_TYPE_GENERATE_CARD,
+        vol.Required("system_id"): cv.string,
+        vol.Optional("title"): cv.string,
+        vol.Optional("show_graph", default=True): cv.boolean,
+        vol.Optional("show_inputs", default=True): cv.boolean,
+        vol.Optional("show_rules", default=True): cv.boolean,
+    }
+)
+@websocket_api.require_admin
+@websocket_api.async_response
+async def ws_generate_card(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+) -> None:
+    """Generate Lovelace custom:fuzzy-system-card configuration."""
+    res = _generate_card_config(
+        system_id=msg["system_id"],
+        title=msg.get("title"),
+        show_graph=msg.get("show_graph", True),
+        show_inputs=msg.get("show_inputs", True),
+        show_rules=msg.get("show_rules", True),
+    )
+    connection.send_result(msg["id"], res)
+
+
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): WS_TYPE_ADD_CARD_TO_DASHBOARD,
+        vol.Required("system_id"): cv.string,
+        vol.Optional("dashboard_path"): vol.Any(None, cv.string),
+        vol.Optional("view_title"): vol.Any(None, cv.string),
+        vol.Optional("card_title"): cv.string,
+        vol.Optional("show_graph", default=True): cv.boolean,
+        vol.Optional("show_inputs", default=True): cv.boolean,
+        vol.Optional("show_rules", default=True): cv.boolean,
+    }
+)
+@websocket_api.require_admin
+@websocket_api.async_response
+async def ws_add_card_to_dashboard(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+) -> None:
+    """Insert custom:fuzzy-system-card into target Lovelace dashboard."""
+    res = await _async_add_to_dashboard(
+        hass=hass,
+        system_id=msg["system_id"],
+        dashboard_path=msg.get("dashboard_path"),
+        view_title=msg.get("view_title"),
+        card_title=msg.get("card_title"),
+        show_graph=msg.get("show_graph", True),
+        show_inputs=msg.get("show_inputs", True),
+        show_rules=msg.get("show_rules", True),
+    )
+    connection.send_result(msg["id"], res)
+
+
 def async_setup_websocket(hass: HomeAssistant) -> None:
     """Register all Fuzzy System WebSocket commands."""
     commands = (
@@ -455,6 +518,8 @@ def async_setup_websocket(hass: HomeAssistant) -> None:
         ws_simulate,
         ws_list_templates,
         ws_instantiate_template,
+        ws_generate_card,
+        ws_add_card_to_dashboard,
     )
     for cmd in commands:
         websocket_api.async_register_command(hass, cmd)

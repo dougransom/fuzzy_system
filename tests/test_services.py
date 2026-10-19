@@ -318,3 +318,259 @@ async def test_services_live_inputs_fallbacks_and_case_insensitivity(
     live_res = _get_live_inputs(hass, custom_cfg)
     assert live_res["var_without_entity"] == 33.0
 
+
+async def test_list_and_get_system_services(
+    hass: HomeAssistant, enable_custom_integrations, sample_service_config
+) -> None:
+    """Test fuzzy_system.list_systems and fuzzy_system.get_system MCP actions."""
+    assert await async_setup_component(hass, DOMAIN, sample_service_config)
+    await hass.async_block_till_done()
+
+    # Call list_systems
+    list_res = await hass.services.async_call(
+        DOMAIN,
+        "list_systems",
+        {},
+        blocking=True,
+        return_response=True,
+    )
+    assert list_res is not None
+    assert "systems" in list_res
+    assert list_res["count"] >= 1
+    system_entry = next((s for s in list_res["systems"] if s["system_id"] == "thermostat"), None)
+    assert system_entry is not None
+    assert system_entry["inference"] == "mamdani"
+    assert "temperature" in system_entry["inputs"]
+    assert "cooling" in system_entry["outputs"]
+
+    # Call get_system
+    get_res = await hass.services.async_call(
+        DOMAIN,
+        "get_system",
+        {"system_id": "thermostat"},
+        blocking=True,
+        return_response=True,
+    )
+    assert get_res is not None
+    assert get_res["system_id"] == "thermostat"
+    assert "temperature" in get_res["live_inputs"]
+    assert "cooling" in get_res["outputs"]
+
+
+async def test_dashboard_card_services(
+    hass: HomeAssistant, enable_custom_integrations, sample_service_config, tmp_path
+) -> None:
+    """Test generate_dashboard_card and add_to_dashboard services."""
+    assert await async_setup_component(hass, DOMAIN, sample_service_config)
+    await hass.async_block_till_done()
+
+    # 1. Generate dashboard card config and YAML
+    gen_res = await hass.services.async_call(
+        DOMAIN,
+        "generate_dashboard_card",
+        {"system_id": "thermostat", "title": "Living Room Comfort"},
+        blocking=True,
+        return_response=True,
+    )
+    assert gen_res is not None
+    assert gen_res["card"]["type"] == "custom:fuzzy-system-card"
+    assert gen_res["card"]["system_id"] == "thermostat"
+    assert gen_res["card"]["title"] == "Living Room Comfort"
+    assert "custom:fuzzy-system-card" in gen_res["yaml"]
+
+    # 2. Add to dashboard fallback when storage not initialized
+    add_fallback_res = await hass.services.async_call(
+        DOMAIN,
+        "add_to_dashboard",
+        {"system_id": "thermostat", "view_title": "Comfort View"},
+        blocking=True,
+        return_response=True,
+    )
+    assert add_fallback_res is not None
+    assert "yaml" in add_fallback_res
+    assert "card" in add_fallback_res
+
+    # 3. Add to dashboard when mock Lovelace storage is present
+    class MockLovelaceStorage:
+        def __init__(self):
+            self.saved_config = None
+
+        async def async_load(self, force=False):
+            return {"views": [{"title": "Overview", "cards": []}]}
+
+        async def async_save(self, config):
+            self.saved_config = config
+
+    mock_storage = MockLovelaceStorage()
+    hass.data["lovelace"] = {"dashboards": {None: mock_storage}}
+
+    add_storage_res = await hass.services.async_call(
+        DOMAIN,
+        "add_to_dashboard",
+        {"system_id": "thermostat", "view_title": "Fuzzy Automation"},
+        blocking=True,
+        return_response=True,
+    )
+    assert add_storage_res is not None
+    assert add_storage_res["success"] is True
+    assert add_storage_res["view"] == "Fuzzy Automation"
+    assert mock_storage.saved_config is not None
+    # Verify view was created and card was added
+    new_view = next((v for v in mock_storage.saved_config["views"] if v["title"] == "Fuzzy Automation"), None)
+    assert new_view is not None
+    view_cards = new_view["cards"]
+    assert len(view_cards) == 1
+    assert view_cards[0]["system_id"] == "thermostat"
+
+    # 4. Add to existing view when view_title matches
+    mock_storage.saved_config = None
+
+    async def mock_load_existing(force=False):
+        return {"views": [{"title": "Existing View", "cards": []}]}
+
+    mock_storage.async_load = mock_load_existing
+    add_existing_res = await hass.services.async_call(
+        DOMAIN,
+        "add_to_dashboard",
+        {"system_id": "thermostat", "view_title": "Existing View"},
+        blocking=True,
+        return_response=True,
+    )
+    assert add_existing_res["success"] is True
+    assert add_existing_res["view"] == "Existing View"
+    assert len(mock_storage.saved_config["views"]) == 1
+    assert len(mock_storage.saved_config["views"][0]["cards"]) == 1
+
+    # 5. Add to default view when view_title is not specified and views exist
+    mock_storage.saved_config = None
+
+    async def mock_load_first(force=False):
+        return {"views": [{"title": "First View", "cards": []}]}
+
+    mock_storage.async_load = mock_load_first
+    add_default_res = await hass.services.async_call(
+        DOMAIN,
+        "add_to_dashboard",
+        {"system_id": "thermostat"},
+        blocking=True,
+        return_response=True,
+    )
+    assert add_default_res["success"] is True
+    assert add_default_res["view"] == "First View"
+    assert len(mock_storage.saved_config["views"][0]["cards"]) == 1
+
+    # 6. Add when view_title is not specified and views is empty
+    mock_storage.saved_config = None
+
+    async def mock_load_empty(force=False):
+        return {"views": []}
+
+    mock_storage.async_load = mock_load_empty
+    add_empty_views_res = await hass.services.async_call(
+        DOMAIN,
+        "add_to_dashboard",
+        {"system_id": "thermostat"},
+        blocking=True,
+        return_response=True,
+    )
+    assert add_empty_views_res["success"] is True
+    assert add_empty_views_res["view"] == "Fuzzy Systems"
+    assert len(mock_storage.saved_config["views"]) == 1
+    assert mock_storage.saved_config["views"][0]["title"] == "Fuzzy Systems"
+
+    # 7. Add with custom dashboard_path
+    mock_custom_storage = MockLovelaceStorage()
+    hass.data["lovelace"]["dashboards"]["custom_dash"] = mock_custom_storage
+    add_custom_dash_res = await hass.services.async_call(
+        DOMAIN,
+        "add_to_dashboard",
+        {"system_id": "thermostat", "dashboard_path": "custom_dash", "view_title": "Custom View"},
+        blocking=True,
+        return_response=True,
+    )
+    assert add_custom_dash_res["success"] is True
+    assert mock_custom_storage.saved_config is not None
+
+    # 8. Storage save failure handles exception gracefully
+    async def failing_save(config):
+        raise OSError("Disk write failed")
+
+    mock_storage.async_save = failing_save
+    add_fail_res = await hass.services.async_call(
+        DOMAIN,
+        "add_to_dashboard",
+        {"system_id": "thermostat"},
+        blocking=True,
+        return_response=True,
+    )
+    assert add_fail_res["success"] is False
+    assert "Disk write failed" in add_fail_res["error"]
+    assert "instruction" in add_fail_res
+
+    # 9. Add when dashboard is in YAML mode
+    temp_yaml = tmp_path / "ui-lovelace.yaml"
+    temp_yaml.write_text("views:\n  - title: YAML View\n    cards: []\n", encoding="utf-8")
+
+    class MockLovelaceYAML:
+        mode = "yaml"
+        path = str(temp_yaml)
+        _cache = None
+
+        def _config_updated(self):
+            pass
+
+    mock_yaml_storage = MockLovelaceYAML()
+    hass.data["lovelace"]["dashboards"]["yaml_dash"] = mock_yaml_storage
+    add_yaml_res = await hass.services.async_call(
+        DOMAIN,
+        "add_to_dashboard",
+        {"system_id": "thermostat", "dashboard_path": "yaml_dash", "view_title": "YAML View"},
+        blocking=True,
+        return_response=True,
+    )
+    assert add_yaml_res["success"] is True
+    assert add_yaml_res["view"] == "YAML View"
+    saved_yaml = temp_yaml.read_text(encoding="utf-8")
+    assert "custom:fuzzy-system-card" in saved_yaml
+    assert "thermostat" in saved_yaml
+
+
+
+
+async def test_templates_services(
+    hass: HomeAssistant, enable_custom_integrations, sample_service_config
+) -> None:
+    """Test list_templates and instantiate_template MCP actions."""
+    assert await async_setup_component(hass, DOMAIN, sample_service_config)
+    await hass.async_block_till_done()
+
+    # 1. list_templates
+    templates_res = await hass.services.async_call(
+        DOMAIN,
+        "list_templates",
+        {},
+        blocking=True,
+        return_response=True,
+    )
+    assert templates_res is not None
+    assert "templates" in templates_res
+    assert len(templates_res["templates"]) >= 1
+
+    # 2. instantiate_template
+    instantiate_res = await hass.services.async_call(
+        DOMAIN,
+        "instantiate_template",
+        {
+            "template_id": "smart_fan_controller",
+            "system_id": "mcp_fan_control",
+            "name": "MCP Climate System",
+            "entity_mappings": {"room_temperature": "sensor.hallway_temp"},
+        },
+        blocking=True,
+        return_response=True,
+    )
+    assert instantiate_res is not None
+    assert instantiate_res["success"] is True
+    assert instantiate_res["system_id"] == "mcp_fan_control"
+    assert "entry_id" in instantiate_res
+

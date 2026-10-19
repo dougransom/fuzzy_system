@@ -22,6 +22,69 @@ The primary goal of this project is to implement **Fuzzy Control for Home Assist
    - Maintain seamless installation via HACS (Home Assistant Community Store).
 6. **Code Quality & Quality Scale (Gold Certified)**: Certified **Gold** (minimum Silver) on the [Home Assistant Quality Scale](https://contributors.home-assistant.io/core/quality-scale/), enforcing strictly $\ge 95\%$ test coverage in CI, typed `entry.runtime_data` architecture, native diagnostics platform, reconfiguration flow, and automatic repair issue tracking.
 7. **Eventual Home Assistant Core Integration**: Architect, test, and document the integration to meet Home Assistant Core architectural standards for eventual adoption into Home Assistant Core as a first-class built-in helper (alongside Threshold, Derivative, Min/Max, and Filter).
+8. **Autonomous Agent & Dashboard Synthesis (MCP & WebMCP)**: Empower AI agents (such as Claude, Gemini, ChatGPT, or Antigravity) to reason about, author, tune, simulate, and automatically publish companion Lovelace dashboard displays using Home Assistant's Model Context Protocol (MCP) server and the browser-native W3C WebMCP standard.
+
+---
+
+## Neurosymbolic Design: Bridging Modern Generative AI & Classical Old-School AI
+
+This integration represents a deliberate **neurosymbolic and hybrid-AI architecture**—bringing together modern statistical AI (Large Language Models) with classical "old school" rule-based AI (Fuzzy Logic and Approximate Reasoning):
+
+```mermaid
+graph LR
+    subgraph ModernAI["Modern Generative AI (Neural / Probabilistic)"]
+        LLM["Large Language Models (LLMs)"]
+        Agents["Autonomous AI Agents"]
+        Dev["AI-Assisted Engineering"]
+    end
+
+    subgraph Interface["Open Agent Protocols"]
+        MCP["Model Context Protocol (MCP)"]
+        WebMCP["Browser WebMCP (document.modelContext)"]
+    end
+
+    subgraph ClassicalAI["Old-School AI: Fuzzy Logic (Deterministic / Interpretable)"]
+        FL["Fuzzy Logic Control (Lotfi Zadeh, 1965)"]
+        Rules["Linguistic Rules & Hedges"]
+        Engine["Mamdani & Sugeno Inference Engines"]
+    end
+
+    subgraph Output["Home Assistant Environment"]
+        Edge["Deterministic Local Execution (0ms Latency)"]
+        Dashboards["Auto-Generated Lovelace Dashboards"]
+    end
+
+    ModernAI --> Interface
+    Interface --> ClassicalAI
+    ClassicalAI --> Output
+```
+
+### 1. Old-School AI: Capturing Human Heuristics at the Edge
+Fuzzy Logic—pioneered by Lotfi Zadeh in 1965—is a classic cornerstone of **old-school artificial intelligence** from the golden era of expert systems and automated control. While humans rarely think in rigid binary thresholds (*"turn on the AC if temperature exceeds exactly 22.4°C"*), we naturally excel at **approximate, linguistic reasoning** (*"if the room feels warm and humid, increase fan ventilation to medium-high"*).
+
+Fuzzy controllers convert these subjective linguistic variables into continuous, mathematically rigorous membership curves. Once compiled, fuzzy systems execute:
+- **Locally & Deterministically**: Zero cloud dependency, zero token costs, and sub-millisecond evaluation cycles.
+- **Safely & Explainably**: Mathematically bounded outputs with full interpretability and rule-level explainability.
+
+### 2. Modern Generative AI: Agents as Intelligent Designers
+While fuzzy logic excels at deterministic execution, designing membership functions, tuning universe parameters, and authoring rule bases has historically required tedious domain expertise and manual configuration.
+
+Modern Large Language Models (LLMs) and agentic workflows excel at high-level reasoning, intent translation, and tool coordination. Through **Model Context Protocol (MCP)** actions and browser-native **WebMCP** tools:
+- **Design & Scaffolding**: An agent can translate a user's conversational intent into a complete, mathematically balanced fuzzy system from starter templates (`fuzzy_system.instantiate_template`).
+- **Tuning & Simulation**: Agents run dry-run what-if simulations (`fuzzy_system.simulate`) to evaluate system behavior across various edge conditions before applying rules to physical actuators.
+- **Automated Dashboard Generation**: Agents autonomously synthesize companion Lovelace monitoring cards and views (`fuzzy_system.add_to_dashboard`), creating dedicated displays so humans retain immediate visual observability over automated logic.
+- **Transparent Explainability**: Agents query live evaluation state (`fuzzy_system.explain`) to answer questions like *"Why is the irrigation valve open at 40% right now?"* with human-understandable rule attribution.
+
+### 3. A Meta-Note on Engineering & "Old-School" vs. "Symbolic" AI
+In a fitting reflection of this hybrid AI synergy, **modern generative AI (LLMs) was actively utilized to research, architect, code, test, and document this entire integration**. Modern "new-school" probabilistic AI was employed to build the integration, while classical **"old-school" AI** provides robust, explainable, and cost-free execution in the physical home.
+
+> **Is Fuzzy Logic "Symbolic AI"?**
+> In the history of artificial intelligence, purists often debate whether fuzzy logic strictly qualifies as "symbolic AI." Traditional Good Old-Fashioned AI (GOFAI) and pure symbolic reasoning operate on discrete symbols, formal ontologies, and binary boolean logic (true/false, such as Prolog or classical expert system inference rules).
+>
+> Fuzzy logic occupies a unique middle ground: while its **input and rule definitions are linguistic and symbolic** (e.g., `IF temp IS hot THEN fan IS high`), its **mathematical inference is continuous and numeric**, operating over continuous truth degrees $\mu \in [0, 1]$, t-norms, s-norms, and geometric defuzzification. For this reason, computer scientists frequently classify fuzzy logic under **"soft computing"** and **computational intelligence** alongside neural networks, or as an approximate reasoning extension to classical rule-based expert systems.
+>
+> Regardless of taxonomy, fuzzy logic represents the quintessential **old-school AI**: deterministic, transparent, mathematically bounded, completely auditable, and capable of capturing nuanced human intuition without a single matrix multiplication or GPU cluster.
+
 
 ---
 
@@ -143,19 +206,42 @@ show_rules: true
 
 ---
 
-## Model Context Protocol (MCP) & AI Assistant Support
+## Model Context Protocol (MCP) & WebMCP Support
 
-The integration natively supports Home Assistant's **Model Context Protocol (MCP)** server and LLM APIs, enabling AI agents (such as Claude, Gemini, ChatGPT, or Antigravity) to reason about, simulate, and explain your smart home's fuzzy logic:
+The integration natively supports Home Assistant's **Model Context Protocol (MCP)** server, LLM APIs, and the W3C browser-native **WebMCP** standard, enabling AI agents (such as Claude, Gemini, ChatGPT, Antigravity, or browser-based agents) to reason about, configure, simulate, explain, and build dashboards for your fuzzy controllers:
 
 ```mermaid
-graph LR
-    Agent["AI Agent / LLM (via MCP)"] --> ActionSim["fuzzy_system.simulate"]
-    Agent --> ActionExp["fuzzy_system.explain"]
-    Agent --> Context["homeassistant.GetLiveContext"]
+graph TD
+    subgraph Agents["AI Agents & Assistants"]
+        MCPClient["AI Agent / MCP Client"]
+        WebMCPAgent["Browser Agent / DevTools"]
+    end
 
-    ActionSim --> Engine["Inference Engine (Hypothetical)"]
-    ActionExp --> Live["Live Entities & Rule Breakdown"]
-    Context --> Sensors["Fuzzy Output Sensors & Attributes"]
+    subgraph BackendMCP["Backend MCP Actions (SupportsResponse.ONLY)"]
+        ActionSim["fuzzy_system.simulate"]
+        ActionExp["fuzzy_system.explain"]
+        ActionList["fuzzy_system.list_systems / get_system"]
+        ActionDash["fuzzy_system.generate_dashboard_card"]
+        ActionAddDash["fuzzy_system.add_to_dashboard"]
+        ActionTmpl["fuzzy_system.instantiate_template"]
+    end
+
+    subgraph FrontendWebMCP["Frontend WebMCP (document.modelContext)"]
+        WebMCPCtx["window.fuzzySystemMCP"]
+        LiveCanvas["Live Curve Canvas & Sliders"]
+        DashModal["One-Click Dashboard Injector"]
+    end
+
+    MCPClient --> ActionSim
+    MCPClient --> ActionExp
+    MCPClient --> ActionList
+    MCPClient --> ActionDash
+    MCPClient --> ActionAddDash
+    MCPClient --> ActionTmpl
+
+    WebMCPAgent --> WebMCPCtx
+    WebMCPCtx --> LiveCanvas
+    WebMCPCtx --> DashModal
 ```
 
 ### 1. `fuzzy_system.simulate` (What-If Hypothetical Reasoning)
@@ -168,16 +254,6 @@ data:
     temperature: 28.5
     humidity: 75.0
 ```
-**MCP Response**:
-```json
-{
-  "system_id": "fan_simulator",
-  "inputs": {"temperature": 28.5, "humidity": 75.0},
-  "outputs": {"fan_speed": 83.42},
-  "dominant_terms": {"fan_speed": "high"},
-  "summary": "Fuzzy system 'fan_simulator' simulated: fan_speed = 83.42 (high). 2 rule(s) fired."
-}
-```
 
 ### 2. `fuzzy_system.explain` (Decision Explainability)
 Allows AI models to answer *"Why is the fan running on high?"* by reading real-time live sensors and evaluating active rule firing levels:
@@ -186,16 +262,31 @@ service: fuzzy_system.explain
 data:
   system_id: fan_simulator
 ```
-**MCP Response**:
-```json
-{
-  "system_id": "fan_simulator",
-  "live_inputs": {"temperature": 25.0, "humidity": 80.0},
-  "outputs": {"fan_speed": 91.67},
-  "dominant_terms": {"fan_speed": "high"},
-  "explanation": "Fuzzy system 'fan_simulator' is currently calculating fan_speed is 91.67 (high) given live inputs (temperature: 25.0, humidity: 80.0). The primary driving factor is rule 'IF temperature IS hot OR humidity IS humid THEN fan_speed IS high', firing with strength 1.0."
-}
+
+### 3. `fuzzy_system.list_systems` & `fuzzy_system.get_system` (System Inspection)
+Allows AI agents to enumerate all registered fuzzy logic systems, retrieve variable definitions, membership curves, and current output values.
+
+### 4. `fuzzy_system.generate_dashboard_card` & `fuzzy_system.add_to_dashboard` (Lovelace Automation)
+AI agents can generate customized Lovelace card YAML snippets or automatically insert `custom:fuzzy-system-card` into any target dashboard view:
+```yaml
+service: fuzzy_system.add_to_dashboard
+data:
+  system_id: fan_simulator
+  view_title: "Climate Controls"
+  card_title: "Living Room Fan Control"
+  show_graph: true
+  show_inputs: true
+  show_rules: true
 ```
+
+### 5. `fuzzy_system.list_templates` & `fuzzy_system.instantiate_template` (Template Deployment)
+Allows AI agents to discover starter templates (e.g. `smart_fan_controller`, `iaq_ventilation`, `intelligent_irrigation`, `solar_excess_diversion`) and deploy them into active Config Entries with entity mappings.
+
+### 6. Browser-Native WebMCP (`document.modelContext`)
+When viewing the Fuzzy System Workbench panel (`/fuzzy-system`), the web frontend exposes a structured tool contract adhering to the W3C WebMCP specification (`document.modelContext` and `window.fuzzySystemMCP`). Browser agents can:
+* Inspect and adjust active membership curves live (`tune_editor_term`).
+* Add linguistic rules directly into the open workbench draft (`add_editor_rule`).
+* Trigger instant one-click Lovelace dashboard card insertion without separate API tokens.
 
 ---
 

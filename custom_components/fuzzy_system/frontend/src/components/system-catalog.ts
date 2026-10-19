@@ -2,7 +2,7 @@ import { LitElement, html, css } from "lit";
 import { property, state } from "lit/decorators.js";
 import { safeCustomElement } from "../utils/custom-element";
 import { HomeAssistant, SystemSummary } from "../types";
-import { deleteSystem, fetchSystems } from "../api/websocket";
+import { addCardToDashboard, deleteSystem, fetchSystems, generateCardConfig } from "../api/websocket";
 import { sharedStyles } from "../styles/shared-styles";
 import "./aggregated-graph";
 
@@ -210,6 +210,74 @@ export class FuzzySystemCatalog extends LitElement {
   @state() private _error = "";
   @state() private _showTemplateModal = false;
   @state() private _expandedWaveforms: Record<string, boolean> = {};
+
+  @state() private _dashboardModalSystem?: SystemSummary;
+  @state() private _dashboardViewTitle = "Fuzzy Systems";
+  @state() private _dashboardCardTitle = "";
+  @state() private _dashboardShowGraph = true;
+  @state() private _dashboardShowInputs = true;
+  @state() private _dashboardShowRules = true;
+  @state() private _dashboardStatusMsg = "";
+  @state() private _dashboardIsError = false;
+  @state() private _dashboardLoading = false;
+
+  private _openDashboardModal(sys: SystemSummary) {
+    this._dashboardModalSystem = sys;
+    this._dashboardCardTitle = sys.name || sys.system_id;
+    this._dashboardStatusMsg = "";
+    this._dashboardIsError = false;
+    this._dashboardLoading = false;
+  }
+
+  private async _handleAddToDashboard() {
+    if (!this.hass || !this._dashboardModalSystem) return;
+    this._dashboardLoading = true;
+    this._dashboardStatusMsg = "";
+    try {
+      const res = await addCardToDashboard(this.hass, {
+        system_id: this._dashboardModalSystem.system_id,
+        view_title: this._dashboardViewTitle || null,
+        card_title: this._dashboardCardTitle || undefined,
+        show_graph: this._dashboardShowGraph,
+        show_inputs: this._dashboardShowInputs,
+        show_rules: this._dashboardShowRules,
+      });
+      if (res.success) {
+        this._dashboardStatusMsg = `Added to Lovelace view "${res.view || "default"}"!`;
+        this._dashboardIsError = false;
+        setTimeout(() => {
+          this._dashboardModalSystem = undefined;
+        }, 1500);
+      } else {
+        this._dashboardStatusMsg = res.error || "Dashboard is in YAML mode. Use 'Copy YAML' below.";
+        this._dashboardIsError = true;
+      }
+    } catch (err: any) {
+      this._dashboardStatusMsg = err.message || "Failed to add card to dashboard.";
+      this._dashboardIsError = true;
+    } finally {
+      this._dashboardLoading = false;
+    }
+  }
+
+  private async _handleCopyCardYaml() {
+    if (!this.hass || !this._dashboardModalSystem) return;
+    try {
+      const res = await generateCardConfig(this.hass, {
+        system_id: this._dashboardModalSystem.system_id,
+        title: this._dashboardCardTitle || undefined,
+        show_graph: this._dashboardShowGraph,
+        show_inputs: this._dashboardShowInputs,
+        show_rules: this._dashboardShowRules,
+      });
+      await navigator.clipboard.writeText(res.yaml);
+      this._dashboardStatusMsg = "Card YAML copied to clipboard!";
+      this._dashboardIsError = false;
+    } catch (err: any) {
+      this._dashboardStatusMsg = "Could not copy YAML: " + (err.message || String(err));
+      this._dashboardIsError = true;
+    }
+  }
 
   private _toggleWaveform(systemId: string, outputKey: string) {
     const key = `${systemId}_${outputKey}`;
@@ -558,6 +626,14 @@ export class FuzzySystemCatalog extends LitElement {
                       <button class="btn btn-secondary" @click=${() => this._handleEdit(sys)}>
                         ${sys.source === "yaml" ? "Inspect" : "Edit"}
                       </button>
+                      <button
+                        class="btn btn-secondary"
+                        style="color: var(--fuzzy-accent);"
+                        title="Add custom:fuzzy-system-card for this controller to a Lovelace dashboard"
+                        @click=${() => this._openDashboardModal(sys)}
+                      >
+                        📊 Add Card
+                      </button>
                       ${sys.source === "config_entry"
                         ? html`
                             <button class="btn btn-danger" @click=${() => this._handleDelete(sys)}>
@@ -571,6 +647,127 @@ export class FuzzySystemCatalog extends LitElement {
               )}
             </div>
           `}
+
+      ${this._dashboardModalSystem
+        ? html`
+            <div
+              class="modal-overlay"
+              @click=${(e: Event) => e.target === e.currentTarget && (this._dashboardModalSystem = undefined)}
+            >
+              <div class="modal-content" style="max-width: 520px; padding: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--fuzzy-card-border); padding-bottom: 14px;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 24px;">📊</span>
+                    <div>
+                      <h2 class="title-lg" style="font-size: 18px; margin: 0;">Add to Lovelace Dashboard</h2>
+                      <div class="subtitle" style="font-size: 12px; margin: 0;">
+                        System: <code>${this._dashboardModalSystem.system_id}</code>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    class="btn btn-icon"
+                    style="font-size: 16px;"
+                    title="Close"
+                    @click=${() => (this._dashboardModalSystem = undefined)}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 14px;">
+                  <label class="form-label">Card Header Title</label>
+                  <input
+                    class="input-text"
+                    type="text"
+                    .value=${this._dashboardCardTitle}
+                    @input=${(e: any) => (this._dashboardCardTitle = e.target.value)}
+                    placeholder="e.g. Living Room Fan Control"
+                  />
+                </div>
+
+                <div class="form-group" style="margin-bottom: 14px;">
+                  <label class="form-label">Target View Title</label>
+                  <input
+                    class="input-text"
+                    type="text"
+                    .value=${this._dashboardViewTitle}
+                    @input=${(e: any) => (this._dashboardViewTitle = e.target.value)}
+                    placeholder="e.g. Fuzzy Systems or Overview"
+                  />
+                  <span class="form-hint" style="font-size: 11px; color: var(--fuzzy-text-secondary); margin-top: 4px; display: block;">
+                    Will append to this view, creating it if it doesn't already exist.
+                  </span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; margin: 18px 0;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+                    <input
+                      type="checkbox"
+                      .checked=${this._dashboardShowGraph}
+                      @change=${(e: any) => (this._dashboardShowGraph = e.target.checked)}
+                    />
+                    <span>Show live aggregated output waveform graph</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+                    <input
+                      type="checkbox"
+                      .checked=${this._dashboardShowInputs}
+                      @change=${(e: any) => (this._dashboardShowInputs = e.target.checked)}
+                    />
+                    <span>Show live antecedent input sensors</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+                    <input
+                      type="checkbox"
+                      .checked=${this._dashboardShowRules}
+                      @change=${(e: any) => (this._dashboardShowRules = e.target.checked)}
+                    />
+                    <span>Show active rule firing strengths</span>
+                  </label>
+                </div>
+
+                ${this._dashboardStatusMsg
+                  ? html`
+                      <div
+                        style="padding: 10px 14px; border-radius: var(--fuzzy-radius-md); font-size: 13px; margin-bottom: 14px; background: ${this
+                          ._dashboardIsError
+                          ? "rgba(239, 68, 68, 0.15)"
+                          : "rgba(16, 185, 129, 0.15)"}; color: ${this._dashboardIsError
+                          ? "var(--fuzzy-danger)"
+                          : "#34d399"}; border: 1px solid ${this._dashboardIsError
+                          ? "rgba(239, 68, 68, 0.3)"
+                          : "rgba(16, 185, 129, 0.3)"};"
+                      >
+                        ${this._dashboardStatusMsg}
+                      </div>
+                    `
+                  : ""}
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px; border-top: 1px solid var(--fuzzy-card-border); padding-top: 16px;">
+                  <button class="btn btn-secondary" @click=${this._handleCopyCardYaml}>
+                    📋 Copy Card YAML
+                  </button>
+                  <div style="display: flex; gap: 8px;">
+                    <button
+                      class="btn btn-secondary"
+                      @click=${() => (this._dashboardModalSystem = undefined)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      class="btn btn-primary"
+                      ?disabled=${this._dashboardLoading}
+                      @click=${this._handleAddToDashboard}
+                    >
+                      ${this._dashboardLoading ? "Adding..." : "Add to Dashboard"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `
+        : ""}
 
       ${this._showTemplateModal
         ? html`

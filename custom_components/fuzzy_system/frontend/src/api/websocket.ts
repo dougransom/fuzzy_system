@@ -128,3 +128,50 @@ export async function simulateSystem(
 
   return data;
 }
+
+export const WS_TYPE_GENERATE_CARD = "fuzzy_system/dashboard/generate_card";
+export const WS_TYPE_ADD_CARD_TO_DASHBOARD = "fuzzy_system/dashboard/add_card";
+
+export async function generateCardConfig(
+  hass: HomeAssistant,
+  params: {
+    system_id: string;
+    title?: string;
+    show_graph?: boolean;
+    show_inputs?: boolean;
+    show_rules?: boolean;
+  }
+): Promise<{ system_id: string; card: any; yaml: string }> {
+  return hass.callWS({
+    type: WS_TYPE_GENERATE_CARD,
+    ...params,
+  });
+}
+
+export async function addCardToDashboard(
+  hass: HomeAssistant,
+  params: {
+    system_id: string;
+    dashboard_path?: string | null;
+    view_title?: string | null;
+    card_title?: string;
+    show_graph?: boolean;
+    show_inputs?: boolean;
+    show_rules?: boolean;
+  }
+): Promise<{
+  success: boolean;
+  system_id: string;
+  dashboard_path: string;
+  view?: string;
+  card?: any;
+  yaml: string;
+  message?: string;
+  error?: string;
+  instruction?: string;
+}> {
+  return hass.callWS({
+    type: WS_TYPE_ADD_CARD_TO_DASHBOARD,
+    ...params,
+  });
+}

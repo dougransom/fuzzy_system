@@ -32,3 +32,136 @@ explain:
       example: fan_simulator
       selector:
         text:
+
+list_systems:
+  name: List Fuzzy Systems
+  description: Returns a list of all configured fuzzy systems (both YAML and UI entries) with variable names, rule counts, and configuration sources.
+
+get_system:
+  name: Get Fuzzy System
+  description: Retrieves the complete configuration, current live sensor inputs, and calculated outputs for a specific fuzzy system.
+  fields:
+    system_id:
+      name: System Identifier
+      description: The identifier of the fuzzy system to retrieve.
+      required: true
+      example: fan_simulator
+      selector:
+        text:
+
+generate_dashboard_card:
+  name: Generate Lovelace Card
+  description: Generates a ready-to-use Lovelace dashboard card configuration and YAML snippet for custom:fuzzy-system-card.
+  fields:
+    system_id:
+      name: System Identifier
+      description: The target fuzzy system identifier.
+      required: true
+      example: fan_simulator
+      selector:
+        text:
+    title:
+      name: Card Title
+      description: Optional custom title for the card header.
+      selector:
+        text:
+    show_graph:
+      name: Show Graph
+      description: Whether to display the live aggregated output waveform canvas.
+      default: true
+      selector:
+        boolean:
+    show_inputs:
+      name: Show Inputs
+      description: Whether to display antecedent input values.
+      default: true
+      selector:
+        boolean:
+    show_rules:
+      name: Show Rules
+      description: Whether to display active rule firing strength bars.
+      default: true
+      selector:
+        boolean:
+
+add_to_dashboard:
+  name: Add Card to Lovelace Dashboard
+  description: Automatically inserts a custom:fuzzy-system-card into a Home Assistant Lovelace dashboard view.
+  fields:
+    system_id:
+      name: System Identifier
+      description: The target fuzzy system identifier.
+      required: true
+      example: fan_simulator
+      selector:
+        text:
+    dashboard_path:
+      name: Dashboard URL Path
+      description: URL path of the target dashboard (leave blank for the primary overview dashboard).
+      example: lovelace
+      selector:
+        text:
+    view_title:
+      name: View Title or Path
+      description: Title or path of the target view. Creates the view if it does not already exist.
+      example: Fuzzy Controls
+      selector:
+        text:
+    card_title:
+      name: Card Title
+      description: Optional custom card title.
+      selector:
+        text:
+    show_graph:
+      name: Show Graph
+      description: Whether to display the aggregated waveform graph.
+      default: true
+      selector:
+        boolean:
+    show_inputs:
+      name: Show Inputs
+      description: Whether to display antecedent input sensors.
+      default: true
+      selector:
+        boolean:
+    show_rules:
+      name: Show Rules
+      description: Whether to display active firing rules.
+      default: true
+      selector:
+        boolean:
+
+list_templates:
+  name: List Starter Templates
+  description: Discovers all pre-built starter templates (e.g. thermostat, fan speed, lighting comfort).
+
+instantiate_template:
+  name: Instantiate Template
+  description: Creates and activates a new Fuzzy System config entry from a starter template.
+  fields:
+    template_id:
+      name: Template Identifier
+      description: Key of the starter template (e.g. thermostat, fan_speed, lighting_comfort).
+      required: true
+      example: thermostat
+      selector:
+        text:
+    system_id:
+      name: New System Identifier
+      description: Unique identifier for the new system.
+      required: true
+      example: my_climate_controller
+      selector:
+        text:
+    name:
+      name: Friendly Name
+      description: Display name for the new controller.
+      example: Living Room Climate Controller
+      selector:
+        text:
+    entity_mappings:
+      name: Entity Mappings
+      description: Optional mapping from template input variables to specific Home Assistant sensor entity IDs.
+      example: '{"temperature": "sensor.living_room_temperature"}'
+      selector:
+        object:

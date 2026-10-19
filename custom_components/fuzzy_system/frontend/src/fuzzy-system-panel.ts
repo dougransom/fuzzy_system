@@ -3,6 +3,7 @@ import { property, state } from "lit/decorators.js";
 import { safeCustomElement } from "./utils/custom-element";
 import { FuzzySystemConfig, HomeAssistant } from "./types";
 import { sharedStyles } from "./styles/shared-styles";
+import { initWebMCP } from "./utils/webmcp";
 
 // Import subcomponents
 import "./components/system-catalog";
@@ -87,6 +88,40 @@ export class FuzzySystemPanel extends LitElement {
   @state() private _selectedEntryId?: string;
   @state() private _selectedSource: "yaml" | "config_entry" = "config_entry";
 
+  firstUpdated() {
+    initWebMCP({
+      getHass: () => this.hass,
+      getActiveConfig: () => {
+        if (this._view === "editor") {
+          const editor = this.shadowRoot?.querySelector("fuzzy-system-editor") as any;
+          return editor?._config || this._selectedConfig;
+        }
+        return undefined;
+      },
+      updateActiveConfig: (updater) => {
+        if (this._view === "editor") {
+          const editor = this.shadowRoot?.querySelector("fuzzy-system-editor") as any;
+          if (editor) {
+            editor._config = updater(editor._config);
+            editor.requestUpdate();
+          }
+        }
+      },
+      openSystemInEditor: (config) => {
+        this._selectedConfig = config;
+        this._selectedEntryId = undefined;
+        this._selectedSource = "config_entry";
+        this._view = "editor";
+      },
+      refreshCatalog: () => {
+        const catalog = this.shadowRoot?.querySelector("fuzzy-system-catalog") as any;
+        if (catalog && typeof catalog.refresh === "function") {
+          catalog.refresh();
+        }
+      },
+    });
+  }
+
   private _handleCreateSystem() {
     this._selectedConfig = undefined;
     this._selectedEntryId = undefined;
@@ -120,6 +155,9 @@ export class FuzzySystemPanel extends LitElement {
         </div>
 
         <div class="nav-links">
+          <span class="badge badge-purple" title="WebMCP tool contract exposed for browser AI agents and DevTools">
+            🌐 WebMCP
+          </span>
           <span class="badge badge-cyan">v0.1.3</span>
         </div>
       </header>

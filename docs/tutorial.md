@@ -140,18 +140,74 @@ The JSON payload shows the exact internal representation stored in Home Assistan
 
 ## Step 8: Adding Dashboard Cards (Zero YAML)
 
-Once your fuzzy system is created, you can monitor and control it directly on your Lovelace dashboards:
+Once your fuzzy system is created, you can monitor its real-time operational status, live input antecedent values, active rule strengths, and defuzzified waveforms directly on your Lovelace dashboards:
 
 ![Lovelace Dashboard with Fuzzy Cards](images/08_lovelace_dashboard.png)
 
-### Using the Visual Card Editor:
-1. On any dashboard, click **Edit Dashboard** (Pencil icon) > **"+ Add Card"**.
-2. Select **"Fuzzy System Controller"** from the card picker.
+There are three convenient ways to add cards to your dashboard:
+
+### Method A: One-Click "📊 Add Card" from the Catalog (Fastest)
+
+You can publish a companion card directly from the Fuzzy System panel without leaving the workbench:
+
+1. In the Home Assistant sidebar, navigate to **Fuzzy Systems** (`/fuzzy-system`).
+2. On any system card in the catalog, click the **`📊 Add Card`** button.
+3. In the centered modal dialog:
+   - **Card Header Title**: Enter an optional title (defaults to your controller's friendly name).
+   - **Target View Title**: Enter the view name where the card should appear (e.g. `Fuzzy Systems` or `Overview`). Home Assistant will append the card to this view, automatically creating the view if it doesn't already exist.
+   - **Display Toggles**: Choose whether to display:
+     - Live aggregated output waveform canvas
+     - Live antecedent input sensors
+     - Active rule firing strength bars
+4. Click **"Add to Dashboard"** for instantaneous one-click addition!
+   - *Note*: If your dashboard is configured in YAML mode, click **"📋 Copy Card YAML"** to copy the ready-to-paste card snippet to your clipboard.
+
+---
+
+### Method B: Manual Placement via Lovelace Visual Card Picker
+
+1. On any Lovelace dashboard, click the **Edit Dashboard** (Pencil icon in the top right) > **"+ Add Card"**.
+2. Select **"Fuzzy System Controller"** (`custom:fuzzy-system-card`) from the card picker.
 3. The visual card editor will appear:
-   - **Target Fuzzy System**: Pick your system from the auto-detected dropdown.
-   - **Card Title**: Enter an optional custom title.
-   - **Visual Toggles**: Toggle on/off the live aggregated graph, inputs grid, or active rule bars.
+   - **Target Fuzzy System**: Pick your system from the auto-detected dropdown list.
+   - **Card Title**: Enter an optional header title.
+   - **Visual Toggles**: Enable or disable the live output graph, input sensor chips, and rule firing meters.
 4. Click **Save**!
+
+---
+
+### Method C: AI Agent & Automation Support (MCP & WebMCP)
+
+AI assistants and automation agents can also create and insert cards onto your dashboards programmatically:
+
+#### 1. Via Home Assistant MCP Action:
+Agents can call the `fuzzy_system.add_to_dashboard` action:
+```yaml
+service: fuzzy_system.add_to_dashboard
+data:
+  system_id: fan_simulator
+  view_title: "Climate Controls"
+  card_title: "Living Room Fan Control"
+  show_graph: true
+  show_inputs: true
+  show_rules: true
+```
+Or generate YAML via `fuzzy_system.generate_dashboard_card`.
+
+#### 2. Via Browser WebMCP (`window.fuzzySystemMCP`):
+In browser-based agent workflows, agents can invoke the `add_card_to_dashboard` WebMCP tool:
+```javascript
+await window.fuzzySystemMCP.add_card_to_dashboard({
+  system_id: "fan_simulator",
+  view_title: "Climate Controls",
+  card_title: "Living Room Fan Control",
+  show_graph: true,
+  show_inputs: true,
+  show_rules: true
+});
+```
+This enables autonomous AI agents to build complete end-to-end automations—designing the fuzzy system, tuning the membership functions, simulating results, and finally publishing the diagnostic card directly to the user's dashboard.
+
 
 ---
 
