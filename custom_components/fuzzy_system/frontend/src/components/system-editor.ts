@@ -49,14 +49,15 @@ export class FuzzySystemEditor extends LitElement {
       }
 
       .tab-btn:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--fuzzy-text);
+        background: rgba(125, 125, 125, 0.08);
+        color: var(--primary-text-color, var(--fuzzy-text));
       }
 
       .tab-btn.active {
-        background: rgba(2, 132, 199, 0.15);
-        color: #38bdf8;
-        border-bottom: 2px solid var(--fuzzy-primary);
+        background: rgba(2, 132, 199, 0.12);
+        color: var(--fuzzy-primary, #0284c7);
+        font-weight: 700;
+        border-bottom: 2px solid var(--fuzzy-primary, #0284c7);
       }
 
       .header-actions {
@@ -81,8 +82,8 @@ export class FuzzySystemEditor extends LitElement {
       }
 
       .section-box {
-        background: rgba(15, 23, 42, 0.5);
-        border: 1px solid var(--fuzzy-card-border);
+        background: var(--secondary-background-color, rgba(125, 125, 125, 0.05));
+        border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.18));
         border-radius: var(--fuzzy-radius-md);
         padding: 18px;
         margin-bottom: 16px;
@@ -140,9 +141,9 @@ export class FuzzySystemEditor extends LitElement {
         font-size: 13px;
         padding: 4px 10px;
         border-radius: 6px;
-        background: rgba(2, 132, 199, 0.12);
-        color: #0284c7;
-        border: 1px solid rgba(2, 132, 199, 0.35);
+        background: #0284c7;
+        color: #ffffff;
+        border: 1px solid #0369a1;
       }
 
       .rule-var-consequent {
@@ -152,16 +153,16 @@ export class FuzzySystemEditor extends LitElement {
         font-size: 13px;
         padding: 4px 10px;
         border-radius: 6px;
-        background: rgba(217, 119, 6, 0.12);
-        color: #d97706;
-        border: 1px solid rgba(217, 119, 6, 0.35);
+        background: #d97706;
+        color: #ffffff;
+        border: 1px solid #b45309;
       }
 
       .rule-op {
-        font-weight: 600;
+        font-weight: 700;
         font-size: 13px;
-        color: var(--secondary-text-color, #64748b);
-        padding: 0 2px;
+        color: var(--primary-text-color, #1e293b);
+        padding: 0 4px;
       }
 
       .rule-term {
@@ -171,9 +172,9 @@ export class FuzzySystemEditor extends LitElement {
         font-size: 13px;
         padding: 4px 10px;
         border-radius: 6px;
-        background: rgba(5, 150, 105, 0.12);
-        color: #059669;
-        border: 1px solid rgba(5, 150, 105, 0.35);
+        background: #059669;
+        color: #ffffff;
+        border: 1px solid #047857;
       }
 
       .rule-raw {
@@ -1832,18 +1833,18 @@ export class FuzzySystemEditor extends LitElement {
                       const active = strength > 0.01;
                       return html`
                         <div
-                          style="display: flex; align-items: center; gap: 12px; background: ${active ? 'rgba(56, 189, 248, 0.08)' : 'rgba(15, 23, 42, 0.5)'}; padding: 10px 14px; border-radius: var(--fuzzy-radius-md); border: 1px solid ${active ? 'rgba(56, 189, 248, 0.35)' : 'rgba(255, 255, 255, 0.08)'};"
+                          style="display: flex; align-items: center; gap: 12px; background: ${active ? 'rgba(2, 132, 199, 0.12)' : 'var(--secondary-background-color, rgba(125, 125, 125, 0.05))'}; padding: 10px 14px; border-radius: var(--fuzzy-radius-md); border: 1px solid ${active ? 'rgba(2, 132, 199, 0.4)' : 'var(--divider-color, rgba(125, 125, 125, 0.18))'};"
                         >
-                          <div style="font-family: monospace; font-size: 12px; flex: 1; color: ${active ? '#f8fafc' : '#cbd5e1'}; font-weight: ${active ? '600' : '400'};">
+                          <div style="font-family: monospace; font-size: 12px; flex: 1; color: ${active ? 'var(--fuzzy-primary, #0284c7)' : 'var(--primary-text-color, var(--fuzzy-text))'}; font-weight: ${active ? '700' : '500'};">
                             ${r.rule}
                           </div>
                           <div style="width: 140px; display: flex; align-items: center; gap: 8px;">
-                            <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                            <div style="flex: 1; height: 6px; background: var(--divider-color, rgba(125, 125, 125, 0.2)); border-radius: 3px; overflow: hidden;">
                               <div
-                                style="width: ${Math.round(strength * 100)}%; height: 100%; background: ${active ? 'linear-gradient(90deg, #0284c7, #38bdf8)' : '#475569'}; border-radius: 3px;"
+                                style="width: ${Math.round(strength * 100)}%; height: 100%; background: ${active ? 'linear-gradient(90deg, #0284c7, #38bdf8)' : 'var(--secondary-text-color, #64748b)'}; border-radius: 3px;"
                               ></div>
                             </div>
-                            <span style="font-size: 11px; font-weight: 700; font-family: monospace; color: ${active ? '#38bdf8' : '#94a3b8'}; width: 34px; text-align: right;">
+                            <span style="font-size: 11px; font-weight: 700; font-family: monospace; color: ${active ? 'var(--fuzzy-primary, #0284c7)' : 'var(--secondary-text-color, #64748b)'}; width: 34px; text-align: right;">
                               ${strength.toFixed(2)}
                             </span>
                           </div>

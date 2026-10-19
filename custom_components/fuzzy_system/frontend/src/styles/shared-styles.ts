@@ -10,7 +10,7 @@ export const sharedStyles = css`
     --fuzzy-danger: var(--error-color, #ef4444);
     --fuzzy-bg: var(--primary-background-color, #0f172a);
     --fuzzy-card-bg: var(--card-background-color, rgba(30, 41, 59, 0.7));
-    --fuzzy-card-border: var(--divider-color, rgba(255, 255, 255, 0.12));
+    --fuzzy-card-border: var(--divider-color, rgba(125, 125, 125, 0.2));
     --fuzzy-text: var(--primary-text-color, #f8fafc);
     --fuzzy-text-secondary: var(--secondary-text-color, #64748b);
     --fuzzy-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
@@ -149,25 +149,30 @@ export const sharedStyles = css`
   }
 
   .btn-secondary {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--fuzzy-text);
-    border: 1px solid var(--fuzzy-card-border);
+    background: var(--secondary-background-color, rgba(125, 125, 125, 0.08));
+    color: var(--primary-text-color, var(--fuzzy-text));
+    border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.25));
   }
 
   .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.14);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(125, 125, 125, 0.16);
+    border-color: rgba(125, 125, 125, 0.4);
+    transform: translateY(-1px);
   }
 
   .btn-danger {
-    background: rgba(239, 68, 68, 0.15);
-    color: #fca5a5;
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    font-weight: 600;
   }
 
   .btn-danger:hover {
-    background: rgba(239, 68, 68, 0.25);
-    color: white;
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
   }
 
   .btn-icon {
@@ -178,8 +183,8 @@ export const sharedStyles = css`
   }
 
   .btn-icon:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--fuzzy-text);
+    background: rgba(125, 125, 125, 0.12);
+    color: var(--primary-text-color, var(--fuzzy-text));
   }
 
   /* Form Inputs */
@@ -190,8 +195,9 @@ export const sharedStyles = css`
   .form-label {
     display: block;
     font-size: 13px;
-    font-weight: 500;
-    color: var(--fuzzy-text-secondary);
+    font-weight: 600;
+    color: var(--primary-text-color, #1e293b);
+    opacity: 0.9;
     margin-bottom: 6px;
   }
 
@@ -199,12 +205,22 @@ export const sharedStyles = css`
     width: 100%;
     padding: 10px 14px;
     border-radius: var(--fuzzy-radius-md);
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid var(--fuzzy-card-border);
-    color: var(--fuzzy-text);
+    background: var(--input-fill-color, var(--card-background-color, #ffffff));
+    border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.3));
+    color: var(--primary-text-color, #0f172a);
     font-size: 14px;
     box-sizing: border-box;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .input-text::placeholder, .input-textarea::placeholder {
+    color: var(--secondary-text-color, #94a3b8);
+    opacity: 0.8;
+  }
+
+  .input-select option {
+    background: var(--card-background-color, #ffffff);
+    color: var(--primary-text-color, #0f172a);
   }
 
   .input-text:focus, .input-select:focus, .input-textarea:focus {
@@ -230,7 +246,7 @@ export const sharedStyles = css`
   }
 
   .modal-content {
-    background: var(--fuzzy-bg);
+    background: var(--card-background-color, var(--fuzzy-bg));
     border: 1px solid var(--fuzzy-card-border);
     border-radius: var(--fuzzy-radius-lg);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -240,5 +256,6 @@ export const sharedStyles = css`
     overflow-y: auto;
     padding: 28px;
     box-sizing: border-box;
+    color: var(--primary-text-color, var(--fuzzy-text));
   }
 `;

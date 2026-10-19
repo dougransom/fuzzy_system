@@ -119,23 +119,23 @@ export class FuzzySystemCatalog extends LitElement {
       }
 
       .output-badge.live-active {
-        background: rgba(5, 150, 105, 0.12);
-        border-color: rgba(5, 150, 105, 0.35);
-        color: var(--fuzzy-success, #059669);
+        background: rgba(5, 150, 105, 0.14);
+        border-color: rgba(5, 150, 105, 0.45);
+        color: var(--fuzzy-success, #047857);
         font-weight: 700;
       }
 
       .output-badge.live-active:hover {
-        background: rgba(5, 150, 105, 0.22);
-        border-color: rgba(5, 150, 105, 0.6);
+        background: rgba(5, 150, 105, 0.25);
+        border-color: rgba(5, 150, 105, 0.7);
         transform: translateY(-1px);
         box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
       }
 
       .output-badge.live-idle {
-        background: rgba(255, 255, 255, 0.04);
-        border-color: var(--fuzzy-card-border);
-        color: var(--fuzzy-text-secondary);
+        background: var(--secondary-background-color, rgba(125, 125, 125, 0.06));
+        border-color: var(--divider-color, rgba(125, 125, 125, 0.2));
+        color: var(--secondary-text-color, #64748b);
         cursor: default;
       }
 

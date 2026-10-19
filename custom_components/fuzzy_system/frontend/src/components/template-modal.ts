@@ -19,8 +19,8 @@ export class FuzzyTemplateModal extends LitElement {
       }
 
       .template-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--fuzzy-card-border);
+        background: var(--secondary-background-color, rgba(125, 125, 125, 0.06));
+        border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.22));
         border-radius: var(--fuzzy-radius-md);
         padding: 16px;
         cursor: pointer;

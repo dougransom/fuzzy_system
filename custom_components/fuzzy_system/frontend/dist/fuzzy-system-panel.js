@@ -572,7 +572,7 @@ const ut = T`
     --fuzzy-danger: var(--error-color, #ef4444);
     --fuzzy-bg: var(--primary-background-color, #0f172a);
     --fuzzy-card-bg: var(--card-background-color, rgba(30, 41, 59, 0.7));
-    --fuzzy-card-border: var(--divider-color, rgba(255, 255, 255, 0.12));
+    --fuzzy-card-border: var(--divider-color, rgba(125, 125, 125, 0.2));
     --fuzzy-text: var(--primary-text-color, #f8fafc);
     --fuzzy-text-secondary: var(--secondary-text-color, #64748b);
     --fuzzy-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
@@ -711,25 +711,30 @@ const ut = T`
   }
 
   .btn-secondary {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--fuzzy-text);
-    border: 1px solid var(--fuzzy-card-border);
+    background: var(--secondary-background-color, rgba(125, 125, 125, 0.08));
+    color: var(--primary-text-color, var(--fuzzy-text));
+    border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.25));
   }
 
   .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.14);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(125, 125, 125, 0.16);
+    border-color: rgba(125, 125, 125, 0.4);
+    transform: translateY(-1px);
   }
 
   .btn-danger {
-    background: rgba(239, 68, 68, 0.15);
-    color: #fca5a5;
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    font-weight: 600;
   }
 
   .btn-danger:hover {
-    background: rgba(239, 68, 68, 0.25);
-    color: white;
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
   }
 
   .btn-icon {
@@ -740,8 +745,8 @@ const ut = T`
   }
 
   .btn-icon:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--fuzzy-text);
+    background: rgba(125, 125, 125, 0.12);
+    color: var(--primary-text-color, var(--fuzzy-text));
   }
 
   /* Form Inputs */
@@ -752,8 +757,9 @@ const ut = T`
   .form-label {
     display: block;
     font-size: 13px;
-    font-weight: 500;
-    color: var(--fuzzy-text-secondary);
+    font-weight: 600;
+    color: var(--primary-text-color, #1e293b);
+    opacity: 0.9;
     margin-bottom: 6px;
   }
 
@@ -761,12 +767,22 @@ const ut = T`
     width: 100%;
     padding: 10px 14px;
     border-radius: var(--fuzzy-radius-md);
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid var(--fuzzy-card-border);
-    color: var(--fuzzy-text);
+    background: var(--input-fill-color, var(--card-background-color, #ffffff));
+    border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.3));
+    color: var(--primary-text-color, #0f172a);
     font-size: 14px;
     box-sizing: border-box;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .input-text::placeholder, .input-textarea::placeholder {
+    color: var(--secondary-text-color, #94a3b8);
+    opacity: 0.8;
+  }
+
+  .input-select option {
+    background: var(--card-background-color, #ffffff);
+    color: var(--primary-text-color, #0f172a);
   }
 
   .input-text:focus, .input-select:focus, .input-textarea:focus {
@@ -792,7 +808,7 @@ const ut = T`
   }
 
   .modal-content {
-    background: var(--fuzzy-bg);
+    background: var(--card-background-color, var(--fuzzy-bg));
     border: 1px solid var(--fuzzy-card-border);
     border-radius: var(--fuzzy-radius-lg);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -802,6 +818,7 @@ const ut = T`
     overflow-y: auto;
     padding: 28px;
     box-sizing: border-box;
+    color: var(--primary-text-color, var(--fuzzy-text));
   }
 `, pe = "fuzzy_system/systems/list", ce = "fuzzy_system/systems/save", ue = "fuzzy_system/systems/delete", he = "fuzzy_system/simulate", ge = "fuzzy_system/templates/list", fe = "fuzzy_system/templates/instantiate";
 async function me(e) {
@@ -1523,23 +1540,23 @@ C.styles = [
       }
 
       .output-badge.live-active {
-        background: rgba(5, 150, 105, 0.12);
-        border-color: rgba(5, 150, 105, 0.35);
-        color: var(--fuzzy-success, #059669);
+        background: rgba(5, 150, 105, 0.14);
+        border-color: rgba(5, 150, 105, 0.45);
+        color: var(--fuzzy-success, #047857);
         font-weight: 700;
       }
 
       .output-badge.live-active:hover {
-        background: rgba(5, 150, 105, 0.22);
-        border-color: rgba(5, 150, 105, 0.6);
+        background: rgba(5, 150, 105, 0.25);
+        border-color: rgba(5, 150, 105, 0.7);
         transform: translateY(-1px);
         box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
       }
 
       .output-badge.live-idle {
-        background: rgba(255, 255, 255, 0.04);
-        border-color: var(--fuzzy-card-border);
-        color: var(--fuzzy-text-secondary);
+        background: var(--secondary-background-color, rgba(125, 125, 125, 0.06));
+        border-color: var(--divider-color, rgba(125, 125, 125, 0.2));
+        color: var(--secondary-text-color, #64748b);
         cursor: default;
       }
 
@@ -3093,18 +3110,18 @@ let m = class extends z {
         const l = n.firing_strength || 0, d = l > 0.01;
         return o`
                         <div
-                          style="display: flex; align-items: center; gap: 12px; background: ${d ? "rgba(56, 189, 248, 0.08)" : "rgba(15, 23, 42, 0.5)"}; padding: 10px 14px; border-radius: var(--fuzzy-radius-md); border: 1px solid ${d ? "rgba(56, 189, 248, 0.35)" : "rgba(255, 255, 255, 0.08)"};"
+                          style="display: flex; align-items: center; gap: 12px; background: ${d ? "rgba(2, 132, 199, 0.12)" : "var(--secondary-background-color, rgba(125, 125, 125, 0.05))"}; padding: 10px 14px; border-radius: var(--fuzzy-radius-md); border: 1px solid ${d ? "rgba(2, 132, 199, 0.4)" : "var(--divider-color, rgba(125, 125, 125, 0.18))"};"
                         >
-                          <div style="font-family: monospace; font-size: 12px; flex: 1; color: ${d ? "#f8fafc" : "#cbd5e1"}; font-weight: ${d ? "600" : "400"};">
+                          <div style="font-family: monospace; font-size: 12px; flex: 1; color: ${d ? "var(--fuzzy-primary, #0284c7)" : "var(--primary-text-color, var(--fuzzy-text))"}; font-weight: ${d ? "700" : "500"};">
                             ${n.rule}
                           </div>
                           <div style="width: 140px; display: flex; align-items: center; gap: 8px;">
-                            <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                            <div style="flex: 1; height: 6px; background: var(--divider-color, rgba(125, 125, 125, 0.2)); border-radius: 3px; overflow: hidden;">
                               <div
-                                style="width: ${Math.round(l * 100)}%; height: 100%; background: ${d ? "linear-gradient(90deg, #0284c7, #38bdf8)" : "#475569"}; border-radius: 3px;"
+                                style="width: ${Math.round(l * 100)}%; height: 100%; background: ${d ? "linear-gradient(90deg, #0284c7, #38bdf8)" : "var(--secondary-text-color, #64748b)"}; border-radius: 3px;"
                               ></div>
                             </div>
-                            <span style="font-size: 11px; font-weight: 700; font-family: monospace; color: ${d ? "#38bdf8" : "#94a3b8"}; width: 34px; text-align: right;">
+                            <span style="font-size: 11px; font-weight: 700; font-family: monospace; color: ${d ? "var(--fuzzy-primary, #0284c7)" : "var(--secondary-text-color, #64748b)"}; width: 34px; text-align: right;">
                               ${l.toFixed(2)}
                             </span>
                           </div>
@@ -3553,14 +3570,15 @@ m.styles = [
       }
 
       .tab-btn:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--fuzzy-text);
+        background: rgba(125, 125, 125, 0.08);
+        color: var(--primary-text-color, var(--fuzzy-text));
       }
 
       .tab-btn.active {
-        background: rgba(2, 132, 199, 0.15);
-        color: #38bdf8;
-        border-bottom: 2px solid var(--fuzzy-primary);
+        background: rgba(2, 132, 199, 0.12);
+        color: var(--fuzzy-primary, #0284c7);
+        font-weight: 700;
+        border-bottom: 2px solid var(--fuzzy-primary, #0284c7);
       }
 
       .header-actions {
@@ -3585,8 +3603,8 @@ m.styles = [
       }
 
       .section-box {
-        background: rgba(15, 23, 42, 0.5);
-        border: 1px solid var(--fuzzy-card-border);
+        background: var(--secondary-background-color, rgba(125, 125, 125, 0.05));
+        border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.18));
         border-radius: var(--fuzzy-radius-md);
         padding: 18px;
         margin-bottom: 16px;
@@ -3644,9 +3662,9 @@ m.styles = [
         font-size: 13px;
         padding: 4px 10px;
         border-radius: 6px;
-        background: rgba(2, 132, 199, 0.12);
-        color: #0284c7;
-        border: 1px solid rgba(2, 132, 199, 0.35);
+        background: #0284c7;
+        color: #ffffff;
+        border: 1px solid #0369a1;
       }
 
       .rule-var-consequent {
@@ -3656,16 +3674,16 @@ m.styles = [
         font-size: 13px;
         padding: 4px 10px;
         border-radius: 6px;
-        background: rgba(217, 119, 6, 0.12);
-        color: #d97706;
-        border: 1px solid rgba(217, 119, 6, 0.35);
+        background: #d97706;
+        color: #ffffff;
+        border: 1px solid #b45309;
       }
 
       .rule-op {
-        font-weight: 600;
+        font-weight: 700;
         font-size: 13px;
-        color: var(--secondary-text-color, #64748b);
-        padding: 0 2px;
+        color: var(--primary-text-color, #1e293b);
+        padding: 0 4px;
       }
 
       .rule-term {
@@ -3675,9 +3693,9 @@ m.styles = [
         font-size: 13px;
         padding: 4px 10px;
         border-radius: 6px;
-        background: rgba(5, 150, 105, 0.12);
-        color: #059669;
-        border: 1px solid rgba(5, 150, 105, 0.35);
+        background: #059669;
+        color: #ffffff;
+        border: 1px solid #047857;
       }
 
       .rule-raw {
@@ -3972,8 +3990,8 @@ E.styles = [
       }
 
       .template-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--fuzzy-card-border);
+        background: var(--secondary-background-color, rgba(125, 125, 125, 0.06));
+        border: 1px solid var(--divider-color, rgba(125, 125, 125, 0.22));
         border-radius: var(--fuzzy-radius-md);
         padding: 16px;
         cursor: pointer;
@@ -4648,7 +4666,7 @@ let w = class extends z {
         </div>
 
         <div class="nav-links">
-          <span class="badge badge-cyan">v0.2.0 Phase 2</span>
+          <span class="badge badge-cyan">v0.1.3</span>
         </div>
       </header>
 
@@ -4684,7 +4702,7 @@ w.styles = [
       }
 
       .app-header {
-        background: rgba(15, 23, 42, 0.8);
+        background: var(--card-background-color, rgba(30, 41, 59, 0.85));
         border-bottom: 1px solid var(--fuzzy-card-border);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
@@ -4695,6 +4713,7 @@ w.styles = [
         display: flex;
         justify-content: space-between;
         align-items: center;
+        color: var(--primary-text-color, var(--fuzzy-text));
       }
 
       .brand {
@@ -4719,6 +4738,7 @@ w.styles = [
         font-size: 18px;
         font-weight: 700;
         letter-spacing: -0.01em;
+        color: var(--primary-text-color, var(--fuzzy-text));
       }
 
       .nav-links {

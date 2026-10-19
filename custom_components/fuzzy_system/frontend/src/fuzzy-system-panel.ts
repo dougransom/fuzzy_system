@@ -25,7 +25,7 @@ export class FuzzySystemPanel extends LitElement {
       }
 
       .app-header {
-        background: rgba(15, 23, 42, 0.8);
+        background: var(--card-background-color, rgba(30, 41, 59, 0.85));
         border-bottom: 1px solid var(--fuzzy-card-border);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
@@ -36,6 +36,7 @@ export class FuzzySystemPanel extends LitElement {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        color: var(--primary-text-color, var(--fuzzy-text));
       }
 
       .brand {
@@ -60,6 +61,7 @@ export class FuzzySystemPanel extends LitElement {
         font-size: 18px;
         font-weight: 700;
         letter-spacing: -0.01em;
+        color: var(--primary-text-color, var(--fuzzy-text));
       }
 
       .nav-links {
@@ -118,7 +120,7 @@ export class FuzzySystemPanel extends LitElement {
         </div>
 
         <div class="nav-links">
-          <span class="badge badge-cyan">v0.2.0 Phase 2</span>
+          <span class="badge badge-cyan">v0.1.3</span>
         </div>
       </header>
 
