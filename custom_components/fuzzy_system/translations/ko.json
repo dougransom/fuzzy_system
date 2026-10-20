@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "퍼지 시스템 생성",
+        "description": "새로운 선언적 퍼지 논리 컨트롤러를 구성합니다.",
+        "data": {
+          "system_id": "시스템 식별자(슬러그)",
+          "name": "표시 이름",
+          "inference": "추론 유형(Mamdani 또는 Sugeno)",
+          "defuzzifier": "역퍼지화 방법"
+        }
+      },
+      "reconfigure": {
+        "title": "퍼지 시스템 재구성",
+        "description": "{system_id}에 대한 구성 매개변수를 업데이트합니다.",
+        "data": {
+          "name": "표시 이름",
+          "inference": "추론 유형(Mamdani 또는 Sugeno)",
+          "defuzzifier": "역퍼지화 방법"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "유효한 시스템 식별자를 지정하십시오.",
+      "id_exists_yaml": "이 식별자를 가진 시스템은 이미configuration.yaml에 존재하므로 복제할 수 없습니다.",
+      "id_exists": "이 식별자를 가진 퍼지 시스템이 이미 구성되어 있습니다."
+    },
+    "abort": {
+      "already_configured": "이 식별자를 가진 퍼지 시스템이 이미 구성되어 있습니다.",
+      "reconfigure_successful": "퍼지 시스템 구성이 성공적으로 업데이트되었습니다."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "퍼지 시스템 옵션",
+        "description": "시스템: {system_id}\n\n멤버십 곡선과 언어 규칙을 시각적으로 편집하려면 [비주얼 편집기]({editor_url})를 방문하세요.",
+        "data": {
+          "description": "설명",
+          "expose_system_sensor": "시스템 상태 센서 노출"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "퍼지 시스템 {system_id}를 찾을 수 없습니다."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "{system_id}에 대한 입력 엔터티가 누락되었습니다.",
+      "description": "퍼지 시스템 {system_id}는 현재 찾을 수 없거나 사용할 수 없는 엔터티 {entity_id}에 종속됩니다. 퍼지 시스템은 이 엔터티가 생성되거나 사용 가능해질 때까지 기본값을 사용합니다."
+    }
+  }
+}

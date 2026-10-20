@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "Konfigurowanie karty-systemu rozmytego...",
+    "active": "Aktywny",
+    "live_inputs": "Wejścia na żywo",
+    "outputs": "Wyjścia",
+    "live_aggregated_set": "Zestaw zagregowanych wyników na żywo",
+    "rule_firing_strengths": "Siły wyzwalania reguły aktywnej"
+  },
+  "editor": {
+    "target_system": "Docelowy system rozmyty",
+    "detected": "Wykryto {count}",
+    "target_system_helper": "Wybierz kontroler logiki rozmytej, który chcesz monitorować i wizualizować na tej karcie panelu kontrolnego.",
+    "card_title": "Tytuł karty (opcjonalnie)",
+    "card_title_placeholder": "np. Kontroler wentylatora w salonie",
+    "card_title_helper": "Pozostaw puste, aby automatycznie używać rozmytej nazwy systemu.",
+    "visual_components": "Elementy karty wizualnej",
+    "aggregated_waveform": "Zagregowany przebieg wyjściowy",
+    "aggregated_waveform_desc": "Rozkład cieniowanych zbiorów rozmytych w czasie rzeczywistym z wycinkiem rozmytym",
+    "inputs_grid": "Siatka wejść na żywo",
+    "inputs_grid_desc": "Pokaż wejściowe pigułki metryczne i wartości podawane do silnika",
+    "rule_strengths": "Siły wyzwalania reguły aktywnej",
+    "rule_strengths_desc": "Pokaż paski postępu siły ognia dla aktywnych reguł"
+  },
+  "panel": {
+    "title": "Studio sterowania rozmytego",
+    "catalog": "Katalog systemu",
+    "editor": "Wizualny edytor reguł i krzywych",
+    "add_system": "Dodaj system",
+    "simulate": "Symuluj ocenę",
+    "reload": "Załaduj ponownie YAML",
+    "loading": "Ładowanie systemów rozmytych..."
+  }
+}

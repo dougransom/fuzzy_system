@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Crear sistema difuso",
+        "description": "Configure un nuevo controlador de lógica difusa declarativa.",
+        "data": {
+          "system_id": "Identificador del sistema (Slug)",
+          "name": "Nombre para mostrar",
+          "inference": "Tipo de inferencia (Mamdani o Sugeno)",
+          "defuzzifier": "Método de defusificación"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurar el sistema difuso",
+        "description": "Actualice los parámetros de configuración para {system_id}.",
+        "data": {
+          "name": "Nombre para mostrar",
+          "inference": "Tipo de inferencia (Mamdani o Sugeno)",
+          "defuzzifier": "Método de defusificación"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Especifique un identificador de sistema válido.",
+      "id_exists_yaml": "Ya existe un sistema con este identificador en Configuration.yaml y no se puede duplicar.",
+      "id_exists": "Ya está configurado un sistema difuso con este identificador."
+    },
+    "abort": {
+      "already_configured": "Ya está configurado un sistema difuso con este identificador.",
+      "reconfigure_successful": "La configuración del sistema difuso se actualizó correctamente."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opciones del sistema difuso",
+        "description": "Sistema: {system_id}\n\nPara editar visualmente curvas de membresía y reglas lingüísticas, visite el [Editor visual]({editor_url}).",
+        "data": {
+          "description": "Descripción",
+          "expose_system_sensor": "Exponer el sensor de estado del sistema"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "No se encontró el sistema difuso {system_id}."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "Falta entidad de entrada para {system_id}",
+      "description": "El sistema difuso {system_id} depende de la entidad {entity_id}, que actualmente no se encuentra o no está disponible. El sistema difuso utilizará el valor predeterminado hasta que esta entidad se cree o esté disponible."
+    }
+  }
+}

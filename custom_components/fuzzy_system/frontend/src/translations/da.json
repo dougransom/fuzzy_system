@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "Konfigurerer fuzzy-system-kort...",
+    "active": "Aktiv",
+    "live_inputs": "Live input",
+    "outputs": "Udgange",
+    "live_aggregated_set": "Live aggregeret output sæt",
+    "rule_firing_strengths": "Aktive regel skydestyrker"
+  },
+  "editor": {
+    "target_system": "Target Fuzzy System",
+    "detected": "{count} fundet",
+    "target_system_helper": "Vælg den fuzzy logic-controller for at overvåge og visualisere på dette dashboard-kort.",
+    "card_title": "Korttitel (valgfrit)",
+    "card_title_placeholder": "f.eks. Stue Ventilator Controller",
+    "card_title_helper": "Lad det være tomt for automatisk at bruge det uklare systemnavn.",
+    "visual_components": "Visuelle kortkomponenter",
+    "aggregated_waveform": "Aggregeret outputbølgeform",
+    "aggregated_waveform_desc": "Real-time skyggelagt fuzzy sæt distribution med defuzzification skive",
+    "inputs_grid": "Live Input Grid",
+    "inputs_grid_desc": "Vis input metriske piller og værdier, der føres ind i motoren",
+    "rule_strengths": "Aktive regel skydestyrker",
+    "rule_strengths_desc": "Vis skydestyrke fremskridtsbjælker for aktive regler"
+  },
+  "panel": {
+    "title": "Fuzzy Control Studio",
+    "catalog": "Systemkatalog",
+    "editor": "Visual Rule & Curve Editor",
+    "add_system": "Tilføj system",
+    "simulate": "Simulere evaluering",
+    "reload": "Genindlæs YAML",
+    "loading": "Indlæser Fuzzy Systems..."
+  }
+}

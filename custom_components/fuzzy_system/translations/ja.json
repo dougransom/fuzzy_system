@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ファジーシステムの作成",
+        "description": "新しい宣言型ファジー ロジック コントローラーを構成します。",
+        "data": {
+          "system_id": "システム識別子 (スラッグ)",
+          "name": "表示名",
+          "inference": "推論タイプ（マムダニまたはスゲノ）",
+          "defuzzifier": "非ファジー化方法"
+        }
+      },
+      "reconfigure": {
+        "title": "ファジーシステムの再構成",
+        "description": "{system_id} の構成パラメータを更新します。",
+        "data": {
+          "name": "表示名",
+          "inference": "推論タイプ（マムダニまたはスゲノ）",
+          "defuzzifier": "非ファジー化方法"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "有効なシステム識別子を指定してください。",
+      "id_exists_yaml": "この識別子を持つシステムはconfiguration.yamlにすでに存在しているため、複製することはできません。",
+      "id_exists": "この識別子を持つファジー システムはすでに構成されています。"
+    },
+    "abort": {
+      "already_configured": "この識別子を持つファジー システムはすでに構成されています。",
+      "reconfigure_successful": "ファジー システム構成が正常に更新されました。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "ファジー システム オプション",
+        "description": "システム: {system_id}\n\nメンバーシップ カーブと言語ルールを視覚的に編集するには、[ビジュアル エディター]({editor_url}) にアクセスしてください。",
+        "data": {
+          "description": "説明",
+          "expose_system_sensor": "システムステータスセンサーを露出させる"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "ファジー システム {system_id} が見つかりませんでした。"
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "{system_id} の入力エンティティがありません",
+      "description": "ファジー システム {system_id} はエンティティ {entity_id} に依存していますが、エンティティ {entity_id} は現在見つからないか、使用できません。ファジー システムは、このエンティティが作成されるか使用可能になるまで、デフォルト値を使用します。"
+    }
+  }
+}

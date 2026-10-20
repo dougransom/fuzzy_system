@@ -44,6 +44,7 @@ Refer to [`README.md`](README.md) for the detailed project goals, technical spec
 
 ## 4. Pre-Release Validation Gate (Mandatory)
 Before cutting any release, bumping version numbers in `manifest.json`, creating git tags, or submitting/updating PRs to `hacs/default`:
-1. The agent **MUST** run `./scripts/pre_release_check.sh`.
-2. All 4 checks must pass cleanly (Ruff linting, Pytest with $\ge 95\%$ coverage, Home Assistant Hassfest via Docker, and JSON/translation placeholder checks).
-3. **Translation placeholders rule**: Never wrap placeholders in single quotes (e.g. use `{system_id}`, never `'{system_id}'`) in `strings.json` or `translations/*.json`.
+1. **Incremental Translation**: Run `./scripts/translate.py --since-last-release --tier 1,2 --build-frontend` to translate new or modified Home Assistant UI strings and frontend card/editor components across target language tiers (including Japanese `ja`). For on-demand translation testing, run `./scripts/translate.py --on-demand --lang ja,de`.
+2. **Quality Gate Script**: The agent **MUST** run `./scripts/pre_release_check.sh`.
+3. All 4 checks must pass cleanly (Ruff linting, Pytest with $\ge 95\%$ coverage, Home Assistant Hassfest via Docker, and JSON/translation placeholder checks across all languages).
+4. **Translation placeholders rule**: Never wrap placeholders in single quotes (e.g. use `{system_id}`, never `'{system_id}'`) in `strings.json` or `translations/*.json`.

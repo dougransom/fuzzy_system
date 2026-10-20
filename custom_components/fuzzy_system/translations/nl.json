@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Creëer een Fuzzy-systeem",
+        "description": "Configureer een nieuwe declaratieve fuzzy logic-controller.",
+        "data": {
+          "system_id": "Systeemidentificatie (slak)",
+          "name": "Weergavenaam",
+          "inference": "Inferentietype (Mamdani of Sugeno)",
+          "defuzzifier": "Defuzzificatiemethode"
+        }
+      },
+      "reconfigure": {
+        "title": "Configureer het Fuzzy-systeem opnieuw",
+        "description": "Update configuratieparameters voor {system_id}.",
+        "data": {
+          "name": "Weergavenaam",
+          "inference": "Inferentietype (Mamdani of Sugeno)",
+          "defuzzifier": "Defuzzificatiemethode"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Geef een geldige systeem-ID op.",
+      "id_exists_yaml": "Er bestaat al een systeem met deze identificatie in configuratie.yaml en kan niet worden gedupliceerd.",
+      "id_exists": "Er is al een fuzzy-systeem met deze identificatie geconfigureerd."
+    },
+    "abort": {
+      "already_configured": "Er is al een fuzzy-systeem met deze identificatie geconfigureerd.",
+      "reconfigure_successful": "Fuzzy-systeemconfiguratie is succesvol bijgewerkt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Vage systeemopties",
+        "description": "Systeem: {system_id}\n\nOm lidmaatschapscurven en taalregels visueel te bewerken, gaat u naar de [Visuele Editor]({editor_url}).",
+        "data": {
+          "description": "Beschrijving",
+          "expose_system_sensor": "Stel de systeemstatussensor bloot"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "Fuzzy-systeem {system_id} is niet gevonden."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "Ontbrekende invoerentiteit voor {system_id}",
+      "description": "Fuzzy-systeem {system_id} is afhankelijk van entiteit {entity_id}, die momenteel niet wordt gevonden of niet beschikbaar is. Het fuzzy-systeem gebruikt de standaardwaarde totdat deze entiteit wordt gemaakt of beschikbaar komt."
+    }
+  }
+}

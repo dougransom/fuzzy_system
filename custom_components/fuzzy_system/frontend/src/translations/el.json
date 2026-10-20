@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "Διαμόρφωση fuzzy-system-card...",
+    "active": "Ενεργός",
+    "live_inputs": "Ζωντανές εισροές",
+    "outputs": "Έξοδοι",
+    "live_aggregated_set": "Σετ ζωντανών συγκεντρωτικών εξόδων",
+    "rule_firing_strengths": "Ενεργός κανόνας Δυνάμεις πυροδότησης"
+  },
+  "editor": {
+    "target_system": "Ασαφές σύστημα στόχου",
+    "detected": "Εντοπίστηκε {count}",
+    "target_system_helper": "Επιλέξτε τον ελεγκτή ασαφούς λογικής για παρακολούθηση και οπτικοποίηση σε αυτήν την κάρτα ταμπλό.",
+    "card_title": "Τίτλος κάρτας (Προαιρετικό)",
+    "card_title_placeholder": "π.χ. Ελεγκτής ανεμιστήρα σαλονιού",
+    "card_title_helper": "Αφήστε κενό για να χρησιμοποιήσετε αυτόματα το ασαφές όνομα συστήματος.",
+    "visual_components": "Στοιχεία Visual Card",
+    "aggregated_waveform": "Συγκεντρωτική Κυματομορφή Εξόδου",
+    "aggregated_waveform_desc": "Κατανομή ασαφούς συνόλου με σκίαση σε πραγματικό χρόνο με τομή αποασαφοποίησης",
+    "inputs_grid": "Πλέγμα ζωντανών εισόδων",
+    "inputs_grid_desc": "Εμφάνιση μετρικών χαπιών εισόδου και τιμών που τροφοδοτούνται στον κινητήρα",
+    "rule_strengths": "Ενεργός κανόνας Δυνάμεις πυροδότησης",
+    "rule_strengths_desc": "Εμφάνιση ράβδων προόδου ισχύος πυροδότησης για ενεργούς κανόνες"
+  },
+  "panel": {
+    "title": "Fuzzy Control Studio",
+    "catalog": "Κατάλογος Συστήματος",
+    "editor": "Visual Rule & Curve Editor",
+    "add_system": "Προσθήκη συστήματος",
+    "simulate": "Προσομοίωση Αξιολόγησης",
+    "reload": "Επαναφόρτωση YAML",
+    "loading": "Φόρτωση Fuzzy Systems..."
+  }
+}

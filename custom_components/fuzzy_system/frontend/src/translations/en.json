@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "Configuring fuzzy-system-card...",
+    "active": "Active",
+    "live_inputs": "Live Inputs",
+    "outputs": "Outputs",
+    "live_aggregated_set": "Live Aggregated Output Set",
+    "rule_firing_strengths": "Active Rule Firing Strengths"
+  },
+  "editor": {
+    "target_system": "Target Fuzzy System",
+    "detected": "{count} detected",
+    "target_system_helper": "Select the fuzzy logic controller to monitor and visualize on this dashboard card.",
+    "card_title": "Card Title (Optional)",
+    "card_title_placeholder": "e.g. Living Room Fan Controller",
+    "card_title_helper": "Leave blank to use the fuzzy system name automatically.",
+    "visual_components": "Visual Card Components",
+    "aggregated_waveform": "Aggregated Output Waveform",
+    "aggregated_waveform_desc": "Real-time shaded fuzzy set distribution with defuzzification slice",
+    "inputs_grid": "Live Inputs Grid",
+    "inputs_grid_desc": "Show input metric pills and values feeding into the engine",
+    "rule_strengths": "Active Rule Firing Strengths",
+    "rule_strengths_desc": "Show firing strength progress bars for active rules"
+  },
+  "panel": {
+    "title": "Fuzzy Control Studio",
+    "catalog": "System Catalog",
+    "editor": "Visual Rule & Curve Editor",
+    "add_system": "Add System",
+    "simulate": "Simulate Evaluation",
+    "reload": "Reload YAML",
+    "loading": "Loading Fuzzy Systems..."
+  }
+}

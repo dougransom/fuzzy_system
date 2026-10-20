@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Bulanık Sistem Oluştur",
+        "description": "Yeni bir bildirimsel bulanık mantık denetleyicisi yapılandırın.",
+        "data": {
+          "system_id": "Sistem Tanımlayıcı (Slug)",
+          "name": "Ekran adı",
+          "inference": "Çıkarım Türü (Mamdani veya Sugeno)",
+          "defuzzifier": "Durulaştırma Yöntemi"
+        }
+      },
+      "reconfigure": {
+        "title": "Bulanık Sistemi Yeniden Yapılandırın",
+        "description": "{system_id} için yapılandırma parametrelerini güncelleyin.",
+        "data": {
+          "name": "Ekran adı",
+          "inference": "Çıkarım Türü (Mamdani veya Sugeno)",
+          "defuzzifier": "Durulaştırma Yöntemi"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Lütfen geçerli bir sistem tanımlayıcısı belirtin.",
+      "id_exists_yaml": "Bu tanımlayıcıya sahip bir sistem, Configuration.yaml dosyasında zaten mevcuttur ve kopyalanamaz.",
+      "id_exists": "Bu tanımlayıcıya sahip bulanık bir sistem zaten yapılandırılmıştır."
+    },
+    "abort": {
+      "already_configured": "Bu tanımlayıcıya sahip bulanık bir sistem zaten yapılandırılmıştır.",
+      "reconfigure_successful": "Bulanık sistem yapılandırması başarıyla güncellendi."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Bulanık Sistem Seçenekleri",
+        "description": "Sistem: {system_id}\n\nÜyelik eğrilerini ve dil kurallarını görsel olarak düzenlemek için [Görsel Düzenleyiciyi]({editor_url}) ziyaret edin.",
+        "data": {
+          "description": "Tanım",
+          "expose_system_sensor": "Sistem Durum Sensörünü Açığa Çıkarma"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "Bulanık sistem {system_id} bulunamadı."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "{system_id} için eksik giriş varlığı",
+      "description": "Bulanık sistem {system_id}, şu anda bulunmayan veya kullanılamayan {entity_id} varlığına bağlıdır. Bulanık sistem, bu varlık oluşturulana veya kullanılabilir hale gelene kadar varsayılan değeri kullanacaktır."
+    }
+  }
+}

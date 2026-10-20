@@ -11,6 +11,10 @@ export interface HomeAssistant {
   };
   themes?: any;
   language?: string;
+  locale?: {
+    language: string;
+    [key: string]: any;
+  };
 }
 
 export interface TermConfig {

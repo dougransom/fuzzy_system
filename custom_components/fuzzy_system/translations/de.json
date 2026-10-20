@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Erstellen Sie ein Fuzzy-System",
+        "description": "Konfigurieren Sie einen neuen deklarativen Fuzzy-Logic-Controller.",
+        "data": {
+          "system_id": "Systemkennung (Slug)",
+          "name": "Anzeigename",
+          "inference": "Inferenztyp (Mamdani oder Sugeno)",
+          "defuzzifier": "Defuzzifizierungsmethode"
+        }
+      },
+      "reconfigure": {
+        "title": "Fuzzy-System neu konfigurieren",
+        "description": "Konfigurationsparameter für {system_id} aktualisieren.",
+        "data": {
+          "name": "Anzeigename",
+          "inference": "Inferenztyp (Mamdani oder Sugeno)",
+          "defuzzifier": "Defuzzifizierungsmethode"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Bitte geben Sie eine gültige Systemkennung an.",
+      "id_exists_yaml": "Ein System mit dieser Kennung ist bereits in der Datei „configuration.yaml“ vorhanden und kann nicht dupliziert werden.",
+      "id_exists": "Ein Fuzzy-System mit dieser Kennung ist bereits konfiguriert."
+    },
+    "abort": {
+      "already_configured": "Ein Fuzzy-System mit dieser Kennung ist bereits konfiguriert.",
+      "reconfigure_successful": "Die Fuzzy-Systemkonfiguration wurde erfolgreich aktualisiert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Fuzzy-Systemoptionen",
+        "description": "System: {system_id}\n\nUm Mitgliedskurven und Sprachregeln visuell zu bearbeiten, besuchen Sie den [Visual Editor]({editor_url}).",
+        "data": {
+          "description": "Beschreibung",
+          "expose_system_sensor": "Legen Sie den Systemstatussensor frei"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "Fuzzy-System {system_id} wurde nicht gefunden."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "Fehlende Eingabeentität für {system_id}",
+      "description": "Das Fuzzy-System {system_id} hängt von der Entität {entity_id} ab, die derzeit nicht gefunden oder nicht verfügbar ist. Das Fuzzy-System verwendet den Standardwert, bis diese Entität erstellt wird oder verfügbar wird."
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Lag fuzzy system",
+        "description": "Konfigurer en ny deklarativ fuzzy logic-kontroller.",
+        "data": {
+          "system_id": "Systemidentifikator (Slug)",
+          "name": "Vist navn",
+          "inference": "Inferenstype (Mamdani eller Sugeno)",
+          "defuzzifier": "Defuzzification metode"
+        }
+      },
+      "reconfigure": {
+        "title": "Konfigurer Fuzzy System på nytt",
+        "description": "Oppdater konfigurasjonsparametere for {system_id}.",
+        "data": {
+          "name": "Vist navn",
+          "inference": "Inferenstype (Mamdani eller Sugeno)",
+          "defuzzifier": "Defuzzification metode"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Vennligst spesifiser en gyldig systemidentifikator.",
+      "id_exists_yaml": "Et system med denne identifikatoren finnes allerede i configuration.yaml og kan ikke dupliseres.",
+      "id_exists": "Et uklart system med denne identifikatoren er allerede konfigurert."
+    },
+    "abort": {
+      "already_configured": "Et uklart system med denne identifikatoren er allerede konfigurert.",
+      "reconfigure_successful": "Fuzzy systemkonfigurasjon ble oppdatert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Fuzzy systemalternativer",
+        "description": "System: {system_id}\n\nFor å redigere medlemskapskurver og språklige regler visuelt, besøk [Visual Editor]({editor_url}).",
+        "data": {
+          "description": "Beskrivelse",
+          "expose_system_sensor": "Utsett systemstatussensor"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "Uklar system {system_id} ble ikke funnet."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "Manglende inndataenhet for {system_id}",
+      "description": "Uklar system {system_id} avhenger av enheten {entity_id}, som for øyeblikket ikke er funnet eller utilgjengelig. Fuzzy-systemet vil bruke standardverdien til denne enheten er opprettet eller blir tilgjengelig."
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "配置模糊系統卡...",
+    "active": "積極的",
+    "live_inputs": "即時輸入",
+    "outputs": "輸出",
+    "live_aggregated_set": "即時聚合輸出集",
+    "rule_firing_strengths": "主動規則觸發優勢"
+  },
+  "editor": {
+    "target_system": "目標模糊系統",
+    "detected": "檢測到 {count}",
+    "target_system_helper": "選擇模糊邏輯控制器以在此儀表闆卡上進行監控和視覺化。",
+    "card_title": "卡片標題（可選）",
+    "card_title_placeholder": "例如客廳風扇控制器",
+    "card_title_helper": "留空可自動使用模糊系統名稱。",
+    "visual_components": "可視卡組件",
+    "aggregated_waveform": "聚合輸出波形",
+    "aggregated_waveform_desc": "具有去模糊切片的即時著色模糊集分佈",
+    "inputs_grid": "即時輸入網格",
+    "inputs_grid_desc": "顯示輸入引擎的輸入計量丸和值",
+    "rule_strengths": "主動規則觸發優勢",
+    "rule_strengths_desc": "Show firing strength progress bars for active rules"
+  },
+  "panel": {
+    "title": "模糊控制工作室",
+    "catalog": "系統目錄",
+    "editor": "可視化規則和曲線編輯器",
+    "add_system": "新增系統",
+    "simulate": "模擬評估",
+    "reload": "重新載入 YAML",
+    "loading": "正在載入模糊系統..."
+  }
+}

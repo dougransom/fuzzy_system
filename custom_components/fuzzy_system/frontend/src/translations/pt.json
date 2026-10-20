@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "Configurando placa de sistema fuzzy...",
+    "active": "Ativo",
+    "live_inputs": "Entradas ao vivo",
+    "outputs": "Resultados",
+    "live_aggregated_set": "Conjunto de saída agregada ao vivo",
+    "rule_firing_strengths": "Forças de disparo de regras ativas"
+  },
+  "editor": {
+    "target_system": "Sistema difuso de destino",
+    "detected": "{count} detectado",
+    "target_system_helper": "Selecione o controlador de lógica difusa para monitorar e visualizar neste cartão de painel.",
+    "card_title": "Título do cartão (opcional)",
+    "card_title_placeholder": "por exemplo Controlador de ventilador de sala de estar",
+    "card_title_helper": "Deixe em branco para usar o nome do sistema difuso automaticamente.",
+    "visual_components": "Componentes do cartão visual",
+    "aggregated_waveform": "Forma de onda de saída agregada",
+    "aggregated_waveform_desc": "Distribuição de conjuntos difusos sombreados em tempo real com fatia de defuzzificação",
+    "inputs_grid": "Grade de entradas ao vivo",
+    "inputs_grid_desc": "Mostrar pílulas métricas de entrada e valores que alimentam o mecanismo",
+    "rule_strengths": "Forças de disparo de regras ativas",
+    "rule_strengths_desc": "Mostrar barras de progresso de força de tiro para regras ativas"
+  },
+  "panel": {
+    "title": "Estúdio de controle difuso",
+    "catalog": "Catálogo do Sistema",
+    "editor": "Editor visual de regras e curvas",
+    "add_system": "Adicionar sistema",
+    "simulate": "Simular Avaliação",
+    "reload": "Recarregar YAML",
+    "loading": "Carregando sistemas difusos..."
+  }
+}

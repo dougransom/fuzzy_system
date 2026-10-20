@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Luo sumea järjestelmä",
+        "description": "Määritä uusi deklaratiivinen sumea logiikkaohjain.",
+        "data": {
+          "system_id": "Järjestelmän tunniste (Slug)",
+          "name": "Näyttönimi",
+          "inference": "Päätelmätyyppi (Mamdani tai Sugeno)",
+          "defuzzifier": "Defuzzification menetelmä"
+        }
+      },
+      "reconfigure": {
+        "title": "Määritä Fuzzy System uudelleen",
+        "description": "Päivitä {system_id}:n määritysparametrit.",
+        "data": {
+          "name": "Näyttönimi",
+          "inference": "Päätelmätyyppi (Mamdani tai Sugeno)",
+          "defuzzifier": "Defuzzification menetelmä"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Määritä kelvollinen järjestelmätunnus.",
+      "id_exists_yaml": "Tällä tunnisteella varustettu järjestelmä on jo olemassa konfiguraatio.yaml-tiedostossa, eikä sitä voi monistaa.",
+      "id_exists": "Tällä tunnisteella varustettu sumea järjestelmä on jo määritetty."
+    },
+    "abort": {
+      "already_configured": "Tällä tunnisteella varustettu sumea järjestelmä on jo määritetty.",
+      "reconfigure_successful": "Sumean järjestelmäkokoonpanon päivitys onnistui."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Sumeat järjestelmävaihtoehdot",
+        "description": "Järjestelmä: {system_id}\n\nVoit muokata jäsenkäyriä ja kielellisiä sääntöjä visuaalisesti [Visual Editorissa] ({editor_url}).",
+        "data": {
+          "description": "Kuvaus",
+          "expose_system_sensor": "Paljasta järjestelmän tila-anturi"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "Sumeaa järjestelmää {system_id} ei löytynyt."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "Puuttuva syöttöentiteetti kohteelle {system_id}",
+      "description": "Sumea järjestelmä {system_id} riippuu entiteetistä {entity_id}, jota ei tällä hetkellä löydy tai se ei ole käytettävissä. Sumea järjestelmä käyttää oletusarvoa, kunnes tämä entiteetti luodaan tai tulee saataville."
+    }
+  }
+}

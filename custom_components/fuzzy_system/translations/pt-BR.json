@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Criar sistema difuso",
+        "description": "Configure um novo controlador de lógica difusa declarativa.",
+        "data": {
+          "system_id": "Identificador do Sistema (Slug)",
+          "name": "Nome de exibição",
+          "inference": "Tipo de inferência (Mamdani ou Sugeno)",
+          "defuzzifier": "Método de Defuzzificação"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurar sistema difuso",
+        "description": "Atualize os parâmetros de configuração para {system_id}.",
+        "data": {
+          "name": "Nome de exibição",
+          "inference": "Tipo de inferência (Mamdani ou Sugeno)",
+          "defuzzifier": "Método de Defuzzificação"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Especifique um identificador de sistema válido.",
+      "id_exists_yaml": "Já existe um sistema com este identificador em configuration.yaml e não pode ser duplicado.",
+      "id_exists": "Um sistema fuzzy com este identificador já está configurado."
+    },
+    "abort": {
+      "already_configured": "Um sistema fuzzy com este identificador já está configurado.",
+      "reconfigure_successful": "Configuração difusa do sistema atualizada com sucesso."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opções de sistema difuso",
+        "description": "Sistema: {system_id}\n\nPara editar visualmente curvas de pertinência e regras linguísticas, visite o [Editor Visual]({editor_url}).",
+        "data": {
+          "description": "Descrição",
+          "expose_system_sensor": "Expor o sensor de status do sistema"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "O sistema difuso {system_id} não foi encontrado."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "Entidade de entrada ausente para {system_id}",
+      "description": "O sistema fuzzy {system_id} depende da entidade {entity_id}, que atualmente não foi encontrada ou está indisponível. O sistema fuzzy usará o valor padrão até que esta entidade seja criada ou fique disponível."
+    }
+  }
+}

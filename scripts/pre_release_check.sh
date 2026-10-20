@@ -42,6 +42,7 @@ echo "========================================="
 echo " 4. Validating JSON Schemas & Placeholder Quotes..."
 echo "========================================="
 python3 -c "
+import glob
 import json
 import re
 import sys
@@ -50,12 +51,12 @@ files_to_check = [
     'hacs.json',
     'custom_components/fuzzy_system/manifest.json',
     'custom_components/fuzzy_system/strings.json',
-    'custom_components/fuzzy_system/translations/en.json',
-]
+] + glob.glob('custom_components/fuzzy_system/translations/*.json') + \
+    glob.glob('custom_components/fuzzy_system/frontend/src/translations/*.json')
 
 has_error = False
 
-for path in files_to_check:
+for path in sorted(files_to_check):
     try:
         with open(path) as f:
             data = json.load(f)
@@ -64,8 +65,12 @@ for path in files_to_check:
         print(f'  ✗ Invalid JSON in {path}: {err}', file=sys.stderr)
         has_error = True
 
-# Translation placeholder quotes check (Frenck / Hassfest rule)
-for path in ['custom_components/fuzzy_system/strings.json', 'custom_components/fuzzy_system/translations/en.json']:
+# Translation placeholder quotes check (Frenck / Hassfest rule across all translation files)
+check_quote_files = ['custom_components/fuzzy_system/strings.json'] + \
+    glob.glob('custom_components/fuzzy_system/translations/*.json') + \
+    glob.glob('custom_components/fuzzy_system/frontend/src/translations/*.json')
+
+for path in sorted(check_quote_files):
     with open(path) as f:
         content = f.read()
     # Match '{something}' in strings
@@ -76,7 +81,7 @@ for path in ['custom_components/fuzzy_system/strings.json', 'custom_components/f
 
 if has_error:
     sys.exit(1)
-print('✓ Translation placeholders and manifests verified.')
+print('✓ All translation files and manifests verified cleanly.')
 "
 
 echo ""

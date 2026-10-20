@@ -2,6 +2,7 @@ import { LitElement, html, css } from "lit";
 import { property, state } from "lit/decorators.js";
 import { safeCustomElement } from "../utils/custom-element";
 import { HomeAssistant } from "../types";
+import { localize } from "../localize/localize";
 
 export interface FuzzySystemCardConfig {
   type?: string;
@@ -225,14 +226,15 @@ export class FuzzySystemCardEditor extends LitElement {
 
     const availableSystems = this._getAvailableSystems();
     const currentSystem = this._config.system_id || availableSystems[0] || "";
+    const lang = this.hass?.locale?.language || this.hass?.language || "en";
 
     return html`
       <div class="card-config">
         <!-- Fuzzy System Selector -->
         <div class="form-group">
           <label class="form-label" for="system-select">
-            Target Fuzzy System
-            <span class="system-badge">${availableSystems.length} detected</span>
+            ${localize("editor.target_system", undefined, undefined, lang)}
+            <span class="system-badge">${localize("editor.detected", { count: availableSystems.length }, undefined, lang)}</span>
           </label>
           <select
             id="system-select"
@@ -250,34 +252,34 @@ export class FuzzySystemCardEditor extends LitElement {
             )}
           </select>
           <div class="form-helper">
-            Select the fuzzy logic controller to monitor and visualize on this dashboard card.
+            ${localize("editor.target_system_helper", undefined, undefined, lang)}
           </div>
         </div>
 
         <!-- Custom Card Title -->
         <div class="form-group">
-          <label class="form-label" for="card-title">Card Title (Optional)</label>
+          <label class="form-label" for="card-title">${localize("editor.card_title", undefined, undefined, lang)}</label>
           <input
             id="card-title"
             class="input-field"
             type="text"
             data-config-value="title"
-            placeholder="e.g. Living Room Fan Controller"
+            placeholder="${localize("editor.card_title_placeholder", undefined, undefined, lang)}"
             .value=${this._config.title || ""}
             @input=${this._valueChanged}
           />
-          <div class="form-helper">Leave blank to use the fuzzy system name automatically.</div>
+          <div class="form-helper">${localize("editor.card_title_helper", undefined, undefined, lang)}</div>
         </div>
 
         <!-- Display Toggles -->
         <div class="form-group">
-          <label class="form-label">Visual Card Components</label>
+          <label class="form-label">${localize("editor.visual_components", undefined, undefined, lang)}</label>
           <div class="toggles-group">
             <!-- Aggregated Graph Toggle -->
             <label class="toggle-row">
               <div class="toggle-info">
-                <span class="toggle-title">Aggregated Output Waveform</span>
-                <span class="toggle-desc">Real-time shaded fuzzy set distribution with defuzzification slice</span>
+                <span class="toggle-title">${localize("editor.aggregated_waveform", undefined, undefined, lang)}</span>
+                <span class="toggle-desc">${localize("editor.aggregated_waveform_desc", undefined, undefined, lang)}</span>
               </div>
               <div class="switch">
                 <input
@@ -293,8 +295,8 @@ export class FuzzySystemCardEditor extends LitElement {
             <!-- Inputs Grid Toggle -->
             <label class="toggle-row">
               <div class="toggle-info">
-                <span class="toggle-title">Live Inputs Grid</span>
-                <span class="toggle-desc">Show input metric pills and values feeding into the engine</span>
+                <span class="toggle-title">${localize("editor.inputs_grid", undefined, undefined, lang)}</span>
+                <span class="toggle-desc">${localize("editor.inputs_grid_desc", undefined, undefined, lang)}</span>
               </div>
               <div class="switch">
                 <input
@@ -310,8 +312,8 @@ export class FuzzySystemCardEditor extends LitElement {
             <!-- Rule Strengths Toggle -->
             <label class="toggle-row">
               <div class="toggle-info">
-                <span class="toggle-title">Active Rule Firing Strengths</span>
-                <span class="toggle-desc">Show firing strength progress bars for active rules</span>
+                <span class="toggle-title">${localize("editor.rule_strengths", undefined, undefined, lang)}</span>
+                <span class="toggle-desc">${localize("editor.rule_strengths_desc", undefined, undefined, lang)}</span>
               </div>
               <div class="switch">
                 <input

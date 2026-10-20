@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "Konfigurerer fuzzy-system-kort...",
+    "active": "Aktiv",
+    "live_inputs": "Live-innganger",
+    "outputs": "Utganger",
+    "live_aggregated_set": "Live aggregert utdatasett",
+    "rule_firing_strengths": "Aktiv regel skytestyrker"
+  },
+  "editor": {
+    "target_system": "Target Fuzzy System",
+    "detected": "{count} oppdaget",
+    "target_system_helper": "Velg fuzzy logic-kontrolleren for å overvåke og visualisere på dette dashbordkortet.",
+    "card_title": "Korttittel (valgfritt)",
+    "card_title_placeholder": "f.eks. Stue viftekontroller",
+    "card_title_helper": "La stå tomt for å bruke det uklare systemnavnet automatisk.",
+    "visual_components": "Visuelle kortkomponenter",
+    "aggregated_waveform": "Aggregert utgangsbølgeform",
+    "aggregated_waveform_desc": "Sanntidsskyggelagt fuzzy sett-distribusjon med defuzzification skive",
+    "inputs_grid": "Live Input Grid",
+    "inputs_grid_desc": "Vis input metriske piller og verdier som mates inn i motoren",
+    "rule_strengths": "Aktiv regel skytestyrker",
+    "rule_strengths_desc": "Vis fremdriftslinjer for skytestyrke for aktive regler"
+  },
+  "panel": {
+    "title": "Fuzzy Control Studio",
+    "catalog": "Systemkatalog",
+    "editor": "Visual Rule & Curve Editor",
+    "add_system": "Legg til system",
+    "simulate": "Simulere evaluering",
+    "reload": "Last inn YAML på nytt",
+    "loading": "Laster Fuzzy Systems..."
+  }
+}

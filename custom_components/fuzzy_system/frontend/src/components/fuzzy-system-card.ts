@@ -2,6 +2,7 @@ import { LitElement, html, css } from "lit";
 import { property, state } from "lit/decorators.js";
 import { safeCustomElement } from "../utils/custom-element";
 import { HomeAssistant } from "../types";
+import { localize } from "../localize/localize";
 import "./aggregated-graph";
 import "./fuzzy-system-card-editor";
 
@@ -224,8 +225,10 @@ export class FuzzySystemCard extends LitElement {
   }
 
   render() {
+    const lang = this.hass?.locale?.language || this.hass?.language || "en";
+
     if (!this.hass || !this._config.system_id) {
-      return html`<ha-card><p style="padding: 16px;">Configuring fuzzy-system-card...</p></ha-card>`;
+      return html`<ha-card><p style="padding: 16px;">${localize("card.configuring", undefined, undefined, lang)}</p></ha-card>`;
     }
 
     const { outputs } = this._findSensors();
@@ -256,13 +259,13 @@ export class FuzzySystemCard extends LitElement {
           </div>
           <div class="badge-status">
             <span class="pulse-dot"></span>
-            <span>Active</span>
+            <span>${localize("card.active", undefined, undefined, lang)}</span>
           </div>
         </div>
 
         ${this._config.show_inputs !== false && Object.keys(inputsMap).length > 0
           ? html`
-              <div class="section-title">Live Inputs</div>
+              <div class="section-title">${localize("card.live_inputs", undefined, undefined, lang)}</div>
               <div class="inputs-grid">
                 ${Object.entries(inputsMap).map(
                   ([varName, val]) => html`
@@ -278,7 +281,7 @@ export class FuzzySystemCard extends LitElement {
 
         ${this._config.show_graph !== false && universe.length > 0
           ? html`
-              <div class="section-title">Live Aggregated Output Set</div>
+              <div class="section-title">${localize("card.live_aggregated_set", undefined, undefined, lang)}</div>
               <fuzzy-aggregated-graph
                 .universe=${universe}
                 .aggregatedSet=${aggregatedSet}
@@ -291,7 +294,7 @@ export class FuzzySystemCard extends LitElement {
             `
           : outputs.length > 0
           ? html`
-              <div class="section-title">Outputs</div>
+              <div class="section-title">${localize("card.outputs", undefined, undefined, lang)}</div>
               ${outputs.map(
                 (out) => html`
                   <div class="metric-pill" style="margin-bottom: 6px;">
@@ -305,7 +308,7 @@ export class FuzzySystemCard extends LitElement {
 
         ${this._config.show_rules !== false && ruleStrengths.length > 0
           ? html`
-              <div class="section-title">Active Rule Firing Strengths</div>
+              <div class="section-title">${localize("card.rule_firing_strengths", undefined, undefined, lang)}</div>
               ${ruleStrengths.slice(0, 4).map(
                 (r, idx) => html`
                   <div class="rule-bar-row">

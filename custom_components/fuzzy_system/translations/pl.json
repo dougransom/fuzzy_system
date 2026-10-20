@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Utwórz system rozmyty",
+        "description": "Skonfiguruj nowy deklaratywny kontroler logiki rozmytej.",
+        "data": {
+          "system_id": "Identyfikator systemu (Slug)",
+          "name": "Nazwa wyświetlana",
+          "inference": "Typ wnioskowania (Mamdani lub Sugeno)",
+          "defuzzifier": "Metoda defuzyfikacji"
+        }
+      },
+      "reconfigure": {
+        "title": "Skonfiguruj ponownie system rozmyty",
+        "description": "Zaktualizuj parametry konfiguracyjne dla {system_id}.",
+        "data": {
+          "name": "Nazwa wyświetlana",
+          "inference": "Typ wnioskowania (Mamdani lub Sugeno)",
+          "defuzzifier": "Metoda defuzyfikacji"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Proszę podać prawidłowy identyfikator systemu.",
+      "id_exists_yaml": "System o tym identyfikatorze już istnieje w pliku konfiguracyjnym.yaml i nie można go zduplikować.",
+      "id_exists": "System rozmyty o tym identyfikatorze jest już skonfigurowany."
+    },
+    "abort": {
+      "already_configured": "System rozmyty o tym identyfikatorze jest już skonfigurowany.",
+      "reconfigure_successful": "Rozmyta konfiguracja systemu została pomyślnie zaktualizowana."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Rozmyte opcje systemu",
+        "description": "Układ: {system_id}\n\nAby wizualnie edytować krzywe członkostwa i reguły językowe, odwiedź [Edytor wizualny]({editor_url}).",
+        "data": {
+          "description": "Opis",
+          "expose_system_sensor": "Odsłoń czujnik stanu systemu"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "Nie znaleziono układu rozmytego {system_id}."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "Brak elementu wejściowego dla {system_id}",
+      "description": "System rozmyty {system_id} jest zależny od encji {entity_id}, która aktualnie nie została znaleziona lub jest niedostępna. System rozmyty będzie używał wartości domyślnej do czasu utworzenia lub udostępnienia tej jednostki."
+    }
+  }
+}
