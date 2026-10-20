@@ -45,13 +45,13 @@
   },
   "exceptions": {
     "system_not_found": {
-      "message": "Fuzzy system '{system_id}' was not found."
+      "message": "Fuzzy system {system_id} was not found."
     }
   },
   "issues": {
     "missing_input_entity": {
       "title": "Missing input entity for {system_id}",
-      "description": "Fuzzy system '{system_id}' depends on entity '{entity_id}', which is currently not found or unavailable. The fuzzy system will use the default value until this entity is created or becomes available."
+      "description": "Fuzzy system {system_id} depends on entity {entity_id}, which is currently not found or unavailable. The fuzzy system will use the default value until this entity is created or becomes available."
     }
   }
 }

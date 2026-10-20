@@ -158,7 +158,7 @@ export class FuzzySystemPanel extends LitElement {
           <span class="badge badge-purple" title="WebMCP tool contract exposed for browser AI agents and DevTools">
             🌐 WebMCP
           </span>
-          <span class="badge badge-cyan">v0.1.3</span>
+          <span class="badge badge-cyan">v0.1.4</span>
         </div>
       </header>
 
