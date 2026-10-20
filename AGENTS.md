@@ -39,3 +39,11 @@ Refer to [`README.md`](README.md) for the detailed project goals, technical spec
    - Keep all documentation, design docs, agent notes, and project goals localized inside `config/custom_components/fuzzy_system/`.
 6. **Documentation & Diagrams**:
    - Always use Mermaid (`mermaid` code blocks) for diagrams, architectures, flowcharts, and state machines in markdown files.
+
+---
+
+## 4. Pre-Release Validation Gate (Mandatory)
+Before cutting any release, bumping version numbers in `manifest.json`, creating git tags, or submitting/updating PRs to `hacs/default`:
+1. The agent **MUST** run `./scripts/pre_release_check.sh`.
+2. All 4 checks must pass cleanly (Ruff linting, Pytest with $\ge 95\%$ coverage, Home Assistant Hassfest via Docker, and JSON/translation placeholder checks).
+3. **Translation placeholders rule**: Never wrap placeholders in single quotes (e.g. use `{system_id}`, never `'{system_id}'`) in `strings.json` or `translations/*.json`.

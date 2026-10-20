@@ -526,3 +526,44 @@ async def test_diagnostic_entity_categories(
     assert status_entry is not None
     assert status_entry.entity_category == EntityCategory.DIAGNOSTIC
 
+
+async def test_sensor_setup_fallback_when_runtime_data_none(
+    hass: HomeAssistant, enable_custom_integrations
+) -> None:
+    """Test sensor setup fallback branch when runtime_data is None."""
+    from custom_components.fuzzy_system.sensor import async_setup_entry
+
+    config_data = {
+        CONF_SYSTEM_ID: "fallback_test",
+        CONF_NAME: "Fallback Test",
+        CONF_INFERENCE: INFERENCE_MAMDANI,
+        CONF_DEFUZZIFIER: DEF_COG,
+        CONF_EXPOSE_SYSTEM_SENSOR: True,
+        CONF_INPUTS: {
+            "temp": {
+                "range": [0.0, 40.0],
+                "default": 20.0,
+                "terms": {"low": {"type": "trimf", "params": [0, 0, 40]}},
+            }
+        },
+        CONF_OUTPUTS: {
+            "cooling": {
+                "range": [0.0, 100.0],
+                "terms": {"on": {"type": "trimf", "params": [0, 100, 100]}},
+            }
+        },
+        CONF_RULES: ["IF temp IS low THEN cooling IS on"],
+    }
+
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        unique_id="fallback_test",
+        title="Fallback Test",
+        data=config_data,
+        entry_id="fallback_entry_id",
+    )
+    added_entities = []
+    await async_setup_entry(hass, entry, lambda ents: added_entities.extend(ents))
+    assert len(added_entities) > 0
+
+

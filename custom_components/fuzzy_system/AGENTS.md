@@ -47,9 +47,10 @@ Refer to [`README.md`](README.md) for the detailed project goals, technical spec
 - **Coverage Requirement**: Overall unit and integration test coverage must remain strictly **$\ge 95\%$** (`pytest --cov=custom_components.fuzzy_system --cov-fail-under=95`).
 - **Check Cadence**:
   - **On Every Pull Request / Push**: Automated via GitHub Actions CI (`validate.yml`) running `ruff check`, `pytest` with 95% coverage enforcement, and `hassfest`.
-  - **On Every Release**: Pre-release verification checklist ensuring `quality_scale.yaml` and `manifest.json` match, diagnostic exports function, and no regressions exist in config flow or repair issues.
+  - **On Every Release**: Pre-release verification execution (`./scripts/pre_release_check.sh`) ensuring Ruff, Pytest (>=95% coverage), Hassfest (Docker), and JSON translation placeholder validation succeed before any git tag or release is created.
 - **Architectural Rules**:
   - Do not revert `entry.runtime_data` to legacy `hass.data` indexing.
   - Do not bypass `PARALLEL_UPDATES = 0` or `_attr_has_entity_name = True`.
   - Always maintain `diagnostics.py`, translated exceptions, `icons.json`, and repair issue lifecycles for any new platforms or services.
+  - Never place single quotes around `{placeholder}` tokens in ICU translation files (`strings.json`, `en.json`).
 
