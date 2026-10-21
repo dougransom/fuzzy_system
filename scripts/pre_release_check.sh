@@ -86,5 +86,12 @@ print('✓ All translation files and manifests verified cleanly.')
 
 echo ""
 echo "========================================="
+echo " 5. Running Home Assistant Architecture & Security Audit..."
+echo "========================================="
+python3 "${REPO_ROOT}/scripts/audit_ha_standards.py"
+echo "✓ Architecture and security audit passed."
+
+echo ""
+echo "========================================="
 echo "✓ ALL PRE-RELEASE CHECKS PASSED!"
 echo "========================================="
