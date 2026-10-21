@@ -1112,17 +1112,17 @@ function Ie(e) {
   for (const s of t)
     a[s.name] = s.handler;
   window.fuzzySystemMCP = a, window.addEventListener("message", async (s) => {
-    if (s.data?.type === "fuzzy_system:mcp_call") {
+    if (!(s.source !== window || s.origin !== window.location.origin) && s.data?.type === "fuzzy_system:mcp_call") {
       const { id: r, tool: n, args: o } = s.data, d = t.find((p) => p.name === n);
       if (!d) {
-        window.postMessage({ type: "fuzzy_system:mcp_result", id: r, error: `Tool '${n}' not found` }, "*");
+        window.postMessage({ type: "fuzzy_system:mcp_result", id: r, error: `Tool '${n}' not found` }, window.location.origin);
         return;
       }
       try {
         const p = await d.handler(o || {});
-        window.postMessage({ type: "fuzzy_system:mcp_result", id: r, result: p }, "*");
+        window.postMessage({ type: "fuzzy_system:mcp_result", id: r, result: p }, window.location.origin);
       } catch (p) {
-        window.postMessage({ type: "fuzzy_system:mcp_result", id: r, error: p?.message || String(p) }, "*");
+        window.postMessage({ type: "fuzzy_system:mcp_result", id: r, error: p?.message || String(p) }, window.location.origin);
       }
     }
   });

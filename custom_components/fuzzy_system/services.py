@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+import inspect
 import logging
-import os
 from typing import Any
 
 import voluptuous as vol
@@ -12,8 +12,14 @@ import yaml
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
 from homeassistant.data_entry_flow import FlowResultType
-from homeassistant.exceptions import ServiceValidationError
+from homeassistant.exceptions import (
+    HomeAssistantError,
+    ServiceValidationError,
+    Unauthorized,
+    UnknownUser,
+)
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.service import async_register_admin_service
 
 from .const import (
     CONF_DEFAULT,
@@ -336,7 +342,7 @@ def _insert_card_into_views(
 
 
 def _resolve_dashboard_storage(hass: HomeAssistant, norm_path: str | None) -> Any:
-    """Locate the target Lovelace dashboard storage or YAML instance."""
+    """Locate the target Lovelace dashboard storage instance."""
     lovelace_data = hass.data.get("lovelace")
     dashboards: dict[Any, Any] = {}
     if lovelace_data:
@@ -345,60 +351,15 @@ def _resolve_dashboard_storage(hass: HomeAssistant, norm_path: str | None) -> An
         elif hasattr(lovelace_data, "dashboards"):
             dashboards = getattr(lovelace_data, "dashboards", {})
 
-    dashboard_storage = dashboards.get(norm_path) if norm_path else None
-    if dashboard_storage is None:
-        dashboard_storage = dashboards.get("lovelace") or dashboards.get(None)
-    if dashboard_storage is None and dashboards:
-        dashboard_storage = next(iter(dashboards.values()), None)
+    if norm_path is not None:
+        if norm_path in dashboards:
+            return dashboards[norm_path]
+        if norm_path == "lovelace" and None in dashboards:
+            return dashboards[None]
+        raise HomeAssistantError(f"Dashboard '{norm_path}' not found")
+
+    dashboard_storage = dashboards.get(None) or dashboards.get("lovelace")
     return dashboard_storage
-
-
-def _resolve_yaml_path(
-    hass: HomeAssistant, dashboard_storage: Any, norm_path: str | None
-) -> str | None:
-    """Determine the file path if the dashboard is YAML-based."""
-    if dashboard_storage is not None:
-        if getattr(dashboard_storage, "mode", None) == "yaml" or hasattr(dashboard_storage, "path"):
-            return getattr(dashboard_storage, "path", None)
-    default_yaml_file = hass.config.path("ui-lovelace.yaml")
-    if (norm_path in (None, "lovelace") or dashboard_storage is None) and os.path.exists(default_yaml_file):
-        return default_yaml_file
-    return None
-
-
-async def _async_save_to_yaml_dashboard(
-    hass: HomeAssistant,
-    dashboard_storage: Any,
-    yaml_file_path: str,
-    card_config: dict[str, Any],
-    view_title: str | None,
-) -> str:
-    """Append card to YAML dashboard file on disk and invalidate cache."""
-    def _update_yaml_file() -> str:
-        content: dict[str, Any] = {}
-        if os.path.exists(yaml_file_path):
-            with open(yaml_file_path, "r", encoding="utf-8") as f:
-                content = yaml.safe_load(f) or {}
-        if not isinstance(content, dict):
-            content = {"views": []}
-        views = content.setdefault("views", [])
-        if not isinstance(views, list):
-            views = content["views"] = []
-
-        view_name = _insert_card_into_views(views, card_config, view_title)
-
-        with open(yaml_file_path, "w", encoding="utf-8") as f:
-            yaml.dump(content, f, sort_keys=False, default_flow_style=False, allow_unicode=True)
-        return view_name
-
-    target_view_name = await hass.async_add_executor_job(_update_yaml_file)
-
-    if hasattr(dashboard_storage, "_cache"):
-        dashboard_storage._cache = None
-    if hasattr(dashboard_storage, "_config_updated"):
-        dashboard_storage._config_updated()
-
-    return target_view_name
 
 
 async def _async_save_to_storage_dashboard(
@@ -440,37 +401,14 @@ async def _async_add_to_dashboard(
     card_config = card_info["card"]
     yaml_str = card_info["yaml"]
 
-    norm_path = None if dashboard_path in (None, "", "default", "lovelace") else dashboard_path
+    norm_path = None if dashboard_path in (None, "", "default") else dashboard_path
     dashboard_storage = _resolve_dashboard_storage(hass, norm_path)
-    yaml_file_path = _resolve_yaml_path(hass, dashboard_storage, norm_path)
 
-    if yaml_file_path:
-        try:
-            view_name = await _async_save_to_yaml_dashboard(
-                hass, dashboard_storage, yaml_file_path, card_config, view_title
-            )
-            return {
-                "success": True,
-                "system_id": system_id,
-                "dashboard_path": dashboard_path or "default",
-                "view": view_name,
-                "card": card_config,
-                "yaml": yaml_str,
-                "message": f"Successfully added Fuzzy System card for '{system_id}' to YAML dashboard view '{view_name}'.",
-            }
-        except Exception as err:
-            _LOGGER.warning("Could not append card to YAML dashboard file '%s': %s", yaml_file_path, err)
-            return {
-                "success": False,
-                "system_id": system_id,
-                "dashboard_path": dashboard_path or "default",
-                "card": card_config,
-                "yaml": yaml_str,
-                "error": str(err),
-                "instruction": "Could not modify YAML dashboard file. Copy and paste the returned YAML into your Lovelace dashboard.",
-            }
-
-    if dashboard_storage is None or not hasattr(dashboard_storage, "async_save"):
+    if (
+        dashboard_storage is None
+        or getattr(dashboard_storage, "mode", None) == "yaml"
+        or not hasattr(dashboard_storage, "async_save")
+    ):
         return {
             "success": False,
             "system_id": system_id,
@@ -701,6 +639,46 @@ def _make_service_callback(func, hass: HomeAssistant):
     return _async_callback
 
 
+def _register_admin_service(
+    hass: HomeAssistant,
+    domain: str,
+    service: str,
+    service_func: Any,
+    schema: Any = None,
+    supports_response: SupportsResponse = SupportsResponse.NONE,
+) -> None:
+    """Register an admin service with backward/forward compatibility for supports_response."""
+    if "supports_response" in inspect.signature(async_register_admin_service).parameters:
+        async_register_admin_service(
+            hass,
+            domain,
+            service,
+            service_func,
+            schema=schema,
+            supports_response=supports_response,
+        )
+    else:
+        async def _admin_handler(call: ServiceCall) -> Any:
+            if call.context.user_id:
+                user = await hass.auth.async_get_user(call.context.user_id)
+                if user is None:
+                    raise UnknownUser(context=call.context)
+                if not user.is_admin:
+                    raise Unauthorized(context=call.context)
+            res = service_func(call)
+            if asyncio.iscoroutine(res):
+                return await res
+            return res
+
+        hass.services.async_register(
+            domain,
+            service,
+            _admin_handler,
+            schema=schema,
+            supports_response=supports_response,
+        )
+
+
 async def async_setup_services(hass: HomeAssistant) -> None:
     """Register MCP and automation actions for fuzzy systems."""
     hass.services.async_register(
@@ -747,7 +725,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         schema=GENERATE_CARD_SCHEMA,
         supports_response=SupportsResponse.ONLY,
     )
-    hass.services.async_register(
+    _register_admin_service(
+        hass,
         DOMAIN,
         SERVICE_ADD_TO_DASHBOARD,
         _make_service_callback(_handle_service_add_to_dashboard, hass),
@@ -761,7 +740,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         schema=LIST_TEMPLATES_SCHEMA,
         supports_response=SupportsResponse.ONLY,
     )
-    hass.services.async_register(
+    _register_admin_service(
+        hass,
         DOMAIN,
         SERVICE_INSTANTIATE_TEMPLATE,
         _make_service_callback(_handle_service_instantiate_template, hass),

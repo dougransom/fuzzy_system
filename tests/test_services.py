@@ -1,8 +1,10 @@
 """Tests for Fuzzy System MCP actions / services (simulate and explain)."""
 
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
-from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.core import Context, HomeAssistant
+from homeassistant.exceptions import HomeAssistantError, Unauthorized
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -507,9 +509,10 @@ async def test_dashboard_card_services(
     assert "Disk write failed" in add_fail_res["error"]
     assert "instruction" in add_fail_res
 
-    # 9. Add when dashboard is in YAML mode
+    # 9. Add when dashboard is in YAML mode (must NOT overwrite file, returns card snippet instead)
     temp_yaml = tmp_path / "ui-lovelace.yaml"
-    temp_yaml.write_text("views:\n  - title: YAML View\n    cards: []\n", encoding="utf-8")
+    initial_yaml_content = "views:\n  - title: YAML View\n    cards: []\n"
+    temp_yaml.write_text(initial_yaml_content, encoding="utf-8")
 
     class MockLovelaceYAML:
         mode = "yaml"
@@ -528,11 +531,36 @@ async def test_dashboard_card_services(
         blocking=True,
         return_response=True,
     )
-    assert add_yaml_res["success"] is True
-    assert add_yaml_res["view"] == "YAML View"
-    saved_yaml = temp_yaml.read_text(encoding="utf-8")
-    assert "custom:fuzzy-system-card" in saved_yaml
-    assert "thermostat" in saved_yaml
+    assert add_yaml_res["success"] is False
+    assert "YAML mode" in add_yaml_res["error"]
+    assert "custom:fuzzy-system-card" in add_yaml_res["yaml"]
+    assert "instruction" in add_yaml_res
+    # Verify file was untouched
+    assert temp_yaml.read_text(encoding="utf-8") == initial_yaml_content
+
+    # 10. Raise error when requested dashboard does not exist (no silent fallback)
+    with pytest.raises(HomeAssistantError, match="Dashboard 'nonexistent_dashboard' not found"):
+        await hass.services.async_call(
+            DOMAIN,
+            "add_to_dashboard",
+            {"system_id": "thermostat", "dashboard_path": "nonexistent_dashboard"},
+            blocking=True,
+            return_response=True,
+        )
+
+    # 11. Reject non-admin callers (async_register_admin_service)
+    mock_user = MagicMock(is_admin=False)
+    hass.auth = MagicMock()
+    hass.auth.async_get_user = AsyncMock(return_value=mock_user)
+    with pytest.raises(Unauthorized):
+        await hass.services.async_call(
+            DOMAIN,
+            "add_to_dashboard",
+            {"system_id": "thermostat"},
+            context=Context(user_id="non_admin_user"),
+            blocking=True,
+            return_response=True,
+        )
 
 
 
@@ -573,4 +601,21 @@ async def test_templates_services(
     assert instantiate_res["success"] is True
     assert instantiate_res["system_id"] == "mcp_fan_control"
     assert "entry_id" in instantiate_res
+
+    # 3. Reject non-admin callers for instantiate_template
+    mock_user = MagicMock(is_admin=False)
+    hass.auth = MagicMock()
+    hass.auth.async_get_user = AsyncMock(return_value=mock_user)
+    with pytest.raises(Unauthorized):
+        await hass.services.async_call(
+            DOMAIN,
+            "instantiate_template",
+            {
+                "template_id": "smart_fan_controller",
+                "system_id": "mcp_fan_control_2",
+            },
+            context=Context(user_id="non_admin_user"),
+            blocking=True,
+            return_response=True,
+        )
 

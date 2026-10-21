@@ -265,18 +265,22 @@ export function initWebMCP(holder: FuzzyMCPContextHolder): void {
 
   // 3. PostMessage handler for cross-context invocation
   window.addEventListener("message", async (event) => {
+    // Only accept messages originating from the same window and origin
+    if (event.source !== window || event.origin !== window.location.origin) {
+      return;
+    }
     if (event.data?.type === "fuzzy_system:mcp_call") {
       const { id, tool, args } = event.data;
       const targetTool = tools.find((t) => t.name === tool);
       if (!targetTool) {
-        window.postMessage({ type: "fuzzy_system:mcp_result", id, error: `Tool '${tool}' not found` }, "*");
+        window.postMessage({ type: "fuzzy_system:mcp_result", id, error: `Tool '${tool}' not found` }, window.location.origin);
         return;
       }
       try {
         const result = await targetTool.handler(args || {});
-        window.postMessage({ type: "fuzzy_system:mcp_result", id, result }, "*");
+        window.postMessage({ type: "fuzzy_system:mcp_result", id, result }, window.location.origin);
       } catch (err: any) {
-        window.postMessage({ type: "fuzzy_system:mcp_result", id, error: err?.message || String(err) }, "*");
+        window.postMessage({ type: "fuzzy_system:mcp_result", id, error: err?.message || String(err) }, window.location.origin);
       }
     }
   });
