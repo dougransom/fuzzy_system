@@ -1,6 +1,6 @@
 {
   "name": "fuzzy-system-frontend",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "Visual Configuration UI and Workbench for Home Assistant Fuzzy System integration",
   "private": true,
   "type": "module",
