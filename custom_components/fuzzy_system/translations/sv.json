@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Skapa Fuzzy System",
+        "description": "Konfigurera en ny deklarativ fuzzy logic controller.",
+        "data": {
+          "system_id": "Systemidentifierare (slug)",
+          "name": "Visningsnamn",
+          "inference": "Inferenstyp (Mamdani eller Sugeno)",
+          "defuzzifier": "Defuzzifieringsmetod"
+        }
+      },
+      "reconfigure": {
+        "title": "Konfigurera om Fuzzy System",
+        "description": "Uppdatera konfigurationsparametrar för {system_id}.",
+        "data": {
+          "name": "Visningsnamn",
+          "inference": "Inferenstyp (Mamdani eller Sugeno)",
+          "defuzzifier": "Defuzzifieringsmetod"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Vänligen ange en giltig systemidentifierare.",
+      "id_exists_yaml": "Ett system med denna identifierare finns redan i configuration.yaml och kan inte dupliceras.",
+      "id_exists": "Ett suddigt system med denna identifierare är redan konfigurerat."
+    },
+    "abort": {
+      "already_configured": "Ett suddigt system med denna identifierare är redan konfigurerat.",
+      "reconfigure_successful": "Fuzzy systemkonfiguration har uppdaterats."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Luddiga systemalternativ",
+        "description": "System: {system_id}\n\nFör att visuellt redigera medlemskapskurvor och språkliga regler, besök [Visual Editor]({editor_url}).",
+        "data": {
+          "description": "Beskrivning",
+          "expose_system_sensor": "Exponera systemstatussensor"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "Otydligt system {system_id} hittades inte."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "Saknar indataenhet för {system_id}",
+      "description": "Otydligt system {system_id} beror på enheten {entity_id}, som för närvarande inte hittas eller inte är tillgänglig. Fuzzy-systemet kommer att använda standardvärdet tills denna enhet skapas eller blir tillgänglig."
+    }
+  }
+}

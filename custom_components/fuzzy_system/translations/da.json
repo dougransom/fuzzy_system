@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Opret fuzzy system",
+        "description": "Konfigurer en ny deklarativ fuzzy logic controller.",
+        "data": {
+          "system_id": "Systemidentifikator (slug)",
+          "name": "Vist navn",
+          "inference": "Inferenstype (Mamdani eller Sugeno)",
+          "defuzzifier": "Defuzzification metode"
+        }
+      },
+      "reconfigure": {
+        "title": "Genkonfigurer Fuzzy System",
+        "description": "Opdater konfigurationsparametre for {system_id}.",
+        "data": {
+          "name": "Vist navn",
+          "inference": "Inferenstype (Mamdani eller Sugeno)",
+          "defuzzifier": "Defuzzification metode"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Angiv venligst et gyldigt system-id.",
+      "id_exists_yaml": "Et system med denne identifikator findes allerede i configuration.yaml og kan ikke duplikeres.",
+      "id_exists": "Et fuzzy system med denne identifikator er allerede konfigureret."
+    },
+    "abort": {
+      "already_configured": "Et fuzzy system med denne identifikator er allerede konfigureret.",
+      "reconfigure_successful": "Fuzzy systemkonfiguration blev opdateret."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Fuzzy System Options",
+        "description": "System: {system_id}\n\nBesøg [Visual Editor]({editor_url}) for visuelt at redigere medlemskurver og sproglige regler.",
+        "data": {
+          "description": "Beskrivelse",
+          "expose_system_sensor": "Udsæt systemstatussensor"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "Fuzzy system {system_id} blev ikke fundet."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "Manglende inputenhed for {system_id}",
+      "description": "Fuzzy system {system_id} afhænger af entiteten {entity_id}, som i øjeblikket ikke er fundet eller ikke tilgængelig. Fuzzy-systemet vil bruge standardværdien, indtil denne enhed er oprettet eller bliver tilgængelig."
+    }
+  }
+}

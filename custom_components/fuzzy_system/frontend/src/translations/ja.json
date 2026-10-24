@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "ファジー システム カードを構成しています...",
+    "active": "アクティブ",
+    "live_inputs": "ライブ入力",
+    "outputs": "出力",
+    "live_aggregated_set": "ライブ集約出力セット",
+    "rule_firing_strengths": "アクティブルール発動の強み"
+  },
+  "editor": {
+    "target_system": "ターゲットファジーシステム",
+    "detected": "{count} が検出されました",
+    "target_system_helper": "このダッシュボード カードで監視および視覚化するファジー ロジック コントローラーを選択します。",
+    "card_title": "カードタイトル (オプション)",
+    "card_title_placeholder": "例えばリビングルームのファンコントローラー",
+    "card_title_helper": "ファジー システム名を自動的に使用するには、空白のままにします。",
+    "visual_components": "ビジュアルカードコンポーネント",
+    "aggregated_waveform": "集約出力波形",
+    "aggregated_waveform_desc": "非ファジー化スライスを使用したリアルタイムのシェーディング ファジー セット分布",
+    "inputs_grid": "ライブ入力グリッド",
+    "inputs_grid_desc": "エンジンに入力される入力メトリクスの丸薬と値を表示する",
+    "rule_strengths": "アクティブルール発動の強み",
+    "rule_strengths_desc": "アクティブなルールの発砲強度の進行状況バーを表示する"
+  },
+  "panel": {
+    "title": "ファジーコントロールスタジオ",
+    "catalog": "システムカタログ",
+    "editor": "ビジュアルルール＆カーブエディター",
+    "add_system": "システムの追加",
+    "simulate": "評価のシミュレーション",
+    "reload": "YAMLのリロード",
+    "loading": "ファジー システムを読み込んでいます..."
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "Configurazione della scheda del sistema fuzzy in corso...",
+    "active": "Attivo",
+    "live_inputs": "Ingressi in tempo reale",
+    "outputs": "Uscite",
+    "live_aggregated_set": "Set di output aggregati in tempo reale",
+    "rule_firing_strengths": "Forza di attivazione della regola attiva"
+  },
+  "editor": {
+    "target_system": "Sistema di destinazione fuzzy",
+    "detected": "{count} rilevato",
+    "target_system_helper": "Selezionare il controller a logica fuzzy da monitorare e visualizzare su questa scheda dashboard.",
+    "card_title": "Titolo della carta (facoltativo)",
+    "card_title_placeholder": "per esempio. Controller per ventola del soggiorno",
+    "card_title_helper": "Lasciare vuoto per utilizzare automaticamente il nome del sistema fuzzy.",
+    "visual_components": "Componenti della scheda visiva",
+    "aggregated_waveform": "Forma d'onda di uscita aggregata",
+    "aggregated_waveform_desc": "Distribuzione di set fuzzy ombreggiati in tempo reale con fetta di defuzzificazione",
+    "inputs_grid": "Griglia degli ingressi live",
+    "inputs_grid_desc": "Mostra pillole e valori di input inseriti nel motore",
+    "rule_strengths": "Forza di attivazione della regola attiva",
+    "rule_strengths_desc": "Mostra le barre di avanzamento della forza di fuoco per le regole attive"
+  },
+  "panel": {
+    "title": "Studio di controllo fuzzy",
+    "catalog": "Catalogo di sistema",
+    "editor": "Editor visivo di regole e curve",
+    "add_system": "Aggiungi sistema",
+    "simulate": "Simulare la valutazione",
+    "reload": "Ricarica YAML",
+    "loading": "Caricamento sistemi fuzzy..."
+  }
+}

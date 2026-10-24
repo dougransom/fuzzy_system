@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "Bulanık sistem kartı yapılandırılıyor...",
+    "active": "Aktif",
+    "live_inputs": "Canlı Girişler",
+    "outputs": "Çıkışlar",
+    "live_aggregated_set": "Canlı Birleştirilmiş Çıkış Seti",
+    "rule_firing_strengths": "Aktif Kural Etkinleştirmenin Güçlü Yönleri"
+  },
+  "editor": {
+    "target_system": "Hedef Bulanık Sistemi",
+    "detected": "{count} algılandı",
+    "target_system_helper": "Bu kontrol paneli kartında izlemek ve görselleştirmek için bulanık mantık denetleyicisini seçin.",
+    "card_title": "Kart Başlığı (İsteğe bağlı)",
+    "card_title_placeholder": "örneğin Oturma Odası Fan Kontrol Cihazı",
+    "card_title_helper": "Bulanık sistem adının otomatik olarak kullanılması için boş bırakın.",
+    "visual_components": "Görsel Kart Bileşenleri",
+    "aggregated_waveform": "Toplu Çıkış Dalga Formu",
+    "aggregated_waveform_desc": "Durulaştırma dilimli gerçek zamanlı gölgeli bulanık küme dağıtımı",
+    "inputs_grid": "Canlı Giriş Tablosu",
+    "inputs_grid_desc": "Motora beslenen giriş ölçüm haplarını ve değerleri göster",
+    "rule_strengths": "Aktif Kural Etkinleştirmenin Güçlü Yönleri",
+    "rule_strengths_desc": "Etkin kurallar için tetikleme gücü ilerleme çubuklarını göster"
+  },
+  "panel": {
+    "title": "Bulanık Kontrol Stüdyosu",
+    "catalog": "Sistem Kataloğu",
+    "editor": "Görsel Kural ve Eğri Düzenleyici",
+    "add_system": "Sistem Ekle",
+    "simulate": "Değerlendirmeyi Simüle Et",
+    "reload": "YAML'yi yeniden yükle",
+    "loading": "Loading Fuzzy Systems..."
+  }
+}

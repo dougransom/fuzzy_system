@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "创建模糊系统",
+        "description": "配置新的声明式模糊逻辑控制器。",
+        "data": {
+          "system_id": "系统标识符（Slug）",
+          "name": "显示名称",
+          "inference": "推理类型（Mamdani 或 Sugeno）",
+          "defuzzifier": "去模糊化方法"
+        }
+      },
+      "reconfigure": {
+        "title": "重新配置模糊系统",
+        "description": "更新 {system_id} 的配置参数。",
+        "data": {
+          "name": "显示名称",
+          "inference": "推理类型（Mamdani 或 Sugeno）",
+          "defuzzifier": "去模糊化方法"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "请指定有效的系统标识符。",
+      "id_exists_yaml": "具有此标识符的系统已存在于configuration.yaml中，并且不能重复。",
+      "id_exists": "具有该标识符的模糊系统已配置。"
+    },
+    "abort": {
+      "already_configured": "具有该标识符的模糊系统已配置。",
+      "reconfigure_successful": "模糊系统配置更新成功。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "模糊系统选项",
+        "description": "系统：{system_id}\n\n要直观地编辑隶属曲线和语言规则，请访问[可视化编辑器]({editor_url})。",
+        "data": {
+          "description": "描述",
+          "expose_system_sensor": "暴露系统状态传感器"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "未找到模糊系统 {system_id}。"
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "缺少 {system_id} 的输入实体",
+      "description": "模糊系统 {system_id} 依赖于实体 {entity_id}，该实体当前未找到或不可用。模糊系统将使用默认值，直到该实体被创建或可用。"
+    }
+  }
+}

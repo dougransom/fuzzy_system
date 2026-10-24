@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Créer un système flou",
+        "description": "Configurez un nouveau contrôleur à logique floue déclaratif.",
+        "data": {
+          "system_id": "Identificateur du système (Slug)",
+          "name": "Nom d'affichage",
+          "inference": "Type d'inférence (Mamdani ou Sugeno)",
+          "defuzzifier": "Méthode de défuzzification"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurer le système flou",
+        "description": "Mettez à jour les paramètres de configuration pour {system_id}.",
+        "data": {
+          "name": "Nom d'affichage",
+          "inference": "Type d'inférence (Mamdani ou Sugeno)",
+          "defuzzifier": "Méthode de défuzzification"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Veuillez spécifier un identifiant système valide.",
+      "id_exists_yaml": "Un système avec cet identifiant existe déjà dans configuration.yaml et ne peut pas être dupliqué.",
+      "id_exists": "Un système flou avec cet identifiant est déjà configuré."
+    },
+    "abort": {
+      "already_configured": "Un système flou avec cet identifiant est déjà configuré.",
+      "reconfigure_successful": "La configuration du système flou a été mise à jour avec succès."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options du système flou",
+        "description": "Système : {system_id}\n\nPour modifier visuellement les courbes d'adhésion et les règles linguistiques, visitez l'[Éditeur visuel] ({editor_url}).",
+        "data": {
+          "description": "Description",
+          "expose_system_sensor": "Exposer le capteur d’état du système"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "Le système flou {system_id} n'a pas été trouvé."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "Entité d'entrée manquante pour {system_id}",
+      "description": "Le système flou {system_id} dépend de l'entité {entity_id}, qui est actuellement introuvable ou indisponible. Le système flou utilisera la valeur par défaut jusqu'à ce que cette entité soit créée ou devienne disponible."
+    }
+  }
+}

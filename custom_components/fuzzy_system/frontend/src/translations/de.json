@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "Fuzzy-System-Karte konfigurieren...",
+    "active": "Aktiv",
+    "live_inputs": "Live-Eingaben",
+    "outputs": "Ausgänge",
+    "live_aggregated_set": "Live-aggregierter Ausgabesatz",
+    "rule_firing_strengths": "Aktive Regelfeuerstärken"
+  },
+  "editor": {
+    "target_system": "Ziel-Fuzzy-System",
+    "detected": "{count} erkannt",
+    "target_system_helper": "Wählen Sie den Fuzzy-Logic-Controller zur Überwachung und Visualisierung auf dieser Dashboard-Karte aus.",
+    "card_title": "Kartentitel (optional)",
+    "card_title_placeholder": "z.B. Wohnzimmer-Lüftersteuerung",
+    "card_title_helper": "Lassen Sie das Feld leer, um den Fuzzy-Systemnamen automatisch zu verwenden.",
+    "visual_components": "Visuelle Kartenkomponenten",
+    "aggregated_waveform": "Aggregierte Ausgangswellenform",
+    "aggregated_waveform_desc": "Echtzeit-Verteilung schattierter Fuzzy-Sets mit Defuzzifizierungs-Slice",
+    "inputs_grid": "Live-Eingaberaster",
+    "inputs_grid_desc": "Zeigen Sie Eingabemetrikpillen und Werte an, die in die Engine eingespeist werden",
+    "rule_strengths": "Aktive Regelfeuerstärken",
+    "rule_strengths_desc": "Fortschrittsbalken für die Schussstärke für aktive Regeln anzeigen"
+  },
+  "panel": {
+    "title": "Fuzzy Control Studio",
+    "catalog": "Systemkatalog",
+    "editor": "Visueller Regel- und Kurveneditor",
+    "add_system": "System hinzufügen",
+    "simulate": "Auswertung simulieren",
+    "reload": "Laden Sie YAML neu",
+    "loading": "Fuzzy-Systeme werden geladen..."
+  }
+}

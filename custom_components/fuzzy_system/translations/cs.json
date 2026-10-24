@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Vytvořte Fuzzy systém",
+        "description": "Nakonfigurujte nový deklarativní fuzzy logický regulátor.",
+        "data": {
+          "system_id": "Identifikátor systému (Slug)",
+          "name": "Zobrazovaný název",
+          "inference": "Typ odvození (Mamdani nebo Sugeno)",
+          "defuzzifier": "Metoda defuzzifikace"
+        }
+      },
+      "reconfigure": {
+        "title": "Překonfigurujte Fuzzy systém",
+        "description": "Aktualizujte konfigurační parametry pro {system_id}.",
+        "data": {
+          "name": "Zobrazovaný název",
+          "inference": "Typ odvození (Mamdani nebo Sugeno)",
+          "defuzzifier": "Metoda defuzzifikace"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Zadejte prosím platný identifikátor systému.",
+      "id_exists_yaml": "Systém s tímto identifikátorem již existuje v configuration.yaml a nelze jej duplikovat.",
+      "id_exists": "Fuzzy systém s tímto identifikátorem je již nakonfigurován."
+    },
+    "abort": {
+      "already_configured": "Fuzzy systém s tímto identifikátorem je již nakonfigurován.",
+      "reconfigure_successful": "Konfigurace fuzzy systému byla úspěšně aktualizována."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti fuzzy systému",
+        "description": "Systém: {system_id}\n\nChcete-li vizuálně upravit křivky členství a lingvistická pravidla, navštivte [Visual Editor] ({editor_url}).",
+        "data": {
+          "description": "Popis",
+          "expose_system_sensor": "Vystavte snímač stavu systému"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "Fuzzy systém {system_id} nebyl nalezen."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "Chybí vstupní entita pro {system_id}",
+      "description": "Fuzzy systém {system_id} závisí na entitě {entity_id}, která momentálně není nalezena nebo je nedostupná. Fuzzy systém bude používat výchozí hodnotu, dokud nebude tato entita vytvořena nebo nebude dostupná."
+    }
+  }
+}

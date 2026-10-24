@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "Määritetään fuzzy-system-korttia...",
+    "active": "Aktiivinen",
+    "live_inputs": "Live-tulot",
+    "outputs": "Lähdöt",
+    "live_aggregated_set": "Live Aggregated Output Set",
+    "rule_firing_strengths": "Aktiiviset sääntövoimat"
+  },
+  "editor": {
+    "target_system": "Kohdista sumea järjestelmä",
+    "detected": "{count} havaittu",
+    "target_system_helper": "Valitse sumea logiikkaohjain, jota haluat seurata ja visualisoida tällä kojelautakortilla.",
+    "card_title": "Kortin otsikko (valinnainen)",
+    "card_title_placeholder": "esim. Olohuoneen tuulettimen ohjain",
+    "card_title_helper": "Jätä tyhjäksi, jos haluat käyttää sumeaa järjestelmän nimeä automaattisesti.",
+    "visual_components": "Visuaalisen kortin komponentit",
+    "aggregated_waveform": "Kootun ulostulon aaltomuoto",
+    "aggregated_waveform_desc": "Reaaliaikainen varjostettu sumea joukkojakauma defuzzification-osalla",
+    "inputs_grid": "Live Input Grid",
+    "inputs_grid_desc": "Näytä syötemittarit ja moottoriin syötettävät arvot",
+    "rule_strengths": "Aktiiviset sääntövoimat",
+    "rule_strengths_desc": "Näytä aktiivisten sääntöjen laukaisuvoimakkuuden etenemispalkit"
+  },
+  "panel": {
+    "title": "Fuzzy Control Studio",
+    "catalog": "Järjestelmän katalogi",
+    "editor": "Visual Rule & Curve Editor",
+    "add_system": "Lisää järjestelmä",
+    "simulate": "Simuloi arviointi",
+    "reload": "Lataa YAML uudelleen",
+    "loading": "Ladataan sumeita järjestelmiä..."
+  }
+}

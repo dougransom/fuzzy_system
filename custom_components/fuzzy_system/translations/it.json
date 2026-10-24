@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Crea un sistema fuzzy",
+        "description": "Configurare un nuovo controller a logica fuzzy dichiarativa.",
+        "data": {
+          "system_id": "Identificatore di sistema (Slug)",
+          "name": "Nome da visualizzare",
+          "inference": "Tipo di inferenza (Mamdani o Sugeno)",
+          "defuzzifier": "Metodo di defuzzificazione"
+        }
+      },
+      "reconfigure": {
+        "title": "Riconfigurare il sistema fuzzy",
+        "description": "Aggiorna i parametri di configurazione per {system_id}.",
+        "data": {
+          "name": "Nome da visualizzare",
+          "inference": "Tipo di inferenza (Mamdani o Sugeno)",
+          "defuzzifier": "Metodo di defuzzificazione"
+        }
+      }
+    },
+    "error": {
+      "invalid_system_id": "Specificare un identificatore di sistema valido.",
+      "id_exists_yaml": "Un sistema con questo identificatore esiste già in Configuration.yaml e non può essere duplicato.",
+      "id_exists": "Un sistema fuzzy con questo identificatore è già configurato."
+    },
+    "abort": {
+      "already_configured": "Un sistema fuzzy con questo identificatore è già configurato.",
+      "reconfigure_successful": "Configurazione del sistema fuzzy aggiornata correttamente."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni di sistema fuzzy",
+        "description": "Sistema: {system_id}\n\nPer modificare visivamente le curve di appartenenza e le regole linguistiche, visitare l'[Editor visivo]({editor_url}).",
+        "data": {
+          "description": "Descrizione",
+          "expose_system_sensor": "Esporre il sensore di stato del sistema"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "system_not_found": {
+      "message": "Il sistema fuzzy {system_id} non è stato trovato."
+    }
+  },
+  "issues": {
+    "missing_input_entity": {
+      "title": "Entità di input mancante per {system_id}",
+      "description": "Il sistema fuzzy {system_id} dipende dall'entità {entity_id}, che attualmente non è trovata o non è disponibile. Il sistema fuzzy utilizzerà il valore predefinito finché questa entità non verrà creata o diventerà disponibile."
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "card": {
+    "configuring": "Fuzzy-systeemkaart configureren...",
+    "active": "Actief",
+    "live_inputs": "Live-invoer",
+    "outputs": "Uitgangen",
+    "live_aggregated_set": "Live geaggregeerde uitvoerset",
+    "rule_firing_strengths": "Actieve regelvuursterkte"
+  },
+  "editor": {
+    "target_system": "Doel Fuzzy-systeem",
+    "detected": "{count} gedetecteerd",
+    "target_system_helper": "Selecteer de fuzzy logic-controller die u op deze dashboardkaart wilt bewaken en visualiseren.",
+    "card_title": "Kaarttitel (optioneel)",
+    "card_title_placeholder": "bijv. Woonkamerventilatorcontroller",
+    "card_title_helper": "Laat dit veld leeg als u de fuzzy systeemnaam automatisch wilt gebruiken.",
+    "visual_components": "Visuele kaartcomponenten",
+    "aggregated_waveform": "Geaggregeerde uitgangsgolfvorm",
+    "aggregated_waveform_desc": "Realtime gearceerde, fuzzy set-distributie met defuzzificatiesegment",
+    "inputs_grid": "Live-invoerraster",
+    "inputs_grid_desc": "Toon invoermetrische pillen en waarden die in de engine worden ingevoerd",
+    "rule_strengths": "Actieve regelvuursterkte",
+    "rule_strengths_desc": "Toon voortgangsbalken voor de schietsterkte voor actieve regels"
+  },
+  "panel": {
+    "title": "Fuzzy Control Studio",
+    "catalog": "Systeemcatalogus",
+    "editor": "Visuele regel- en curve-editor",
+    "add_system": "Systeem toevoegen",
+    "simulate": "Evaluatie simuleren",
+    "reload": "YAML opnieuw laden",
+    "loading": "Fuzzy-systemen laden..."
+  }
+}
