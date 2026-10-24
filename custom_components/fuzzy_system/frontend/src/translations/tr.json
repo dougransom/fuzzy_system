@@ -11,7 +11,7 @@
     "target_system": "Hedef Bulanık Sistemi",
     "detected": "{count} algılandı",
     "target_system_helper": "Bu kontrol paneli kartında izlemek ve görselleştirmek için bulanık mantık denetleyicisini seçin.",
-    "card_title": "Kart Başlığı (İsteğe bağlı)",
+    "card_title": "Kart Başlığı (İsteğe Bağlı)",
     "card_title_placeholder": "örneğin Oturma Odası Fan Kontrol Cihazı",
     "card_title_helper": "Bulanık sistem adının otomatik olarak kullanılması için boş bırakın.",
     "visual_components": "Görsel Kart Bileşenleri",
@@ -29,6 +29,6 @@
     "add_system": "Sistem Ekle",
     "simulate": "Değerlendirmeyi Simüle Et",
     "reload": "YAML'yi yeniden yükle",
-    "loading": "Loading Fuzzy Systems..."
+    "loading": "Bulanık Sistemler Yükleniyor..."
   }
 }

@@ -5,7 +5,7 @@
     "live_inputs": "Live-ingångar",
     "outputs": "Utgångar",
     "live_aggregated_set": "Live aggregerad utdatauppsättning",
-    "rule_firing_strengths": "Aktiva regler eldningsstyrkor"
+    "rule_firing_strengths": "Aktiva regel skjutstyrkor"
   },
   "editor": {
     "target_system": "Target Fuzzy System",
@@ -13,13 +13,13 @@
     "target_system_helper": "Välj kontrollenheten för fuzzy logic för att övervaka och visualisera på det här instrumentpanelskortet.",
     "card_title": "Korttitel (valfritt)",
     "card_title_placeholder": "till exempel Fläktkontroll i vardagsrummet",
-    "card_title_helper": "Lämna tomt om du vill använda det fuzzy systemnamnet automatiskt.",
+    "card_title_helper": "Lämna tomt för att använda det fuzzy systemnamnet automatiskt.",
     "visual_components": "Visuella kortkomponenter",
     "aggregated_waveform": "Aggregerad utgångsvågform",
     "aggregated_waveform_desc": "Skuggad fuzzy set-distribution i realtid med defuzzification skiva",
     "inputs_grid": "Live Input Grid",
     "inputs_grid_desc": "Visa inmatade metriska piller och värden som matas in i motorn",
-    "rule_strengths": "Aktiva regler eldningsstyrkor",
+    "rule_strengths": "Aktiva regel skjutstyrkor",
     "rule_strengths_desc": "Visa förloppsstaplar för skjutstyrka för aktiva regler"
   },
   "panel": {

@@ -16,11 +16,11 @@
     "card_title_helper": "留空可自動使用模糊系統名稱。",
     "visual_components": "可視卡組件",
     "aggregated_waveform": "聚合輸出波形",
-    "aggregated_waveform_desc": "具有去模糊切片的即時著色模糊集分佈",
+    "aggregated_waveform_desc": "具有去模糊化切片的即時著色模糊集分佈",
     "inputs_grid": "即時輸入網格",
     "inputs_grid_desc": "顯示輸入引擎的輸入計量丸和值",
     "rule_strengths": "主動規則觸發優勢",
-    "rule_strengths_desc": "Show firing strength progress bars for active rules"
+    "rule_strengths_desc": "顯示活動規則的射擊強度進度條"
   },
   "panel": {
     "title": "模糊控制工作室",
@@ -29,6 +29,6 @@
     "add_system": "新增系統",
     "simulate": "模擬評估",
     "reload": "重新載入 YAML",
-    "loading": "正在載入模糊系統..."
+    "loading": "Loading Fuzzy Systems..."
   }
 }

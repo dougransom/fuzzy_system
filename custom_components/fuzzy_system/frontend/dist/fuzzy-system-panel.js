@@ -3,10 +3,10 @@
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const de = globalThis, ye = de.ShadowRoot && (de.ShadyCSS === void 0 || de.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, ve = Symbol(), ke = /* @__PURE__ */ new WeakMap();
+const de = globalThis, ye = de.ShadowRoot && (de.ShadyCSS === void 0 || de.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, be = Symbol(), ke = /* @__PURE__ */ new WeakMap();
 let Ne = class {
   constructor(e, i, a) {
-    if (this._$cssResult$ = !0, a !== ve) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+    if (this._$cssResult$ = !0, a !== be) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
     this.cssText = e, this.t = i;
   }
   get styleSheet() {
@@ -22,13 +22,13 @@ let Ne = class {
     return this.cssText;
   }
 };
-const us = (t) => new Ne(typeof t == "string" ? t : t + "", void 0, ve), I = (t, ...e) => {
+const us = (t) => new Ne(typeof t == "string" ? t : t + "", void 0, be), I = (t, ...e) => {
   const i = t.length === 1 ? t[0] : e.reduce((a, s, r) => a + ((n) => {
     if (n._$cssResult$ === !0) return n.cssText;
     if (typeof n == "number") return n;
     throw Error("Value passed to 'css' function must be a 'css' function result: " + n + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
   })(s) + t[r + 1], t[0]);
-  return new Ne(i, t, ve);
+  return new Ne(i, t, be);
 }, ps = (t, e) => {
   if (ye) t.adoptedStyleSheets = e.map((i) => i instanceof CSSStyleSheet ? i : i.styleSheet);
   else for (const i of e) {
@@ -45,10 +45,10 @@ const us = (t) => new Ne(typeof t == "string" ? t : t + "", void 0, ve), I = (t,
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: gs, defineProperty: hs, getOwnPropertyDescriptor: ms, getOwnPropertyNames: fs, getOwnPropertySymbols: _s, getPrototypeOf: ys } = Object, pe = globalThis, Ce = pe.trustedTypes, vs = Ce ? Ce.emptyScript : "", bs = pe.reactiveElementPolyfillSupport, ee = (t, e) => t, ce = { toAttribute(t, e) {
+const { is: gs, defineProperty: hs, getOwnPropertyDescriptor: ms, getOwnPropertyNames: fs, getOwnPropertySymbols: _s, getPrototypeOf: ys } = Object, pe = globalThis, Ce = pe.trustedTypes, bs = Ce ? Ce.emptyScript : "", vs = pe.reactiveElementPolyfillSupport, ee = (t, e) => t, ce = { toAttribute(t, e) {
   switch (e) {
     case Boolean:
-      t = t ? vs : null;
+      t = t ? bs : null;
       break;
     case Object:
     case Array:
@@ -73,7 +73,7 @@ const { is: gs, defineProperty: hs, getOwnPropertyDescriptor: ms, getOwnProperty
       }
   }
   return i;
-} }, be = (t, e) => !gs(t, e), Ee = { attribute: !0, type: String, converter: ce, reflect: !1, useDefault: !1, hasChanged: be };
+} }, ve = (t, e) => !gs(t, e), Ee = { attribute: !0, type: String, converter: ce, reflect: !1, useDefault: !1, hasChanged: ve };
 Symbol.metadata ??= Symbol("metadata"), pe.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
 let K = class extends HTMLElement {
   static addInitializer(e) {
@@ -188,7 +188,7 @@ let K = class extends HTMLElement {
   requestUpdate(e, i, a, s = !1, r) {
     if (e !== void 0) {
       const n = this.constructor;
-      if (s === !1 && (r = this[e]), a ??= n.getPropertyOptions(e), !((a.hasChanged ?? be)(r, i) || a.useDefault && a.reflect && r === this._$Ej?.get(e) && !this.hasAttribute(n._$Eu(e, a)))) return;
+      if (s === !1 && (r = this[e]), a ??= n.getPropertyOptions(e), !((a.hasChanged ?? ve)(r, i) || a.useDefault && a.reflect && r === this._$Ej?.get(e) && !this.hasAttribute(n._$Eu(e, a)))) return;
       this.C(e, i, a);
     }
     this.isUpdatePending === !1 && (this._$ES = this._$EP());
@@ -256,16 +256,16 @@ let K = class extends HTMLElement {
   firstUpdated(e) {
   }
 };
-K.elementStyles = [], K.shadowRootOptions = { mode: "open" }, K[ee("elementProperties")] = /* @__PURE__ */ new Map(), K[ee("finalized")] = /* @__PURE__ */ new Map(), bs?.({ ReactiveElement: K }), (pe.reactiveElementVersions ??= []).push("2.1.2");
+K.elementStyles = [], K.shadowRootOptions = { mode: "open" }, K[ee("elementProperties")] = /* @__PURE__ */ new Map(), K[ee("finalized")] = /* @__PURE__ */ new Map(), vs?.({ ReactiveElement: K }), (pe.reactiveElementVersions ??= []).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const xe = globalThis, Me = (t) => t, ue = xe.trustedTypes, je = ue ? ue.createPolicy("lit-html", { createHTML: (t) => t }) : void 0, Ve = "$lit$", P = `lit$${Math.random().toFixed(9).slice(2)}$`, De = "?" + P, xs = `<${De}>`, B = document, te = () => B.createComment(""), se = (t) => t === null || typeof t != "object" && typeof t != "function", $e = Array.isArray, $s = (t) => $e(t) || typeof t?.[Symbol.iterator] == "function", me = `[ 	
+const xe = globalThis, Me = (t) => t, ue = xe.trustedTypes, je = ue ? ue.createPolicy("lit-html", { createHTML: (t) => t }) : void 0, Ve = "$lit$", P = `lit$${Math.random().toFixed(9).slice(2)}$`, De = "?" + P, xs = `<${De}>`, q = document, te = () => q.createComment(""), se = (t) => t === null || typeof t != "object" && typeof t != "function", $e = Array.isArray, $s = (t) => $e(t) || typeof t?.[Symbol.iterator] == "function", me = `[ 	
 \f\r]`, X = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, Te = /-->/g, Oe = />/g, H = RegExp(`>|${me}(?:([^\\s"'>=/]+)(${me}*=${me}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), Ie = /'/g, Re = /"/g, He = /^(?:script|style|textarea|title)$/i, qe = (t) => (e, ...i) => ({ _$litType$: t, strings: e, values: i }), l = qe(1), J = qe(2), Z = Symbol.for("lit-noChange"), z = Symbol.for("lit-nothing"), Le = /* @__PURE__ */ new WeakMap(), q = B.createTreeWalker(B, 129);
-function Be(t, e) {
+\f\r"'\`<>=]|("|')|))|$)`, "g"), Ie = /'/g, Re = /"/g, He = /^(?:script|style|textarea|title)$/i, Be = (t) => (e, ...i) => ({ _$litType$: t, strings: e, values: i }), l = Be(1), J = Be(2), Z = Symbol.for("lit-noChange"), z = Symbol.for("lit-nothing"), Le = /* @__PURE__ */ new WeakMap(), B = q.createTreeWalker(q, 129);
+function qe(t, e) {
   if (!$e(t) || !t.hasOwnProperty("raw")) throw Error("invalid template strings array");
   return je !== void 0 ? je.createHTML(e) : e;
 }
@@ -279,7 +279,7 @@ const zs = (t, e) => {
     const f = n === H && t[o + 1].startsWith("/>") ? " " : "";
     r += n === X ? d + xs : g >= 0 ? (a.push(c), d.slice(0, g) + Ve + d.slice(g) + P + f) : d + P + (g === -2 ? o : f);
   }
-  return [Be(t, r + (t[i] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), a];
+  return [qe(t, r + (t[i] || "<?>") + (e === 2 ? "</svg>" : e === 3 ? "</math>" : "")), a];
 };
 class ie {
   constructor({ strings: e, _$litType$: i }, a) {
@@ -287,11 +287,11 @@ class ie {
     this.parts = [];
     let r = 0, n = 0;
     const o = e.length - 1, d = this.parts, [c, u] = zs(e, i);
-    if (this.el = ie.createElement(c, a), q.currentNode = this.el.content, i === 2 || i === 3) {
+    if (this.el = ie.createElement(c, a), B.currentNode = this.el.content, i === 2 || i === 3) {
       const g = this.el.content.firstChild;
       g.replaceWith(...g.childNodes);
     }
-    for (; (s = q.nextNode()) !== null && d.length < o; ) {
+    for (; (s = B.nextNode()) !== null && d.length < o; ) {
       if (s.nodeType === 1) {
         if (s.hasAttributes()) for (const g of s.getAttributeNames()) if (g.endsWith(Ve)) {
           const h = u[n++], f = s.getAttribute(g).split(P), y = /([.?@])?(.*)/.exec(h);
@@ -301,7 +301,7 @@ class ie {
           const g = s.textContent.split(P), h = g.length - 1;
           if (h > 0) {
             s.textContent = ue ? ue.emptyScript : "";
-            for (let f = 0; f < h; f++) s.append(g[f], te()), q.nextNode(), d.push({ type: 2, index: ++r });
+            for (let f = 0; f < h; f++) s.append(g[f], te()), B.nextNode(), d.push({ type: 2, index: ++r });
             s.append(g[h], te());
           }
         }
@@ -314,7 +314,7 @@ class ie {
     }
   }
   static createElement(e, i) {
-    const a = B.createElement("template");
+    const a = q.createElement("template");
     return a.innerHTML = e, a;
   }
 }
@@ -335,17 +335,17 @@ class ws {
     return this._$AM._$AU;
   }
   u(e) {
-    const { el: { content: i }, parts: a } = this._$AD, s = (e?.creationScope ?? B).importNode(i, !0);
-    q.currentNode = s;
-    let r = q.nextNode(), n = 0, o = 0, d = a[0];
+    const { el: { content: i }, parts: a } = this._$AD, s = (e?.creationScope ?? q).importNode(i, !0);
+    B.currentNode = s;
+    let r = B.nextNode(), n = 0, o = 0, d = a[0];
     for (; d !== void 0; ) {
       if (n === d.index) {
         let c;
         d.type === 2 ? c = new ne(r, r.nextSibling, this, e) : d.type === 1 ? c = new d.ctor(r, d.name, d.strings, this, e) : d.type === 6 && (c = new Cs(r, this, e)), this._$AV.push(c), d = a[++o];
       }
-      n !== d?.index && (r = q.nextNode(), n++);
+      n !== d?.index && (r = B.nextNode(), n++);
     }
-    return q.currentNode = B, s;
+    return B.currentNode = q, s;
   }
   p(e) {
     let i = 0;
@@ -380,10 +380,10 @@ class ne {
     this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
   }
   _(e) {
-    this._$AH !== z && se(this._$AH) ? this._$AA.nextSibling.data = e : this.T(B.createTextNode(e)), this._$AH = e;
+    this._$AH !== z && se(this._$AH) ? this._$AA.nextSibling.data = e : this.T(q.createTextNode(e)), this._$AH = e;
   }
   $(e) {
-    const { values: i, _$litType$: a } = e, s = typeof a == "number" ? this._$AC(e) : (a.el === void 0 && (a.el = ie.createElement(Be(a.h, a.h[0]), this.options)), a);
+    const { values: i, _$litType$: a } = e, s = typeof a == "number" ? this._$AC(e) : (a.el === void 0 && (a.el = ie.createElement(qe(a.h, a.h[0]), this.options)), a);
     if (this._$AH?._$AD === s) this._$AH.p(i);
     else {
       const r = new ws(s, this), n = r.u(this.options);
@@ -524,7 +524,7 @@ js?.({ LitElement: A });
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const Ts = { attribute: !0, type: String, converter: ce, reflect: !1, hasChanged: be }, Os = (t = Ts, e, i) => {
+const Ts = { attribute: !0, type: String, converter: ce, reflect: !1, hasChanged: ve }, Os = (t = Ts, e, i) => {
   const { kind: a, metadata: s } = i;
   let r = globalThis.litPropertyMetadata.get(s);
   if (r === void 0 && globalThis.litPropertyMetadata.set(s, r = /* @__PURE__ */ new Map()), a === "setter" && ((t = Object.create(t)).wrapped = !0), r.set(i.name, t), a === "accessor") {
@@ -545,7 +545,7 @@ const Ts = { attribute: !0, type: String, converter: ce, reflect: !1, hasChanged
   }
   throw Error("Unsupported decorator location: " + a);
 };
-function v(t) {
+function b(t) {
   return (e, i) => typeof i == "object" ? Os(t, e, i) : ((a, s, r) => {
     const n = s.hasOwnProperty(r);
     return s.constructor.createProperty(r, a), n ? Object.getOwnPropertyDescriptor(s, r) : void 0;
@@ -557,7 +557,7 @@ function v(t) {
  * SPDX-License-Identifier: BSD-3-Clause
  */
 function p(t) {
-  return v({ ...t, state: !0, attribute: !1 });
+  return b({ ...t, state: !0, attribute: !1 });
 }
 function F(t) {
   return (e) => (typeof customElements < "u" && !customElements.get(t) && customElements.define(t, e), e);
@@ -901,16 +901,16 @@ async function Ye(t, e, i) {
   }
   return s;
 }
-const qs = "fuzzy_system/dashboard/generate_card", Bs = "fuzzy_system/dashboard/add_card";
+const Bs = "fuzzy_system/dashboard/generate_card", qs = "fuzzy_system/dashboard/add_card";
 async function Ke(t, e) {
   return t.callWS({
-    type: qs,
+    type: Bs,
     ...e
   });
 }
 async function Je(t, e) {
   return t.callWS({
-    type: Bs,
+    type: qs,
     ...e
   });
 }
@@ -1145,8 +1145,8 @@ let j = class extends A {
           </div>
         </div>
       `;
-    const t = this.universe[0], e = this.universe[this.universe.length - 1], i = e - t || 1, a = 640, s = 190, r = 36, n = 24, o = 20, d = 28, c = a - r - n, u = s - o - d, g = (k) => r + (k - t) / i * c, h = (k) => o + (1 - Math.max(0, Math.min(1, k))) * u, f = this.aggregatedSet || [], y = [], b = Math.max(1, Math.floor(this.universe.length / 140));
-    for (let k = 0; k < this.universe.length; k += b) {
+    const t = this.universe[0], e = this.universe[this.universe.length - 1], i = e - t || 1, a = 640, s = 190, r = 36, n = 24, o = 20, d = 28, c = a - r - n, u = s - o - d, g = (k) => r + (k - t) / i * c, h = (k) => o + (1 - Math.max(0, Math.min(1, k))) * u, f = this.aggregatedSet || [], y = [], v = Math.max(1, Math.floor(this.universe.length / 140));
+    for (let k = 0; k < this.universe.length; k += v) {
       const E = this.universe[k], M = f[k] ?? 0;
       y.push([g(E), h(M)]);
     }
@@ -1340,25 +1340,25 @@ j.styles = I`
     }
   `;
 N([
-  v({ type: Array })
+  b({ type: Array })
 ], j.prototype, "universe", 2);
 N([
-  v({ type: Array })
+  b({ type: Array })
 ], j.prototype, "aggregatedSet", 2);
 N([
-  v({ type: Number })
+  b({ type: Number })
 ], j.prototype, "defuzzifiedValue", 2);
 N([
-  v({ type: String })
+  b({ type: String })
 ], j.prototype, "defuzzifier", 2);
 N([
-  v({ type: String })
+  b({ type: String })
 ], j.prototype, "dominantTerm", 2);
 N([
-  v({ type: String })
+  b({ type: String })
 ], j.prototype, "unit", 2);
 N([
-  v({ type: String })
+  b({ type: String })
 ], j.prototype, "outputName", 2);
 j = N([
   F("fuzzy-aggregated-graph")
@@ -2015,7 +2015,7 @@ $.styles = [
     `
 ];
 w([
-  v({ attribute: !1 })
+  b({ attribute: !1 })
 ], $.prototype, "hass", 2);
 w([
   p()
@@ -2122,7 +2122,7 @@ let U = class extends A {
     super(...arguments), this.range = [0, 100], this.terms = {};
   }
   render() {
-    const t = Number.isFinite(this.range[0]) ? this.range[0] : 0, e = Number.isFinite(this.range[1]) && this.range[1] > t ? this.range[1] : t + 100, i = e - t || 1, a = 600, s = 180, r = 36, n = 24, o = 16, d = 28, c = a - r - n, u = s - o - d, g = (b) => r + (b - t) / i * c, h = (b) => o + (1 - Math.max(0, Math.min(1, b))) * u, f = Object.keys(this.terms || {}), y = 120;
+    const t = Number.isFinite(this.range[0]) ? this.range[0] : 0, e = Number.isFinite(this.range[1]) && this.range[1] > t ? this.range[1] : t + 100, i = e - t || 1, a = 600, s = 180, r = 36, n = 24, o = 16, d = 28, c = a - r - n, u = s - o - d, g = (v) => r + (v - t) / i * c, h = (v) => o + (1 - Math.max(0, Math.min(1, v))) * u, f = Object.keys(this.terms || {}), y = 120;
     return l`
       <div class="canvas-container">
         <svg viewBox="0 0 ${a} ${s}" preserveAspectRatio="xMidYMid meet">
@@ -2149,8 +2149,8 @@ let U = class extends A {
           </text>
 
           <!-- Curves for each membership term -->
-          ${f.map((b, W) => {
-      const O = this.terms[b];
+          ${f.map((v, W) => {
+      const O = this.terms[v];
       if (!O || !O.params) return J``;
       const D = le[W % le.length], G = [];
       for (let E = 0; E <= y; E++) {
@@ -2171,20 +2171,20 @@ let U = class extends A {
 
           <!-- Current Value Marker (if provided) -->
           ${this.currentValue !== void 0 && !isNaN(this.currentValue) ? (() => {
-      const b = g(Math.max(t, Math.min(e, this.currentValue)));
+      const v = g(Math.max(t, Math.min(e, this.currentValue)));
       return J`
                   <g>
                     <line
                       class="current-val-line"
-                      x1=${b}
+                      x1=${v}
                       y1=${o}
-                      x2=${b}
+                      x2=${v}
                       y2=${o + u}
                     />
-                    <circle cx=${b} cy=${o + u} r="4" fill="#f43f5e" />
+                    <circle cx=${v} cy=${o + u} r="4" fill="#f43f5e" />
                     <text
                       class="axis-text"
-                      x=${b}
+                      x=${v}
                       y=${o - 4}
                       text-anchor="middle"
                       fill="#f43f5e"
@@ -2199,12 +2199,12 @@ let U = class extends A {
 
         <!-- Color Legend -->
         <div class="legend-row">
-          ${f.map((b, W) => {
-      const O = this.terms[b], D = le[W % le.length];
+          ${f.map((v, W) => {
+      const O = this.terms[v], D = le[W % le.length];
       return l`
               <div class="legend-item" style="color: ${D.stroke};">
                 <span class="legend-swatch" style="background: ${D.stroke};"></span>
-                <span>${b}</span>
+                <span>${v}</span>
                 <span style="opacity: 0.6; font-size: 10px;">(${O.type})</span>
               </div>
             `;
@@ -2294,16 +2294,16 @@ U.styles = I`
     }
   `;
 oe([
-  v({ type: Array })
+  b({ type: Array })
 ], U.prototype, "range", 2);
 oe([
-  v({ type: Object })
+  b({ type: Object })
 ], U.prototype, "terms", 2);
 oe([
-  v({ type: Number })
+  b({ type: Number })
 ], U.prototype, "currentValue", 2);
 oe([
-  v({ type: String })
+  b({ type: String })
 ], U.prototype, "unit", 2);
 U = oe([
   F("fuzzy-curve-canvas")
@@ -4176,16 +4176,16 @@ m.styles = [
     `
 ];
 _([
-  v({ attribute: !1 })
+  b({ attribute: !1 })
 ], m.prototype, "hass", 2);
 _([
-  v({ type: Object })
+  b({ type: Object })
 ], m.prototype, "systemConfig", 2);
 _([
-  v({ type: String })
+  b({ type: String })
 ], m.prototype, "entryId", 2);
 _([
-  v({ type: String })
+  b({ type: String })
 ], m.prototype, "source", 2);
 _([
   p()
@@ -4450,7 +4450,7 @@ T.styles = [
     `
 ];
 V([
-  v({ attribute: !1 })
+  b({ attribute: !1 })
 ], T.prototype, "hass", 2);
 V([
   p()
@@ -4486,7 +4486,7 @@ const Qe = {
   target_system_helper: "Vyberte ovladač fuzzy logiky, který chcete sledovat a vizualizovat na této kartě řídicího panelu.",
   card_title: "Název karty (volitelné)",
   card_title_placeholder: "např. Ovladač ventilátoru v obývacím pokoji",
-  card_title_helper: "Chcete-li název fuzzy systému použít automaticky, ponechte prázdné.",
+  card_title_helper: "Ponechte prázdné, chcete-li název fuzzy systému použít automaticky.",
   visual_components: "Komponenty vizuální karty",
   aggregated_waveform: "Agregovaný výstupní průběh",
   aggregated_waveform_desc: "Stínovaná distribuce fuzzy množin v reálném čase s defuzzifikačním řezem",
@@ -4567,11 +4567,11 @@ const Qe = {
   card_title_helper: "Lassen Sie das Feld leer, um den Fuzzy-Systemnamen automatisch zu verwenden.",
   visual_components: "Visuelle Kartenkomponenten",
   aggregated_waveform: "Aggregierte Ausgangswellenform",
-  aggregated_waveform_desc: "Echtzeit-Verteilung schattierter Fuzzy-Sets mit Defuzzifizierungs-Slice",
+  aggregated_waveform_desc: "Verteilung schattierter Fuzzy-Sets in Echtzeit mit Defuzzifizierungs-Slice",
   inputs_grid: "Live-Eingaberaster",
   inputs_grid_desc: "Zeigen Sie Eingabemetrikpillen und Werte an, die in die Engine eingespeist werden",
   rule_strengths: "Aktive Regelfeuerstärken",
-  rule_strengths_desc: "Fortschrittsbalken für die Schussstärke für aktive Regeln anzeigen"
+  rule_strengths_desc: "Zeigt Fortschrittsbalken für die Schussstärke für aktive Regeln an"
 }, nt = {
   title: "Fuzzy Control Studio",
   catalog: "Systemkatalog",
@@ -4688,7 +4688,7 @@ const Qe = {
   inputs_grid: "Cuadrícula de entradas en vivo",
   inputs_grid_desc: "Mostrar píldoras métricas de entrada y valores que ingresan al motor",
   rule_strengths: "Fortalezas de disparo de regla activa",
-  rule_strengths_desc: "Show firing strength progress bars for active rules"
+  rule_strengths_desc: "Mostrar barras de progreso de fuerza de disparo para reglas activas"
 }, mt = {
   title: "Estudio de control difuso",
   catalog: "Catálogo del sistema",
@@ -4722,7 +4722,7 @@ const Qe = {
   card_title_placeholder: "esim. Olohuoneen tuulettimen ohjain",
   card_title_helper: "Jätä tyhjäksi, jos haluat käyttää sumeaa järjestelmän nimeä automaattisesti.",
   visual_components: "Visuaalisen kortin komponentit",
-  aggregated_waveform: "Kootun ulostulon aaltomuoto",
+  aggregated_waveform: "Aggregoitu lähtöaaltomuoto",
   aggregated_waveform_desc: "Reaaliaikainen varjostettu sumea joukkojakauma defuzzification-osalla",
   inputs_grid: "Live Input Grid",
   inputs_grid_desc: "Näytä syötemittarit ja moottoriin syötettävät arvot",
@@ -4746,17 +4746,17 @@ const Qe = {
   default: hi,
   editor: _t,
   panel: yt
-}, Symbol.toStringTag, { value: "Module" })), vt = {
+}, Symbol.toStringTag, { value: "Module" })), bt = {
   configuring: "Configuration de la carte système floue...",
   active: "Actif",
   live_inputs: "Entrées en direct",
   outputs: "Sorties",
   live_aggregated_set: "Ensemble de sorties agrégées en direct",
   rule_firing_strengths: "Forces de déclenchement des règles actives"
-}, bt = {
+}, vt = {
   target_system: "Système flou cible",
   detected: "{count} détecté",
-  target_system_helper: "Sélectionnez le contrôleur à logique floue à surveiller et à visualiser sur cette carte de tableau de bord.",
+  target_system_helper: "Sélectionnez le contrôleur à logique floue à surveiller et visualiser sur cette carte de tableau de bord.",
   card_title: "Titre de la carte (facultatif)",
   card_title_placeholder: "par ex. Contrôleur de ventilateur de salon",
   card_title_helper: "Laissez vide pour utiliser automatiquement le nom flou du système.",
@@ -4766,7 +4766,7 @@ const Qe = {
   inputs_grid: "Grille des entrées en direct",
   inputs_grid_desc: "Afficher les pilules et les valeurs métriques d'entrée alimentant le moteur",
   rule_strengths: "Forces de déclenchement des règles actives",
-  rule_strengths_desc: "Afficher les barres de progression de la puissance de tir pour les règles actives"
+  rule_strengths_desc: "Afficher les barres de progression de la force de tir pour les règles actives"
 }, xt = {
   title: "Studio de contrôle flou",
   catalog: "Catalogue système",
@@ -4776,17 +4776,17 @@ const Qe = {
   reload: "Recharger YAML",
   loading: "Chargement des systèmes flous..."
 }, fi = {
-  card: vt,
-  editor: bt,
+  card: bt,
+  editor: vt,
   panel: xt
 }, _i = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  card: vt,
+  card: bt,
   default: fi,
-  editor: bt,
+  editor: vt,
   panel: xt
 }, Symbol.toStringTag, { value: "Module" })), $t = {
-  configuring: "Configurazione della scheda del sistema fuzzy in corso...",
+  configuring: "Configurazione della scheda del sistema fuzzy...",
   active: "Attivo",
   live_inputs: "Ingressi in tempo reale",
   outputs: "Uscite",
@@ -4818,7 +4818,7 @@ const Qe = {
   card: $t,
   editor: zt,
   panel: wt
-}, vi = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+}, bi = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   card: $t,
   default: yi,
@@ -4832,7 +4832,7 @@ const Qe = {
   live_aggregated_set: "ライブ集約出力セット",
   rule_firing_strengths: "アクティブルール発動の強み"
 }, kt = {
-  target_system: "ターゲットファジーシステム",
+  target_system: "Target Fuzzy System",
   detected: "{count} が検出されました",
   target_system_helper: "このダッシュボード カードで監視および視覚化するファジー ロジック コントローラーを選択します。",
   card_title: "カードタイトル (オプション)",
@@ -4853,14 +4853,14 @@ const Qe = {
   simulate: "評価のシミュレーション",
   reload: "YAMLのリロード",
   loading: "ファジー システムを読み込んでいます..."
-}, bi = {
+}, vi = {
   card: St,
   editor: kt,
   panel: At
 }, xi = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   card: St,
-  default: bi,
+  default: vi,
   editor: kt,
   panel: At
 }, Symbol.toStringTag, { value: "Module" })), Ct = {
@@ -4903,11 +4903,11 @@ const Qe = {
   editor: Et,
   panel: Mt
 }, Symbol.toStringTag, { value: "Module" })), jt = {
-  configuring: "Konfigurerer fuzzy-system-kort...",
+  configuring: "Konfigurerer fuzzy-system-kort ...",
   active: "Aktiv",
   live_inputs: "Live-innganger",
   outputs: "Utganger",
-  live_aggregated_set: "Live aggregert utdatasett",
+  live_aggregated_set: "Live Aggregated Output Set",
   rule_firing_strengths: "Aktiv regel skytestyrker"
 }, Tt = {
   target_system: "Target Fuzzy System",
@@ -4959,7 +4959,7 @@ const Qe = {
   aggregated_waveform: "Geaggregeerde uitgangsgolfvorm",
   aggregated_waveform_desc: "Realtime gearceerde, fuzzy set-distributie met defuzzificatiesegment",
   inputs_grid: "Live-invoerraster",
-  inputs_grid_desc: "Toon invoermetrische pillen en waarden die in de engine worden ingevoerd",
+  inputs_grid_desc: "Toon input-metrische pillen en waarden die in de engine worden ingevoerd",
   rule_strengths: "Actieve regelvuursterkte",
   rule_strengths_desc: "Toon voortgangsbalken voor de schietsterkte voor actieve regels"
 }, Lt = {
@@ -4996,7 +4996,7 @@ const Qe = {
   card_title_helper: "Pozostaw puste, aby automatycznie używać rozmytej nazwy systemu.",
   visual_components: "Elementy karty wizualnej",
   aggregated_waveform: "Zagregowany przebieg wyjściowy",
-  aggregated_waveform_desc: "Rozkład cieniowanych zbiorów rozmytych w czasie rzeczywistym z wycinkiem rozmytym",
+  aggregated_waveform_desc: "Rozkład zacieniowanych zbiorów rozmytych w czasie rzeczywistym z wycinkiem rozmytym",
   inputs_grid: "Siatka wejść na żywo",
   inputs_grid_desc: "Pokaż wejściowe pigułki metryczne i wartości podawane do silnika",
   rule_strengths: "Siły wyzwalania reguły aktywnej",
@@ -5058,14 +5058,14 @@ const Qe = {
   default: Mi,
   editor: Dt,
   panel: Ht
-}, Symbol.toStringTag, { value: "Module" })), qt = {
+}, Symbol.toStringTag, { value: "Module" })), Bt = {
   configuring: "Configurando placa de sistema fuzzy...",
   active: "Ativo",
   live_inputs: "Entradas ao vivo",
   outputs: "Resultados",
   live_aggregated_set: "Conjunto de saída agregada ao vivo",
   rule_firing_strengths: "Forças de disparo de regras ativas"
-}, Bt = {
+}, qt = {
   target_system: "Sistema difuso de destino",
   detected: "{count} detectado",
   target_system_helper: "Selecione o controlador de lógica difusa para monitorar e visualizar neste cartão de painel.",
@@ -5088,14 +5088,14 @@ const Qe = {
   reload: "Recarregar YAML",
   loading: "Carregando sistemas difusos..."
 }, Ti = {
-  card: qt,
-  editor: Bt,
+  card: Bt,
+  editor: qt,
   panel: Ut
 }, Oi = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  card: qt,
+  card: Bt,
   default: Ti,
-  editor: Bt,
+  editor: qt,
   panel: Ut
 }, Symbol.toStringTag, { value: "Module" })), Wt = {
   configuring: "Настройка нечеткой системной карты...",
@@ -5115,7 +5115,7 @@ const Qe = {
   aggregated_waveform: "Агрегированная выходная форма сигнала",
   aggregated_waveform_desc: "Распределение закрашенных нечетких множеств в реальном времени со срезом дефаззификации",
   inputs_grid: "Сетка живых входов",
-  inputs_grid_desc: "Показывать таблицы и значения входных показателей, поступающие в движок.",
+  inputs_grid_desc: "Показывать таблетки и значения входных показателей, поступающие в движок.",
   rule_strengths: "Сильные стороны активных правил",
   rule_strengths_desc: "Показывать индикаторы силы стрельбы для активных правил"
 }, Yt = {
@@ -5142,20 +5142,20 @@ const Qe = {
   live_inputs: "Live-ingångar",
   outputs: "Utgångar",
   live_aggregated_set: "Live aggregerad utdatauppsättning",
-  rule_firing_strengths: "Aktiva regler eldningsstyrkor"
+  rule_firing_strengths: "Aktiva regel skjutstyrkor"
 }, Jt = {
   target_system: "Target Fuzzy System",
   detected: "{count} upptäckt",
   target_system_helper: "Välj kontrollenheten för fuzzy logic för att övervaka och visualisera på det här instrumentpanelskortet.",
   card_title: "Korttitel (valfritt)",
   card_title_placeholder: "till exempel Fläktkontroll i vardagsrummet",
-  card_title_helper: "Lämna tomt om du vill använda det fuzzy systemnamnet automatiskt.",
+  card_title_helper: "Lämna tomt för att använda det fuzzy systemnamnet automatiskt.",
   visual_components: "Visuella kortkomponenter",
   aggregated_waveform: "Aggregerad utgångsvågform",
   aggregated_waveform_desc: "Skuggad fuzzy set-distribution i realtid med defuzzification skiva",
   inputs_grid: "Live Input Grid",
   inputs_grid_desc: "Visa inmatade metriska piller och värden som matas in i motorn",
-  rule_strengths: "Aktiva regler eldningsstyrkor",
+  rule_strengths: "Aktiva regel skjutstyrkor",
   rule_strengths_desc: "Visa förloppsstaplar för skjutstyrka för aktiva regler"
 }, Zt = {
   title: "Fuzzy Control Studio",
@@ -5186,7 +5186,7 @@ const Qe = {
   target_system: "Hedef Bulanık Sistemi",
   detected: "{count} algılandı",
   target_system_helper: "Bu kontrol paneli kartında izlemek ve görselleştirmek için bulanık mantık denetleyicisini seçin.",
-  card_title: "Kart Başlığı (İsteğe bağlı)",
+  card_title: "Kart Başlığı (İsteğe Bağlı)",
   card_title_placeholder: "örneğin Oturma Odası Fan Kontrol Cihazı",
   card_title_helper: "Bulanık sistem adının otomatik olarak kullanılması için boş bırakın.",
   visual_components: "Görsel Kart Bileşenleri",
@@ -5203,7 +5203,7 @@ const Qe = {
   add_system: "Sistem Ekle",
   simulate: "Değerlendirmeyi Simüle Et",
   reload: "YAML'yi yeniden yükle",
-  loading: "Loading Fuzzy Systems..."
+  loading: "Bulanık Sistemler Yükleniyor..."
 }, Fi = {
   card: Qt,
   editor: Xt,
@@ -5268,8 +5268,8 @@ const Qe = {
   card_title_placeholder: "例如客厅风扇控制器",
   card_title_helper: "留空可自动使用模糊系统名称。",
   visual_components: "可视卡组件",
-  aggregated_waveform: "Aggregated Output Waveform",
-  aggregated_waveform_desc: "Real-time shaded fuzzy set distribution with defuzzification slice",
+  aggregated_waveform: "聚合输出波形",
+  aggregated_waveform_desc: "具有去模糊化切片的实时着色模糊集分布",
   inputs_grid: "实时输入网格",
   inputs_grid_desc: "显示输入引擎的输入计量丸和值",
   rule_strengths: "主动规则触发优势",
@@ -5286,7 +5286,7 @@ const Qe = {
   card: as,
   editor: rs,
   panel: ns
-}, qi = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+}, Bi = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   card: as,
   default: Hi,
@@ -5308,11 +5308,11 @@ const Qe = {
   card_title_helper: "留空可自動使用模糊系統名稱。",
   visual_components: "可視卡組件",
   aggregated_waveform: "聚合輸出波形",
-  aggregated_waveform_desc: "具有去模糊切片的即時著色模糊集分佈",
+  aggregated_waveform_desc: "具有去模糊化切片的即時著色模糊集分佈",
   inputs_grid: "即時輸入網格",
   inputs_grid_desc: "顯示輸入引擎的輸入計量丸和值",
   rule_strengths: "主動規則觸發優勢",
-  rule_strengths_desc: "Show firing strength progress bars for active rules"
+  rule_strengths_desc: "顯示活動規則的射擊強度進度條"
 }, ds = {
   title: "模糊控制工作室",
   catalog: "系統目錄",
@@ -5320,18 +5320,18 @@ const Qe = {
   add_system: "新增系統",
   simulate: "模擬評估",
   reload: "重新載入 YAML",
-  loading: "正在載入模糊系統..."
-}, Bi = {
+  loading: "Loading Fuzzy Systems..."
+}, qi = {
   card: os,
   editor: ls,
   panel: ds
 }, Ui = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   card: os,
-  default: Bi,
+  default: qi,
   editor: ls,
   panel: ds
-}, Symbol.toStringTag, { value: "Module" })), _e = {}, fe = /* @__PURE__ */ Object.assign({ "../translations/cs.json": ii, "../translations/da.json": ri, "../translations/de.json": oi, "../translations/el.json": di, "../translations/en.json": ui, "../translations/es.json": gi, "../translations/fi.json": mi, "../translations/fr.json": _i, "../translations/it.json": vi, "../translations/ja.json": xi, "../translations/ko.json": zi, "../translations/nb.json": Si, "../translations/nl.json": Ai, "../translations/pl.json": Ei, "../translations/pt-BR.json": ji, "../translations/pt.json": Oi, "../translations/ru.json": Ri, "../translations/sv.json": Pi, "../translations/tr.json": Ni, "../translations/uk.json": Di, "../translations/zh-Hans.json": qi, "../translations/zh-Hant.json": Ui });
+}, Symbol.toStringTag, { value: "Module" })), _e = {}, fe = /* @__PURE__ */ Object.assign({ "../translations/cs.json": ii, "../translations/da.json": ri, "../translations/de.json": oi, "../translations/el.json": di, "../translations/en.json": ui, "../translations/es.json": gi, "../translations/fi.json": mi, "../translations/fr.json": _i, "../translations/it.json": bi, "../translations/ja.json": xi, "../translations/ko.json": zi, "../translations/nb.json": Si, "../translations/nl.json": Ai, "../translations/pl.json": Ei, "../translations/pt-BR.json": ji, "../translations/pt.json": Oi, "../translations/ru.json": Ri, "../translations/sv.json": Pi, "../translations/tr.json": Ni, "../translations/uk.json": Di, "../translations/zh-Hans.json": Bi, "../translations/zh-Hant.json": Ui });
 for (const t in fe) {
   const e = t.match(/\/([^/]+)\.json$/);
   if (e) {
@@ -5649,7 +5649,7 @@ ae.styles = I`
     }
   `;
 we([
-  v({ attribute: !1 })
+  b({ attribute: !1 })
 ], ae.prototype, "hass", 2);
 we([
   p()
@@ -5745,10 +5745,10 @@ let re = class extends A {
               <div class="section-title">${x("card.live_inputs", void 0, void 0, t)}</div>
               <div class="inputs-grid">
                 ${Object.entries(h).map(
-      ([y, b]) => l`
+      ([y, v]) => l`
                     <div class="metric-pill">
                       <span class="metric-label">${y}</span>
-                      <span class="metric-val">${typeof b == "number" ? b.toFixed(1) : b}</span>
+                      <span class="metric-val">${typeof v == "number" ? v.toFixed(1) : v}</span>
                     </div>
                   `
     )}
@@ -5781,9 +5781,9 @@ let re = class extends A {
         ${this._config.show_rules !== !1 && f.length > 0 ? l`
               <div class="section-title">${x("card.rule_firing_strengths", void 0, void 0, t)}</div>
               ${f.slice(0, 4).map(
-      (y, b) => l`
+      (y, v) => l`
                   <div class="rule-bar-row">
-                    <span style="font-size: 11px; width: 45px; color: var(--secondary-text-color);">R${b + 1}</span>
+                    <span style="font-size: 11px; width: 45px; color: var(--secondary-text-color);">R${v + 1}</span>
                     <div class="rule-progress-bg">
                       <div class="rule-progress-fill" style="width: ${(y.firing_strength * 100).toFixed(0)}%;"></div>
                     </div>
@@ -5932,7 +5932,7 @@ re.styles = I`
     }
   `;
 Se([
-  v({ attribute: !1 })
+  b({ attribute: !1 })
 ], re.prototype, "hass", 2);
 Se([
   p()
@@ -5996,7 +5996,7 @@ let C = class extends A {
           <span class="badge badge-purple" title="WebMCP tool contract exposed for browser AI agents and DevTools">
             🌐 WebMCP
           </span>
-          <span class="badge badge-cyan">v0.1.4</span>
+          <span class="badge badge-cyan">v0.1.7</span>
         </div>
       </header>
 
@@ -6084,16 +6084,16 @@ C.styles = [
     `
 ];
 R([
-  v({ attribute: !1 })
+  b({ attribute: !1 })
 ], C.prototype, "hass", 2);
 R([
-  v({ type: Boolean })
+  b({ type: Boolean })
 ], C.prototype, "narrow", 2);
 R([
-  v({ type: Object })
+  b({ type: Object })
 ], C.prototype, "route", 2);
 R([
-  v({ type: Object })
+  b({ type: Object })
 ], C.prototype, "panel", 2);
 R([
   p()

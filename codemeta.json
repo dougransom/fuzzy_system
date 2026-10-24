@@ -3,7 +3,7 @@
   "@type": "SoftwareSourceCode",
   "name": "fuzzy_system",
   "identifier": "fuzzy_system",
-  "version": "0.1.4",
+  "version": "0.1.7",
   "description": "Mamdani & Sugeno Fuzzy Logic Control and Toolkit for Home Assistant with Model Context Protocol (MCP) and WebMCP integration.",
   "applicationCategory": "HomeAutomation, ControlSystems, ArtificialIntelligence",
   "operatingSystem": "Home Assistant, Linux, macOS, Windows",

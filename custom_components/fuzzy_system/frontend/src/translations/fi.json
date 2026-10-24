@@ -15,7 +15,7 @@
     "card_title_placeholder": "esim. Olohuoneen tuulettimen ohjain",
     "card_title_helper": "Jätä tyhjäksi, jos haluat käyttää sumeaa järjestelmän nimeä automaattisesti.",
     "visual_components": "Visuaalisen kortin komponentit",
-    "aggregated_waveform": "Kootun ulostulon aaltomuoto",
+    "aggregated_waveform": "Aggregoitu lähtöaaltomuoto",
     "aggregated_waveform_desc": "Reaaliaikainen varjostettu sumea joukkojakauma defuzzification-osalla",
     "inputs_grid": "Live Input Grid",
     "inputs_grid_desc": "Näytä syötemittarit ja moottoriin syötettävät arvot",

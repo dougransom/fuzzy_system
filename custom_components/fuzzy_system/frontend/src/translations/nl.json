@@ -18,7 +18,7 @@
     "aggregated_waveform": "Geaggregeerde uitgangsgolfvorm",
     "aggregated_waveform_desc": "Realtime gearceerde, fuzzy set-distributie met defuzzificatiesegment",
     "inputs_grid": "Live-invoerraster",
-    "inputs_grid_desc": "Toon invoermetrische pillen en waarden die in de engine worden ingevoerd",
+    "inputs_grid_desc": "Toon input-metrische pillen en waarden die in de engine worden ingevoerd",
     "rule_strengths": "Actieve regelvuursterkte",
     "rule_strengths_desc": "Toon voortgangsbalken voor de schietsterkte voor actieve regels"
   },

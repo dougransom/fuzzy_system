@@ -20,7 +20,7 @@
     "inputs_grid": "Cuadrícula de entradas en vivo",
     "inputs_grid_desc": "Mostrar píldoras métricas de entrada y valores que ingresan al motor",
     "rule_strengths": "Fortalezas de disparo de regla activa",
-    "rule_strengths_desc": "Show firing strength progress bars for active rules"
+    "rule_strengths_desc": "Mostrar barras de progreso de fuerza de disparo para reglas activas"
   },
   "panel": {
     "title": "Estudio de control difuso",

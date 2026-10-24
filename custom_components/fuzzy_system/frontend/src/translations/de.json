@@ -16,11 +16,11 @@
     "card_title_helper": "Lassen Sie das Feld leer, um den Fuzzy-Systemnamen automatisch zu verwenden.",
     "visual_components": "Visuelle Kartenkomponenten",
     "aggregated_waveform": "Aggregierte Ausgangswellenform",
-    "aggregated_waveform_desc": "Echtzeit-Verteilung schattierter Fuzzy-Sets mit Defuzzifizierungs-Slice",
+    "aggregated_waveform_desc": "Verteilung schattierter Fuzzy-Sets in Echtzeit mit Defuzzifizierungs-Slice",
     "inputs_grid": "Live-Eingaberaster",
     "inputs_grid_desc": "Zeigen Sie Eingabemetrikpillen und Werte an, die in die Engine eingespeist werden",
     "rule_strengths": "Aktive Regelfeuerstärken",
-    "rule_strengths_desc": "Fortschrittsbalken für die Schussstärke für aktive Regeln anzeigen"
+    "rule_strengths_desc": "Zeigt Fortschrittsbalken für die Schussstärke für aktive Regeln an"
   },
   "panel": {
     "title": "Fuzzy Control Studio",

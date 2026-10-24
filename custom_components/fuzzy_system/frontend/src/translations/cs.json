@@ -13,7 +13,7 @@
     "target_system_helper": "Vyberte ovladač fuzzy logiky, který chcete sledovat a vizualizovat na této kartě řídicího panelu.",
     "card_title": "Název karty (volitelné)",
     "card_title_placeholder": "např. Ovladač ventilátoru v obývacím pokoji",
-    "card_title_helper": "Chcete-li název fuzzy systému použít automaticky, ponechte prázdné.",
+    "card_title_helper": "Ponechte prázdné, chcete-li název fuzzy systému použít automaticky.",
     "visual_components": "Komponenty vizuální karty",
     "aggregated_waveform": "Agregovaný výstupní průběh",
     "aggregated_waveform_desc": "Stínovaná distribuce fuzzy množin v reálném čase s defuzzifikačním řezem",

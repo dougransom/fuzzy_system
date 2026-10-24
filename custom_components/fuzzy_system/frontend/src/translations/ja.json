@@ -8,7 +8,7 @@
     "rule_firing_strengths": "アクティブルール発動の強み"
   },
   "editor": {
-    "target_system": "ターゲットファジーシステム",
+    "target_system": "Target Fuzzy System",
     "detected": "{count} が検出されました",
     "target_system_helper": "このダッシュボード カードで監視および視覚化するファジー ロジック コントローラーを選択します。",
     "card_title": "カードタイトル (オプション)",

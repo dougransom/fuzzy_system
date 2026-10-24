@@ -16,7 +16,7 @@
     "card_title_helper": "Pozostaw puste, aby automatycznie używać rozmytej nazwy systemu.",
     "visual_components": "Elementy karty wizualnej",
     "aggregated_waveform": "Zagregowany przebieg wyjściowy",
-    "aggregated_waveform_desc": "Rozkład cieniowanych zbiorów rozmytych w czasie rzeczywistym z wycinkiem rozmytym",
+    "aggregated_waveform_desc": "Rozkład zacieniowanych zbiorów rozmytych w czasie rzeczywistym z wycinkiem rozmytym",
     "inputs_grid": "Siatka wejść na żywo",
     "inputs_grid_desc": "Pokaż wejściowe pigułki metryczne i wartości podawane do silnika",
     "rule_strengths": "Siły wyzwalania reguły aktywnej",

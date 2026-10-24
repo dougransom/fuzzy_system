@@ -10,7 +10,7 @@
   "editor": {
     "target_system": "Système flou cible",
     "detected": "{count} détecté",
-    "target_system_helper": "Sélectionnez le contrôleur à logique floue à surveiller et à visualiser sur cette carte de tableau de bord.",
+    "target_system_helper": "Sélectionnez le contrôleur à logique floue à surveiller et visualiser sur cette carte de tableau de bord.",
     "card_title": "Titre de la carte (facultatif)",
     "card_title_placeholder": "par ex. Contrôleur de ventilateur de salon",
     "card_title_helper": "Laissez vide pour utiliser automatiquement le nom flou du système.",
@@ -20,7 +20,7 @@
     "inputs_grid": "Grille des entrées en direct",
     "inputs_grid_desc": "Afficher les pilules et les valeurs métriques d'entrée alimentant le moteur",
     "rule_strengths": "Forces de déclenchement des règles actives",
-    "rule_strengths_desc": "Afficher les barres de progression de la puissance de tir pour les règles actives"
+    "rule_strengths_desc": "Afficher les barres de progression de la force de tir pour les règles actives"
   },
   "panel": {
     "title": "Studio de contrôle flou",

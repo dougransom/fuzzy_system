@@ -1,10 +1,10 @@
 {
   "card": {
-    "configuring": "Konfigurerer fuzzy-system-kort...",
+    "configuring": "Konfigurerer fuzzy-system-kort ...",
     "active": "Aktiv",
     "live_inputs": "Live-innganger",
     "outputs": "Utganger",
-    "live_aggregated_set": "Live aggregert utdatasett",
+    "live_aggregated_set": "Live Aggregated Output Set",
     "rule_firing_strengths": "Aktiv regel skytestyrker"
   },
   "editor": {
