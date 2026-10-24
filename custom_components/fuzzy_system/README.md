@@ -52,12 +52,23 @@ The primary goal of this project is to implement **Fuzzy Control for Home Assist
 
 ## Installation
 
-### Manual Installation
-1. Copy the `fuzzy_system` directory into your Home Assistant configuration directory:
-   ```
-   config/custom_components/fuzzy_system/
-   ```
-2. Restart Home Assistant.
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=dougransom&repository=fuzzy_system&category=integration)
+
+1. Open **HACS** in Home Assistant.
+2. Go to **Integrations**.
+3. Search for **Fuzzy System**.
+4. Select **Fuzzy System** and click **Download**.
+5. Restart Home Assistant.
+
+<details>
+<summary><b>Fallback / Custom Repository</b> (if not yet appearing in your local HACS catalog)</summary>
+
+1. Open **HACS** in Home Assistant.
+2. Click the three dots in the top-right corner and select **Custom repositories**.
+3. Add `https://github.com/dougransom/fuzzy_system` with category **Integration**.
+4. Click **Download**, then restart Home Assistant.
+
+</details>
 
 ---
 
